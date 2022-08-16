@@ -1,5 +1,4 @@
 // import { MessagingDevicesResponse } from 'firebase-admin/messaging';
-
 import { Controller, Get, Param } from '@nestjs/common';
 // import { GoongMapsService } from 'shared/goong-maps.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
