@@ -1,8 +1,10 @@
 import { AutoMap } from '@automapper/classes';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
+import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 
 @Entity({ name: 'accounts' })
 export class AccountEntity extends BaseEntity {
@@ -28,4 +30,12 @@ export class AccountEntity extends BaseEntity {
 
   @ManyToOne(() => RoleEntity, (role) => role.accounts)
   role: RoleEntity;
+
+  @OneToOne(() => ProfileEntity, (profile) => profile.account)
+  profile: ProfileEntity;
+
+  @OneToOne(() => CustomerEntity, (customer) => customer.account, {
+    onDelete: 'CASCADE',
+  })
+  customer: CustomerEntity;
 }
