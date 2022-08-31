@@ -13,7 +13,21 @@ export class AccountsService extends BaseService<AccountEntity> {
     super(accountsRepository);
   }
 
-  async updateRefeshToken(
+  async findByEmail(email: string): Promise<AccountEntity> {
+    return await this.findOne({
+      relations: {
+        profile: true,
+        role: true,
+      },
+      where: {
+        profile: {
+          email: email,
+        },
+      },
+    });
+  }
+
+  async updateRefreshToken(
     refreshToken: string,
     id: string,
   ): Promise<UpdateResult> {
