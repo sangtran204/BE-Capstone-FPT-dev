@@ -20,6 +20,7 @@ import { ProfileModule } from './models/profiles/profile.module';
 // import { AuthModule } from './auth/auth.module';
 // import { JwtProviderModule } from './providers/jwt/provider.module';
 import { CategoriesModule } from './models/categories/categories.module';
+import { StationsModule } from './models/stations/stations.module';
 // import { VehicleTypesModule } from 'models/vehicle-types/vehicle-types.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
@@ -35,6 +36,7 @@ import { CategoriesModule } from './models/categories/categories.module';
     // AccountsModule,
     // ProfileModule,
     CategoriesModule,
+    StationsModule,
     // SharedModule,
     // AuthModule,
     // LocationCategoriesModule,
