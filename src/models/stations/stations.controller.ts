@@ -2,7 +2,6 @@ import { MapInterceptor } from '@automapper/nestjs';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -51,18 +50,16 @@ export class StationsController {
   @Post()
   @ApiResponse({
     status: 200,
-    description: 'Created new station successfully',
+    description: 'CREATE STATION',
     type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async createStation(@Body() dto: StationDTO): Promise<StationEntity> {
-    return await this.stationsService.save({
-      name: dto.name,
-      address: dto.address,
-      phone: dto.phone,
-      openTime: dto.openTime,
-      closeTime: dto.closeTime,
-    });
+  async createStation(@Body() dto: StationDTO): Promise<string> {
+    if (await this.stationsService.createStation(dto)) {
+      return 'Create station successfull';
+    } else {
+      return 'Create station fail';
+    }
   }
 
   //Delete station
@@ -70,12 +67,16 @@ export class StationsController {
   @Put('/:id')
   @ApiResponse({
     status: 200,
-    description: 'Deleted station successfully',
+    description: 'DELETE STATION',
     type: boolean,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async deleteStation(@Param('id') id: string): Promise<boolean> {
-    return await this.stationsService.deleteStation(id);
+  async deleteStation(@Param('id') id: string): Promise<string> {
+    if (await this.stationsService.deleteStation(id)) {
+      return 'Delete successfull';
+    } else {
+      return 'Delete fail';
+    }
   }
 
   //Update station
@@ -83,15 +84,19 @@ export class StationsController {
   @Post('/:id')
   @ApiResponse({
     status: 200,
-    description: 'Updated station successfully',
+    description: 'UPDATE STATION',
     type: boolean,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
   async updateStation(
     @Param('id') id: string,
     @Body() dto: StationDTO,
-  ): Promise<boolean> {
-    return await this.stationsService.updateStation(id, dto);
+  ): Promise<string> {
+    if (await this.stationsService.updateStation(id, dto)) {
+      return 'Update successfull';
+    } else {
+      return 'Update fail';
+    }
   }
 
   //Search station
@@ -99,11 +104,16 @@ export class StationsController {
   @Get('/:id')
   @ApiResponse({
     status: 200,
-    description: 'Search station successfully',
+    description: 'SEARCH STATION BY ID',
     type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async findById(@Param('id') id: string): Promise<StationEntity> {
-    return await this.stationsService.findOne({ where: { id: id } });
+  async findById(@Param('id') id: string): Promise<StationEntity | string> {
+    const station = await this.stationsService.findOne({ where: { id: id } });
+    if (station != null) {
+      return station;
+    } else {
+      return `${id} not found`;
+    }
   }
 }
