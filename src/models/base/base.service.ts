@@ -2,11 +2,13 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import {
   DataSource,
   DeepPartial,
+  DeleteResult,
   EntityManager,
   FindManyOptions,
   FindOneOptions,
   Repository,
 } from 'typeorm';
+import { EntityId } from 'typeorm/repository/EntityId';
 import { BaseEntity } from './base.entity';
 export class BaseService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
@@ -14,11 +16,6 @@ export class BaseService<T extends BaseEntity> {
   create(entity: DeepPartial<T>): T {
     return this.repository.create(entity);
   }
-
-  // async update(id: string, entity: DeepPartial<T>): T {
-  //   await this.repository.update(id, entity);
-  //   return this.repository.findOne({ where: { id: id } });
-  // }
 
   async save(entity: DeepPartial<T>): Promise<T> {
     return this.repository.save(entity);
