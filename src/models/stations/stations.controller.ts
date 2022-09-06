@@ -15,8 +15,6 @@ import { StationDTO } from './dto/stations.dto';
 import { StationsService } from './stations.service';
 import { boolean } from 'joi';
 
-// const dateNow = new Date(Date.now()).toLocaleString();
-
 @ApiBearerAuth()
 @ApiTags('stations')
 @Controller('stations')
