@@ -44,8 +44,28 @@ export class StationsController {
     return listStation;
   }
 
-  //Insert station
+  //Find ALL ACTIVE STATION
+  @Public()
+  @Get('/getAllActiveStation')
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL STATION',
+    type: [StationDTO],
+  })
+  @UseInterceptors(
+    MapInterceptor(StationDTO, StationEntity, {
+      isArray: true,
+    }),
+  )
+  async findAllActiveStation(): Promise<StationEntity[] | { message: string }> {
+    const listStation = await this.stationsService.getAllActiveStations();
+    if (listStation.length == 0) {
+      return { message: 'No Station found' };
+    }
+    return listStation;
+  }
 
+  //Insert station
   @Public()
   @Post()
   @ApiResponse({
@@ -64,7 +84,7 @@ export class StationsController {
 
   //Delete station
   @Public()
-  @Put('/:id')
+  @Put('/removeStation/:id')
   @ApiResponse({
     status: 200,
     description: 'DELETE STATION',
@@ -99,12 +119,12 @@ export class StationsController {
     }
   }
 
-  //Search station
+  //Find Station By Id
   @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
-    description: 'SEARCH STATION BY ID',
+    description: 'FIND STATION BY ID',
     type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
