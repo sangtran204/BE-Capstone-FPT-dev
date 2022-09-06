@@ -2,7 +2,6 @@ import { MapInterceptor } from '@automapper/nestjs';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -15,7 +14,6 @@ import { ShippersService } from './shippers.service';
 import { ShipperDTO } from './dto/shippers.dto';
 import { ShipperEntity } from './entities/shippers.entity';
 import { boolean } from 'joi';
-import { async } from 'rxjs';
 
 @ApiBearerAuth()
 @ApiTags('shippers')
@@ -67,7 +65,7 @@ export class ShippersController {
 
   //Remove shipper
   @Public()
-  @Put('/:id')
+  @Put('/removeShipper/:id')
   @ApiResponse({
     status: 200,
     description: 'DELETE SHIPPER',
@@ -87,7 +85,7 @@ export class ShippersController {
   @Post('/:id')
   @ApiResponse({
     status: 200,
-    description: 'DELETE SHIPPER',
+    description: 'UPDATE SHIPPER',
     type: boolean,
   })
   @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
@@ -107,7 +105,7 @@ export class ShippersController {
   @Get('/:id')
   @ApiResponse({
     status: 200,
-    description: 'DELETE SHIPPER',
+    description: 'Find SHIPPER By Id',
     type: boolean,
   })
   @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))

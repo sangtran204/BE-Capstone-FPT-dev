@@ -1,5 +1,5 @@
-import { Repository, UpdateResult } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { ShipperEntity } from './entities/shippers.entity';
@@ -16,9 +16,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
   }
 
   async getAllShippers(): Promise<ShipperEntity[]> {
-    return await this.shippersRepository.find({
-      where: { isActive: IsActiveEnum.ACTIVE },
-    });
+    return await this.shippersRepository.find();
   }
 
   async createShipper(dto: ShipperDTO): Promise<boolean> {

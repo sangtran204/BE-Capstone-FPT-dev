@@ -16,6 +16,9 @@ export class StationsService extends BaseService<StationEntity> {
   }
 
   async getStations(): Promise<StationEntity[]> {
+    return await this.stationsRepository.find();
+  }
+  async getAllActiveStations(): Promise<StationEntity[]> {
     return await this.stationsRepository.find({
       where: { isActive: IsActiveEnum.ACTIVE },
     });
