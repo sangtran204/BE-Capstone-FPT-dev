@@ -19,6 +19,8 @@ import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { StationsModule } from './models/stations/stations.module';
 import { ShippersModule } from './models/shippers/shippers.module';
 import { CategoriesModule } from './models/categories/categories.module';
+import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
+import { PackagesModule } from './models/packages/packages.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -34,6 +36,8 @@ import { CategoriesModule } from './models/categories/categories.module';
     CategoriesModule,
     StationsModule,
     ShippersModule,
+    TimeSlotsModule,
+    PackagesModule,
     // SharedModule,
     // AuthModule,
     // FireBaseConfigModule,
