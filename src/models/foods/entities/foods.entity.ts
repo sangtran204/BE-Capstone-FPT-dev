@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity } from 'typeorm';
 
@@ -15,6 +16,14 @@ export class FoodEntity extends BaseEntity {
   @Column()
   @AutoMap()
   img: string;
+
+  @Column()
+  @AutoMap()
+  price: string;
+
+  @Column({ default: IsActiveEnum.ACTIVE })
+  @AutoMap()
+  isActive: string;
 
   //   @OneToMany(() => FoodEntity, (food) => food.foodCategory)
   //   foods: FoodEntity[];
