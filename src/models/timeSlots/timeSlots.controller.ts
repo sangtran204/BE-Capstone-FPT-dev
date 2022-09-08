@@ -6,8 +6,9 @@ import {
   Param,
   Delete,
   Post,
-  Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { boolean } from 'joi';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -30,19 +31,14 @@ export class TimeSlotsController {
     description: 'GET ALL TIME SLOT',
     type: [TimeSlotDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(TimeSlotEntity, TimeSlotDTO, {
-      isArray: true,
-    }),
-  )
   async findAll(): Promise<TimeSlotEntity[] | string> {
     const listTimeSlots = await this.timeSlotsService.getAllTimeSlot();
-    if (listTimeSlots.length == 0) {
-      return 'No Time Slot found';
-    } else {
-      return listTimeSlots;
+    if (!listTimeSlots || listTimeSlots.length == 0) {
+      throw new HttpException('No data time slot', HttpStatus.NOT_FOUND);
     }
+    return listTimeSlots;
   }
+
   //List time slot follow flag
   @Public()
   @Get('/:flag')
@@ -58,13 +54,12 @@ export class TimeSlotsController {
   )
   async getTimeSlotFlag(
     @Param('flag') flag: number,
-  ): Promise<TimeSlotEntity[] | string> {
+  ): Promise<TimeSlotEntity[]> {
     const listTimeSlotFlag = await this.timeSlotsService.getTimeSlotFlag(flag);
-    if (listTimeSlotFlag != null) {
-      return listTimeSlotFlag;
-    } else {
-      return 'No data time slot';
+    if (!listTimeSlotFlag || listTimeSlotFlag.length == 0) {
+      throw new HttpException('No data time slot', HttpStatus.NOT_FOUND);
     }
+    return listTimeSlotFlag;
   }
 
   //Create time slot
@@ -96,11 +91,7 @@ export class TimeSlotsController {
   })
   @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async deleteTimeSlot(@Param('id') id: string): Promise<string> {
-    if (await this.timeSlotsService.deleteTimeSlot(id)) {
-      return 'Delete successfull';
-    } else {
-      return 'Delete fail';
-    }
+    return await this.timeSlotsService.deleteTimeSlot(id);
   }
 
   @Public()
@@ -115,10 +106,6 @@ export class TimeSlotsController {
     @Param('id') id: string,
     @Body() dto: TimeSlotDTO,
   ): Promise<string> {
-    if (await this.timeSlotsService.updateTimeSlot(id, dto)) {
-      return 'Update successfull';
-    } else {
-      return 'Update fail';
-    }
+    return await this.timeSlotsService.updateTimeSlot(id, dto);
   }
 }

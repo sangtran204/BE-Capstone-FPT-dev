@@ -21,7 +21,7 @@ export class PackageEntity extends BaseEntity {
   @AutoMap()
   price: number;
 
-  @Column({ default: IsActiveEnum.ACTIVE })
+  @Column({ default: IsActiveEnum.WAITING })
   @AutoMap()
   isActive: string;
 }
