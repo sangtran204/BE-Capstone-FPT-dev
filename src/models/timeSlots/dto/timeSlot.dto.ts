@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Max, Min } from 'class-validator';
 import { BaseDTO } from '../../base/base.dto';
 
 export class TimeSlotDTO extends BaseDTO {
@@ -16,5 +16,7 @@ export class TimeSlotDTO extends BaseDTO {
 
   @ApiProperty()
   @AutoMap()
+  @Min(0)
+  @Max(2)
   flag: number;
 }
