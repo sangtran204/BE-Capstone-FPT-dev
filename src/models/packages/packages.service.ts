@@ -15,7 +15,11 @@ export class PackageService extends BaseService<PackageEntity> {
     super(packagesRepository);
   }
 
-  async listAllPackage(isActive: string): Promise<PackageEntity[]> {
+  async listAllPackage(): Promise<PackageEntity[]> {
+    return await this.packagesRepository.find();
+  }
+
+  async listPackageStatus(isActive: string): Promise<PackageEntity[]> {
     if (isActive.trim().length == 0) {
       return await this.packagesRepository.find();
     } else {

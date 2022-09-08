@@ -8,6 +8,8 @@ import {
   Post,
   Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
@@ -21,23 +23,41 @@ import { PackageEntity } from './entities/packages.entity';
 export class PackageController {
   constructor(private readonly packageService: PackageService) {}
 
+  //Get all package
+  @Public()
+  @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL PACKAGE',
+    type: [PackageDTO],
+  })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
+  async getAllPackage(): Promise<PackageEntity[] | string> {
+    const listPackages = await this.packageService.listAllPackage();
+    if (listPackages != null) {
+      return listPackages;
+    } else {
+      throw new HttpException('No data package', HttpStatus.NOT_FOUND);
+    }
+  }
+
   //Get package
   @Public()
   @Get('/:isActive')
   @ApiResponse({
     status: 200,
-    description: 'GET PACKAGE',
+    description: 'GET PACKAGE FOLLOW STATUS',
     type: [PackageDTO],
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async getPackage(
     @Param('isActive') isActive: string,
   ): Promise<PackageEntity[] | string> {
-    const listPackages = await this.packageService.listAllPackage(isActive);
+    const listPackages = await this.packageService.listPackageStatus(isActive);
     if (listPackages.length != 0) {
       return listPackages;
     } else {
-      return 'No data package';
+      throw new HttpException('No data package', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -52,12 +72,12 @@ export class PackageController {
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async createPackage(
     @Body() dto: PackageDTO,
-  ): Promise<PackageEntity | string> {
+  ): Promise<PackageEntity | { masage: string }> {
     const create = await this.packageService.createPackage(dto);
     if (create) {
-      return 'Create package successfull';
+      return { masage: 'Create package successfull' };
     } else {
-      return 'Create package fail';
+      return { masage: 'Create package fail' };
     }
   }
 
@@ -73,12 +93,12 @@ export class PackageController {
   async updatePackage(
     @Param('id') id: string,
     @Body() dto: PackageDTO,
-  ): Promise<PackageEntity | string> {
+  ): Promise<PackageEntity | { masage: string }> {
     const create = await this.packageService.updatePackage(id, dto);
     if (create) {
-      return 'Update successfull';
+      return { masage: 'Update successfull' };
     } else {
-      return 'Update fail';
+      return { masage: 'Update fail' };
     }
   }
 
@@ -91,11 +111,13 @@ export class PackageController {
     type: [PackageDTO],
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
-  async updatePackageStatus(@Param('id') id: string): Promise<string> {
+  async updatePackageStatus(
+    @Param('id') id: string,
+  ): Promise<{ massage: string }> {
     if (await this.packageService.updateStatus(id)) {
-      return 'Active';
+      return { massage: 'Package active' };
     } else {
-      return 'InActive';
+      return { massage: 'Package inActive' };
     }
   }
 
@@ -108,11 +130,11 @@ export class PackageController {
     type: [PackageDTO],
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
-  async deletePackage(@Param('id') id: string): Promise<string> {
+  async deletePackage(@Param('id') id: string): Promise<{ massage: string }> {
     if (await this.packageService.deletePackage(id)) {
-      return 'Delete successfull';
+      return { massage: 'Delete successfull' };
     } else {
-      return 'Delete fail';
+      return { massage: 'Delete fail' };
     }
   }
 }
