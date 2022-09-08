@@ -8,6 +8,8 @@ import {
   Post,
   Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
@@ -21,7 +23,6 @@ import { CategoryEntity } from './entities/categories.entity';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  // Find All Category
   @Public()
   @Get()
   @ApiResponse({
@@ -29,20 +30,31 @@ export class CategoriesController {
     description: 'GET ALL CATEGORY',
     type: [CategoryDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(CategoryEntity, CategoryDTO, {
-      isArray: true,
-    }),
-  )
-  async findAll(): Promise<CategoryEntity[] | { message: string }> {
+  async findAll(): Promise<CategoryEntity[]> {
     const listCategory = await this.categoriesService.getCategories();
-    if (listCategory.length == 0) {
-      return { message: 'No Data Category' };
+    if (!listCategory || listCategory.length == 0) {
+      throw new HttpException("Dont't have resource", HttpStatus.NOT_FOUND);
     }
     return listCategory;
   }
 
-  // Create New Category
+  @Public()
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Get detail Category by ID',
+    type: CategoryDTO,
+  })
+  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
+  async findCategoryById(@Param('id') id: string): Promise<CategoryEntity> {
+    const category = await this.categoriesService.findOne({
+      where: { id: id },
+    });
+    if (!category)
+      throw new HttpException("Dont't have resource", HttpStatus.NOT_FOUND);
+    return category;
+  }
+
   @Post()
   @Public()
   @ApiResponse({
@@ -55,23 +67,9 @@ export class CategoriesController {
     return await this.categoriesService.save({ name: dto.name });
   }
 
-  // Find By ID
-  @Public()
-  @Get('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'Get detail Category by ID',
-    type: CategoryDTO,
-  })
-  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
-  async findCategoryById(@Param('id') id: string): Promise<CategoryEntity> {
-    return await this.categoriesService.findOne({ where: { id: id } });
-  }
-
-  // Update Category Name By Id
-  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
   @Put('/:id')
   @Public()
+  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
   async updateCategory(
     @Param('id') id: string,
     @Body() dto: CategoryDTO,
@@ -80,7 +78,6 @@ export class CategoriesController {
     return await this.categoriesService.updateCategory(id, dto);
   }
 
-  //Remove Category by Id
   @Delete('/:id')
   @ApiResponse({
     status: 200,

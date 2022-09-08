@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './entities/categories.entity';
 import { BaseService } from '../base/base.service';
@@ -23,16 +23,9 @@ export class CategoriesService extends BaseService<CategoryEntity> {
       where: { id: id },
     });
     if (!cateId) {
-      throw new BadRequestException(`${id} not found`);
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      await this.categoriesRepository
-        .createQueryBuilder()
-        .update(CategoryEntity)
-        .set({
-          name: data.name,
-        })
-        .where('id = :id', { id: id })
-        .execute();
+      await this.save({ id: id, name: data.name });
       return `Update Sucessfully ${id}`;
     }
   }
@@ -42,7 +35,7 @@ export class CategoriesService extends BaseService<CategoryEntity> {
       where: { id: id },
     });
     if (!cateId) {
-      throw new BadRequestException(`${id} not found`);
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
       await this.categoriesRepository
         .createQueryBuilder()
