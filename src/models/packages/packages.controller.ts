@@ -34,16 +34,15 @@ export class PackageController {
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async getAllPackage(): Promise<PackageEntity[] | string> {
     const listPackages = await this.packageService.listAllPackage();
-    if (listPackages != null) {
-      return listPackages;
-    } else {
+    if (!listPackages || listPackages.length == 0) {
       throw new HttpException('No data package', HttpStatus.NOT_FOUND);
     }
+    return listPackages;
   }
 
   //Get package
   @Public()
-  @Get('/:isActive')
+  @Get('/findByIsActive/:isActive')
   @ApiResponse({
     status: 200,
     description: 'GET PACKAGE FOLLOW STATUS',
@@ -54,11 +53,10 @@ export class PackageController {
     @Param('isActive') isActive: string,
   ): Promise<PackageEntity[] | string> {
     const listPackages = await this.packageService.listPackageStatus(isActive);
-    if (listPackages.length != 0) {
-      return listPackages;
-    } else {
+    if (!listPackages || listPackages.length == 0) {
       throw new HttpException('No data package', HttpStatus.NOT_FOUND);
     }
+    return listPackages;
   }
 
   // Create package
@@ -67,17 +65,17 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'CREATE PACKAGE',
-    type: [PackageDTO],
+    type: PackageDTO,
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async createPackage(
     @Body() dto: PackageDTO,
-  ): Promise<PackageEntity | { masage: string }> {
+  ): Promise<PackageEntity | { message: string }> {
     const create = await this.packageService.createPackage(dto);
     if (create) {
-      return { masage: 'Create package successfull' };
+      return { message: 'Create package successfull' };
     } else {
-      return { masage: 'Create package fail' };
+      return { message: 'Create package fail' };
     }
   }
 
@@ -87,37 +85,30 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE PACKAGE',
-    type: [PackageDTO],
+    type: PackageDTO,
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async updatePackage(
     @Param('id') id: string,
     @Body() dto: PackageDTO,
-  ): Promise<PackageEntity | { masage: string }> {
-    const create = await this.packageService.updatePackage(id, dto);
-    if (create) {
-      return { masage: 'Update successfull' };
-    } else {
-      return { masage: 'Update fail' };
-    }
+  ): Promise<string> {
+    return await this.packageService.updatePackage(id, dto);
   }
 
   //Update package status
   @Public()
-  @Put('/:id')
+  @Put('/updateStatus/:id')
   @ApiResponse({
     status: 200,
     description: 'UPDATE PACKAGE STATUS',
-    type: [PackageDTO],
+    type: PackageDTO,
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
-  async updatePackageStatus(
-    @Param('id') id: string,
-  ): Promise<{ massage: string }> {
+  async updatePackageStatus(@Param('id') id: string): Promise<string> {
     if (await this.packageService.updateStatus(id)) {
-      return { massage: 'Package active' };
+      return 'Package active';
     } else {
-      return { massage: 'Package inActive' };
+      return 'Package inActive';
     }
   }
 
@@ -127,14 +118,10 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'DELETE PACKAGE',
-    type: [PackageDTO],
+    type: String,
   })
   @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
-  async deletePackage(@Param('id') id: string): Promise<{ massage: string }> {
-    if (await this.packageService.deletePackage(id)) {
-      return { massage: 'Delete successfull' };
-    } else {
-      return { massage: 'Delete fail' };
-    }
+  async deletePackage(@Param('id') id: string): Promise<string> {
+    return await this.packageService.deletePackage(id);
   }
 }

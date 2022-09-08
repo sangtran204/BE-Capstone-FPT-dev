@@ -91,11 +91,7 @@ export class TimeSlotsController {
   })
   @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async deleteTimeSlot(@Param('id') id: string): Promise<string> {
-    if (await this.timeSlotsService.deleteTimeSlot(id)) {
-      return 'Delete successfull';
-    } else {
-      return 'Delete fail';
-    }
+    return await this.timeSlotsService.deleteTimeSlot(id);
   }
 
   @Public()
@@ -110,10 +106,6 @@ export class TimeSlotsController {
     @Param('id') id: string,
     @Body() dto: TimeSlotDTO,
   ): Promise<string> {
-    if (await this.timeSlotsService.updateTimeSlot(id, dto)) {
-      return 'Update successfull';
-    } else {
-      return 'Update fail';
-    }
+    return await this.timeSlotsService.updateTimeSlot(id, dto);
   }
 }

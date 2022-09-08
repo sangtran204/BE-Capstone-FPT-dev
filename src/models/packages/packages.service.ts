@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { PackageEntity } from './entities/packages.entity';
@@ -20,13 +20,9 @@ export class PackageService extends BaseService<PackageEntity> {
   }
 
   async listPackageStatus(isActive: string): Promise<PackageEntity[]> {
-    if (isActive.trim().length == 0) {
-      return await this.packagesRepository.find();
-    } else {
-      return await this.packagesRepository.find({
-        where: { isActive: isActive },
-      });
-    }
+    return await this.packagesRepository.find({
+      where: { isActive: isActive },
+    });
   }
 
   async createPackage(dto: PackageDTO): Promise<boolean> {
@@ -43,23 +39,23 @@ export class PackageService extends BaseService<PackageEntity> {
     }
   }
 
-  async updatePackage(id: string, dto: PackageDTO): Promise<boolean> {
-    await this.packagesRepository.findOne({
-      where: { id: id.trim() },
+  async updatePackage(id: string, dto: PackageDTO): Promise<string> {
+    const packageId = await this.packagesRepository.findOne({
+      where: { id: id },
     });
-    const update = await this.packagesRepository.update(
-      { id: id },
-      {
-        name: dto.name,
-        description: dto.description,
-        totalGroupItem: dto.totalGroupItem,
-        price: dto.price,
-      },
-    );
-    if (update.affected == 1) {
-      return true;
+    if (!packageId) {
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      return false;
+      await this.packagesRepository.update(
+        { id: id },
+        {
+          name: dto.name,
+          description: dto.description,
+          totalGroupItem: dto.totalGroupItem,
+          price: dto.price,
+        },
+      );
+      return 'Update package successfull';
     }
   }
 
@@ -67,42 +63,46 @@ export class PackageService extends BaseService<PackageEntity> {
     const packages = await this.packagesRepository.findOne({
       where: { id: id },
     });
-    if (
-      (packages != null && packages.isActive == IsActiveEnum.WAITING) ||
-      packages.isActive == IsActiveEnum.IN_ACTIVE
-    ) {
-      await this.packagesRepository.update(
-        { id: id },
-        {
-          isActive: IsActiveEnum.ACTIVE,
-        },
-      );
-      return true;
-    } else if (packages.isActive == IsActiveEnum.ACTIVE) {
-      await this.packagesRepository.update(
-        { id: id },
-        {
-          isActive: IsActiveEnum.IN_ACTIVE,
-        },
-      );
-      return false;
+    if (!packages) {
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    } else {
+      if (
+        packages.isActive == IsActiveEnum.WAITING ||
+        packages.isActive == IsActiveEnum.IN_ACTIVE
+      ) {
+        await this.packagesRepository.update(
+          { id: id },
+          {
+            isActive: IsActiveEnum.ACTIVE,
+          },
+        );
+        return true;
+      } else if (packages.isActive == IsActiveEnum.ACTIVE) {
+        await this.packagesRepository.update(
+          { id: id },
+          {
+            isActive: IsActiveEnum.IN_ACTIVE,
+          },
+        );
+        return true;
+      }
     }
   }
 
-  async deletePackage(id: string): Promise<boolean> {
+  async deletePackage(id: string): Promise<string> {
     const packages = await this.packagesRepository.findOne({
       where: { id: id },
     });
-    if (packages != null) {
+    if (packages) {
       await this.packagesRepository
         .createQueryBuilder()
         .delete()
         .from(PackageEntity)
-        .where('id=:id', { id: id })
+        .where('id = :id', { id: id })
         .execute();
-      return true;
+      return `Delete Successfully : ${id}`;
     } else {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     }
   }
 }

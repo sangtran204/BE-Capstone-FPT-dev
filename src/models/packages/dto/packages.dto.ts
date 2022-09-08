@@ -24,9 +24,4 @@ export class PackageDTO extends BaseDTO {
   @ApiProperty()
   @AutoMap()
   price: number;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @AutoMap()
-  isActive: string;
 }

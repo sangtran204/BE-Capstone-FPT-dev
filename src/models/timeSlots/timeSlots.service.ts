@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { TimeSlotEntity } from './entities/timeSlots.entity';
@@ -39,28 +39,28 @@ export class TimeSlotsService extends BaseService<TimeSlotEntity> {
     }
   }
 
-  async deleteTimeSlot(id: string): Promise<boolean> {
+  async deleteTimeSlot(id: string): Promise<string> {
     const timeSlot = await this.timeSlotsRepository.findOne({
       where: { id: id },
     });
-    if (timeSlot != null) {
+    if (timeSlot) {
       await this.timeSlotsRepository
         .createQueryBuilder()
         .delete()
         .from(TimeSlotEntity)
         .where('id = :id', { id: id })
         .execute();
-      return true;
+      return `Delete Successfully : ${id}`;
     } else {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     }
   }
 
-  async updateTimeSlot(id: string, dto: TimeSlotDTO): Promise<boolean> {
+  async updateTimeSlot(id: string, dto: TimeSlotDTO): Promise<string> {
     const timeSlot = await this.timeSlotsRepository.findOne({
       where: { id: id },
     });
-    if (timeSlot != null) {
+    if (timeSlot) {
       await this.timeSlotsRepository.update(
         { id: id },
         {
@@ -69,9 +69,9 @@ export class TimeSlotsService extends BaseService<TimeSlotEntity> {
           flag: dto.flag,
         },
       );
-      return true;
+      return 'Update successfull';
     } else {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     }
   }
 }
