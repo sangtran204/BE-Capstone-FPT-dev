@@ -21,6 +21,8 @@ import { ShippersModule } from './models/shippers/shippers.module';
 import { CategoriesModule } from './models/categories/categories.module';
 import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
+import { KitchenModule } from './models/kitchens/kitchens.module';
+import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -38,6 +40,8 @@ import { PackagesModule } from './models/packages/packages.module';
     ShippersModule,
     TimeSlotsModule,
     PackagesModule,
+    KitchenModule,
+    FoodGroupModule,
     // SharedModule,
     // AuthModule,
     // FireBaseConfigModule,
