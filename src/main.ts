@@ -4,8 +4,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-// import { FireBaseConfigService } from 'config/firebase/config.service';
-// import * as firebaseAdmin from 'firebase-admin';
+import * as firebaseAdmin from 'firebase-admin';
+import { FireBaseConfigService } from './config/firebase/config.service';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -14,16 +14,16 @@ async function bootstrap(): Promise<void> {
   // Get app config for cors settings and starting the app.
   const appConfig: AppConfigService = app.get(AppConfigService);
   //setup firebase
-  // const firebaseConfig: FireBaseConfigService = app.get(FireBaseConfigService);
+  const firebaseConfig: FireBaseConfigService = app.get(FireBaseConfigService);
 
-  // firebaseAdmin.initializeApp({
-  //   credential: firebaseAdmin.credential.cert({
-  //     projectId: firebaseConfig.projectId,
-  //     privateKey: firebaseConfig.privateKey,
-  //     clientEmail: firebaseConfig.clientEmail,
-  //   }),
-  //   storageBucket: firebaseConfig.storageBucket,
-  // });
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert({
+      projectId: firebaseConfig.projectId,
+      privateKey: firebaseConfig.privateKey,
+      clientEmail: firebaseConfig.clientEmail,
+    }),
+    storageBucket: firebaseConfig.storageBucket,
+  });
 
   //setup open api
   const configSwagger = new DocumentBuilder()

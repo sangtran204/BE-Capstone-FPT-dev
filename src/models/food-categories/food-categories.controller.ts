@@ -13,25 +13,25 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { CategoriesService } from './categories.service';
-import { CategoryDTO } from './dto/category.dto';
-import { CategoryEntity } from './entities/categories.entity';
+import { FoodCategoryDTO } from './dto/food-category.dto';
+import { FoodCategoryEntity } from './entities/food-categories.entity';
+import { FoodCategoriesService } from './food-categories.service';
 
 @ApiBearerAuth()
 @ApiTags('categories')
 @Controller('categories')
-export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+export class FoodCategoriesController {
+  constructor(private readonly foodCategoriesService: FoodCategoriesService) {}
 
   @Public()
   @Get()
   @ApiResponse({
     status: 200,
     description: 'GET ALL CATEGORY',
-    type: [CategoryDTO],
+    type: [FoodCategoryDTO],
   })
-  async findAll(): Promise<CategoryEntity[]> {
-    const listCategory = await this.categoriesService.getCategories();
+  async findAll(): Promise<FoodCategoryEntity[]> {
+    const listCategory = await this.foodCategoriesService.getCategories();
     if (!listCategory || listCategory.length == 0) {
       throw new HttpException("Dont't have resource", HttpStatus.NOT_FOUND);
     }
@@ -43,11 +43,11 @@ export class CategoriesController {
   @ApiResponse({
     status: 200,
     description: 'Get detail Category by ID',
-    type: CategoryDTO,
+    type: FoodCategoryDTO,
   })
-  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
-  async findCategoryById(@Param('id') id: string): Promise<CategoryEntity> {
-    const category = await this.categoriesService.findOne({
+  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
+  async findCategoryById(@Param('id') id: string): Promise<FoodCategoryEntity> {
+    const category = await this.foodCategoriesService.findOne({
       where: { id: id },
     });
     if (!category)
@@ -60,22 +60,24 @@ export class CategoriesController {
   @ApiResponse({
     status: 200,
     description: 'Created new category successfully',
-    type: CategoryDTO,
+    type: FoodCategoryDTO,
   })
-  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
-  async createCategory(@Body() dto: CategoryDTO): Promise<CategoryEntity> {
-    return await this.categoriesService.save({ name: dto.name });
+  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
+  async createCategory(
+    @Body() dto: FoodCategoryDTO,
+  ): Promise<FoodCategoryEntity> {
+    return await this.foodCategoriesService.save({ name: dto.name });
   }
 
   @Put('/:id')
   @Public()
-  @UseInterceptors(MapInterceptor(CategoryEntity, CategoryDTO))
+  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
   async updateCategory(
     @Param('id') id: string,
-    @Body() dto: CategoryDTO,
+    @Body() dto: FoodCategoryDTO,
   ): Promise<string> {
     // return await this.categoriesService.save({ id: id, name: dto.name });
-    return await this.categoriesService.updateCategory(id, dto);
+    return await this.foodCategoriesService.updateCategory(id, dto);
   }
 
   @Delete('/:id')
@@ -85,6 +87,6 @@ export class CategoriesController {
     type: String,
   })
   async removeCategory(@Param('id') id: string): Promise<string> {
-    return await this.categoriesService.deleteCategoryById(id);
+    return await this.foodCategoriesService.deleteCategoryById(id);
   }
 }

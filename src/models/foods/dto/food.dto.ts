@@ -16,5 +16,5 @@ export class FoodDTO extends BaseDTO {
 
   @ApiProperty()
   @AutoMap()
-  price: string;
+  price: number;
 }

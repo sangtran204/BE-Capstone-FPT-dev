@@ -1,24 +1,24 @@
 import { Repository } from 'typeorm';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity } from './entities/categories.entity';
 import { BaseService } from '../base/base.service';
-import { CategoryDTO } from './dto/category.dto';
+import { FoodCategoryEntity } from './entities/food-categories.entity';
+import { FoodCategoryDTO } from './dto/food-category.dto';
 
 @Injectable()
-export class CategoriesService extends BaseService<CategoryEntity> {
+export class FoodCategoriesService extends BaseService<FoodCategoryEntity> {
   constructor(
-    @InjectRepository(CategoryEntity)
-    private readonly categoriesRepository: Repository<CategoryEntity>,
+    @InjectRepository(FoodCategoryEntity)
+    private readonly categoriesRepository: Repository<FoodCategoryEntity>,
   ) {
     super(categoriesRepository);
   }
 
-  async getCategories(): Promise<CategoryEntity[]> {
+  async getCategories(): Promise<FoodCategoryEntity[]> {
     return await this.categoriesRepository.find();
   }
 
-  async updateCategory(id: string, data: CategoryDTO): Promise<string> {
+  async updateCategory(id: string, data: FoodCategoryDTO): Promise<string> {
     const cateId = await this.categoriesRepository.findOne({
       where: { id: id },
     });
@@ -40,7 +40,7 @@ export class CategoriesService extends BaseService<CategoryEntity> {
       await this.categoriesRepository
         .createQueryBuilder()
         .delete()
-        .from(CategoryEntity)
+        .from(FoodCategoryEntity)
         .where('id = :id', { id: id })
         .execute();
       return `Delete Successfully : ${id}`;
