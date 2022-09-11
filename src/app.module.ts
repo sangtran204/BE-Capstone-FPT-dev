@@ -23,6 +23,10 @@ import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
 import { ImagesModule } from './models/images/images.module';
 import { FireBaseConfigModule } from './config/firebase/config.module';
+import { KitchenModule } from './models/kitchens/kitchens.module';
+import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
+// import { FireBaseConfigModule } from 'config/firebase/config.module';
+// import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -39,6 +43,8 @@ import { FireBaseConfigModule } from './config/firebase/config.module';
     PackagesModule,
     FoodsModule,
     FoodCategoriesModule,
+    KitchenModule,
+    FoodGroupModule,
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,
