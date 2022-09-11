@@ -17,10 +17,6 @@ export class FoodEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  img: string;
-
-  @Column()
-  @AutoMap()
   price: number;
 
   @Column({ default: IsActiveEnum.ACTIVE })

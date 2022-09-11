@@ -27,7 +27,7 @@ export class ImagesController {
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'list image',
+    description: 'List image',
     type: ImagesUploadDto,
   })
   async createImage(
@@ -36,6 +36,7 @@ export class ImagesController {
     return this.imagesService.uploadImagesToFirebase(images);
   }
 
+  // Got Bug =================================================================
   @Get('/:urlImage')
   @Public()
   async getImage(
@@ -43,6 +44,7 @@ export class ImagesController {
   ): Promise<MakeFilePublicResponse> {
     return this.imagesService.getImageFromFirebase(urlImage);
   }
+  // Got Bug =================================================================
 
   // @Post('/upload')
   // @UseInterceptors(FileInterceptor('image'))

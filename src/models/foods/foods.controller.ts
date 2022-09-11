@@ -9,10 +9,19 @@ import {
   Param,
   Post,
   Put,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { ImagesUploadDto } from '../images/dto/images-upload.dto';
 import { FoodDTO } from './dto/food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
@@ -60,14 +69,30 @@ export class FoodsController {
   }
 
   @Public()
-  @Post()
-  @ApiResponse({
-    status: 200,
-    description: 'Create food successfully',
-    type: FoodDTO,
+  @Post('/images/:id')
+  @UseInterceptors(FilesInterceptor('images'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'List image',
+    type: ImagesUploadDto,
   })
-  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO))
-  async createFood(@Body() dto: FoodDTO): Promise<FoodEntity> {
-    return await this.foodsService.save({ name: dto.name });
+  @ApiResponse({
+    status: 201,
+    description: 'Upload Images Successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Upload Images fail',
+  })
+  async addImagesFood(
+    @Param('id') id: string,
+    @UploadedFiles() images: Array<Express.Multer.File>,
+  ): Promise<string> {
+    return await this.foodsService.addImagesFood(id, images);
   }
+
+  // Create
+  // Update
+  // Delete
+  // Delete Image
 }
