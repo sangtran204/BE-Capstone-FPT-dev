@@ -22,13 +22,8 @@ export class ShippersService extends BaseService<ShipperEntity> {
   async createShipper(dto: ShipperDTO): Promise<boolean> {
     try {
       await this.shippersRepository.save({
-        fullName: dto.fullName,
-        address: dto.address,
-        email: dto.email,
-        phone: dto.phone,
-        gender: dto.gender,
-        dob: dto.dob,
-        avatar: dto.avatar,
+        noPlate: dto.noPlate,
+        vehicleType: dto.vehicleType,
       });
       return true;
     } catch (error) {
@@ -68,13 +63,8 @@ export class ShippersService extends BaseService<ShipperEntity> {
       await this.shippersRepository.update(
         { id: id },
         {
-          fullName: dto.fullName,
-          address: dto.address,
-          phone: dto.phone,
-          email: dto.email,
-          gender: dto.gender,
-          dob: dto.dob,
-          avatar: dto.avatar,
+          noPlate: dto.noPlate,
+          vehicleType: dto.vehicleType,
         },
       );
       return true;

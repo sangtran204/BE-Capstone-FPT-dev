@@ -7,6 +7,8 @@ import {
   Post,
   Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
@@ -34,10 +36,10 @@ export class StationsController {
       isArray: true,
     }),
   )
-  async findAll(): Promise<StationEntity[] | { message: string }> {
+  async findAll(): Promise<StationEntity[] | string> {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {
-      return { message: 'No Station found' };
+      throw new HttpException('No data station', HttpStatus.NOT_FOUND);
     }
     return listStation;
   }

@@ -25,6 +25,7 @@ import { ImagesModule } from './models/images/images.module';
 import { FireBaseConfigModule } from './config/firebase/config.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
 import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
+import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -37,14 +38,15 @@ import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
     AutomapperProviderModule,
     // AccountsModule,
     // ProfileModule,
-    StationsModule,
-    ShippersModule,
-    TimeSlotsModule,
-    PackagesModule,
+    DeliveryTripModule,
+    StationsModule, //-> update
+    ShippersModule, //-> update
+    // TimeSlotsModule, -> update
+    // PackagesModule, -> update
     FoodsModule,
     FoodCategoriesModule,
-    KitchenModule,
-    FoodGroupModule,
+    // KitchenModule, -> update
+    // FoodGroupModule, -> update
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,

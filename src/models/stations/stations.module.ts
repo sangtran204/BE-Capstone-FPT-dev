@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { StationEntity } from './entities/stations.entity';
 import { StationsController } from './stations.controller';
 import { StationsService } from './stations.service';
+// import { StationProfile } from './profile/station.profile';
 
 @Module({
   imports: [TypeOrmModule.forFeature([StationEntity])],
