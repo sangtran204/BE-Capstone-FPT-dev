@@ -31,11 +31,11 @@ export class StationsController {
     description: 'GET ALL STATION',
     type: [StationDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(StationDTO, StationEntity, {
-      isArray: true,
-    }),
-  )
+  // @UseInterceptors(
+  //   MapInterceptor(StationDTO, StationEntity, {
+  //     isArray: true,
+  //   }),
+  // )
   async findAll(): Promise<StationEntity[] | string> {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {

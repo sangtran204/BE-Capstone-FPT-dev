@@ -38,8 +38,8 @@ import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
     AutomapperProviderModule,
     // AccountsModule,
     // ProfileModule,
-    DeliveryTripModule,
     StationsModule, //-> update
+    DeliveryTripModule,
     ShippersModule, //-> update
     // TimeSlotsModule, -> update
     // PackagesModule, -> update
