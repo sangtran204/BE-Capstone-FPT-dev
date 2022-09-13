@@ -41,12 +41,12 @@ import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
     StationsModule, //-> update
     DeliveryTripModule,
     ShippersModule, //-> update
-    // TimeSlotsModule, -> update
-    // PackagesModule, -> update
+    TimeSlotsModule, //-> update
+    PackagesModule, //-> update
     FoodsModule,
     FoodCategoriesModule,
-    // KitchenModule, -> update
-    // FoodGroupModule, -> update
+    KitchenModule, //-> update
+    FoodGroupModule, //-> update
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,

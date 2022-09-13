@@ -4,6 +4,7 @@ import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
+import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 
 @Entity({ name: 'kitchens' })
 export class KitchenEntity extends BaseEntity {
@@ -28,4 +29,7 @@ export class KitchenEntity extends BaseEntity {
 
   @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
   shippers: ShipperEntity[];
+
+  @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.kitchen)
+  deliveryTrips: DeliveryTripEntity[];
 }

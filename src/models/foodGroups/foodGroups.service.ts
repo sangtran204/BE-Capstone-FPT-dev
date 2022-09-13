@@ -19,6 +19,12 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     return await this.foodGroupRepository.find();
   }
 
+  async getFoodGroupActive(): Promise<FoodGroupEntity[]> {
+    return await this.foodGroupRepository.find({
+      where: { isActive: IsActiveEnum.ACTIVE },
+    });
+  }
+
   async createFoodGroup(dto: FoodGroupDTO): Promise<string> {
     try {
       await this.foodGroupRepository.save({

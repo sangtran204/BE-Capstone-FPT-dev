@@ -19,13 +19,13 @@ export class PackageService extends BaseService<PackageEntity> {
     return await this.packagesRepository.find();
   }
 
-  async listPackageStatus(isActive: string): Promise<PackageEntity[]> {
+  async listPackageStatus(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
-      where: { isActive: isActive },
+      where: { isActive: IsActiveEnum.ACTIVE },
     });
   }
 
-  async createPackage(dto: PackageDTO): Promise<boolean> {
+  async createPackage(dto: PackageDTO): Promise<string> {
     try {
       await this.packagesRepository.save({
         name: dto.name,
@@ -33,9 +33,9 @@ export class PackageService extends BaseService<PackageEntity> {
         totalGroupItem: dto.totalGroupItem,
         price: dto.price,
       });
-      return true;
+      return 'Create package successfull';
     } catch (error) {
-      return false;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -46,45 +46,38 @@ export class PackageService extends BaseService<PackageEntity> {
     if (!packageId) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      await this.packagesRepository.update(
-        { id: id },
-        {
-          name: dto.name,
-          description: dto.description,
-          totalGroupItem: dto.totalGroupItem,
-          price: dto.price,
-        },
-      );
-      return 'Update package successfull';
+      try {
+        await this.packagesRepository.update(
+          { id: id },
+          {
+            name: dto.name,
+            description: dto.description,
+            totalGroupItem: dto.totalGroupItem,
+            price: dto.price,
+          },
+        );
+        return 'Update package successfull';
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
     }
   }
 
-  async updateStatus(id: string): Promise<boolean> {
+  async updateStatus(id: string): Promise<string> {
     const packages = await this.packagesRepository.findOne({
       where: { id: id },
     });
     if (!packages) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (
-        packages.isActive == IsActiveEnum.WAITING ||
-        packages.isActive == IsActiveEnum.IN_ACTIVE
-      ) {
+      if (packages.isActive == IsActiveEnum.WAITING) {
         await this.packagesRepository.update(
           { id: id },
           {
             isActive: IsActiveEnum.ACTIVE,
           },
         );
-        return true;
-      } else if (packages.isActive == IsActiveEnum.ACTIVE) {
-        await this.packagesRepository.update(
-          { id: id },
-          {
-            isActive: IsActiveEnum.IN_ACTIVE,
-          },
-        );
-        return true;
+        return 'Package is active';
       }
     }
   }

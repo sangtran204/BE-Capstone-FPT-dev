@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { ShipperEntity } from './entities/shippers.entity';
@@ -19,55 +19,55 @@ export class ShippersService extends BaseService<ShipperEntity> {
     return await this.shippersRepository.find();
   }
 
-  async createShipper(dto: ShipperDTO): Promise<boolean> {
+  async createShipper(dto: ShipperDTO): Promise<ShipperEntity> {
     try {
-      await this.shippersRepository.save({
+      return await this.shippersRepository.save({
         noPlate: dto.noPlate,
         vehicleType: dto.vehicleType,
       });
-      return true;
     } catch (error) {
-      return false;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async deleteShipper(id: string): Promise<boolean> {
+  async deleteShipper(id: string): Promise<string> {
     const shipperId = await this.shippersRepository.findOne({
       where: { id: id },
     });
     if (shipperId == null) {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (shipperId.isActive == IsActiveEnum.ACTIVE) {
+      try {
         await this.shippersRepository.update(
           { id: id },
           { isActive: IsActiveEnum.IN_ACTIVE },
         );
-      } else if (shipperId.isActive == IsActiveEnum.IN_ACTIVE) {
-        await this.shippersRepository.update(
-          { id: id },
-          { isActive: IsActiveEnum.ACTIVE },
-        );
+        return 'Shipper is inactive';
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
       }
-      return true;
     }
   }
 
-  async updateShipper(id: string, dto: ShipperDTO): Promise<boolean> {
+  async updateShipper(id: string, dto: ShipperDTO): Promise<string> {
     const shipperId = await this.shippersRepository.findOne({
       where: { id: id },
     });
     if (shipperId == null) {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      await this.shippersRepository.update(
-        { id: id },
-        {
-          noPlate: dto.noPlate,
-          vehicleType: dto.vehicleType,
-        },
-      );
-      return true;
+      try {
+        await this.shippersRepository.update(
+          { id: id },
+          {
+            noPlate: dto.noPlate,
+            vehicleType: dto.vehicleType,
+          },
+        );
+        return 'Update shipper successful';
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
     }
   }
 }

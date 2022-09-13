@@ -26,16 +26,16 @@ export class TimeSlotsService extends BaseService<TimeSlotEntity> {
     });
   }
 
-  async createTimeSlot(dto: TimeSlotDTO): Promise<boolean> {
+  async createTimeSlot(dto: TimeSlotDTO): Promise<string> {
     try {
       await this.timeSlotsRepository.save({
         startTime: dto.startTime,
         endTime: dto.endTime,
         flag: dto.flag,
       });
-      return true;
+      return 'Create time slot successful';
     } catch (error) {
-      return false;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -43,16 +43,20 @@ export class TimeSlotsService extends BaseService<TimeSlotEntity> {
     const timeSlot = await this.timeSlotsRepository.findOne({
       where: { id: id },
     });
-    if (timeSlot) {
-      await this.timeSlotsRepository
-        .createQueryBuilder()
-        .delete()
-        .from(TimeSlotEntity)
-        .where('id = :id', { id: id })
-        .execute();
-      return `Delete Successfully : ${id}`;
-    } else {
+    if (timeSlot == null) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    } else {
+      try {
+        await this.timeSlotsRepository
+          .createQueryBuilder()
+          .delete()
+          .from(TimeSlotEntity)
+          .where('id = :id', { id: id })
+          .execute();
+        return `Delete Successfully : ${id}`;
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
     }
   }
 

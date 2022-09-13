@@ -19,7 +19,10 @@ export class ShipperEntity extends BaseEntity {
   @AutoMap()
   isActive: string;
 
-  @AutoMap(() => DeliveryTripEntity)
+  @AutoMap(() => KitchenEntity)
   @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.shippers)
   kitchen: KitchenEntity;
+
+  @OneToMany(() => DeliveryTripEntity, (trip) => trip.shipper)
+  trips: DeliveryTripEntity[];
 }
