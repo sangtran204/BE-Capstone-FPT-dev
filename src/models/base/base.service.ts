@@ -29,6 +29,10 @@ export class BaseService<T extends BaseEntity> {
     return this.repository.findOne(options);
   }
 
+  async deleteById(id: EntityId): Promise<DeleteResult> {
+    return this.repository.delete(id);
+  }
+
   async transaction(
     callback: (entityManager: EntityManager) => Promise<void>,
     dataSource: DataSource,

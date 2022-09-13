@@ -22,6 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { ImagesUploadDto } from '../images/dto/images-upload.dto';
+import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
@@ -92,6 +93,27 @@ export class FoodsController {
   }
 
   // Create
+  @Public()
+  @Post('/createFood')
+  @UseInterceptors(FilesInterceptor('images'))
+  @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'List Created Food',
+  //   type: CreateFoodDTO,
+  // })
+  @ApiResponse({
+    status: 200,
+    description: 'Create new food successfully',
+    type: FoodDTO,
+  })
+  @UseInterceptors(MapInterceptor(FoodDTO, FoodEntity))
+  async createFood(
+    @Body() createFoodDTO: CreateFoodDTO,
+    @UploadedFiles() images: Array<Express.Multer.File>,
+  ): Promise<FoodEntity> {
+    return await this.foodsService.createFood(createFoodDTO, images);
+    // return await 'hehe';
+  }
   // Update
   // Delete
   // Delete Image

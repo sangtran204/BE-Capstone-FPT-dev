@@ -8,6 +8,8 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { ImagesService } from '../images/images.service';
 import { ImageEntity } from '../images/entities/images.entity';
+import { CreateFoodDTO } from './dto/create-food.dto';
+import { FoodCategoriesService } from '../food-categories/food-categories.service';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -16,6 +18,7 @@ export class FoodsService extends BaseService<FoodEntity> {
     private readonly foodsRepository: Repository<FoodEntity>,
     @InjectMapper() private readonly mapper: Mapper,
     private readonly imageService: ImagesService,
+    private readonly foodCategoryService: FoodCategoriesService,
   ) {
     super(foodsRepository);
   }
@@ -54,5 +57,14 @@ export class FoodsService extends BaseService<FoodEntity> {
         throw new HttpException('Upload Images fail', HttpStatus.BAD_REQUEST);
       });
     return message;
+  }
+
+  async createFood(
+    data: CreateFoodDTO,
+    images: Array<Express.Multer.File>,
+  ): Promise<FoodEntity> {
+    const category = await this.foodCategoryService.findOne({
+      where: { id: data.foodCategory.id },
+    });
   }
 }

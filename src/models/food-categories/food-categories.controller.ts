@@ -18,8 +18,8 @@ import { FoodCategoryEntity } from './entities/food-categories.entity';
 import { FoodCategoriesService } from './food-categories.service';
 
 @ApiBearerAuth()
-@ApiTags('categories')
-@Controller('categories')
+@ApiTags('food-categories')
+@Controller('food-categories')
 export class FoodCategoriesController {
   constructor(private readonly foodCategoriesService: FoodCategoriesService) {}
 
@@ -45,7 +45,7 @@ export class FoodCategoriesController {
     description: 'Get detail Category by ID',
     type: FoodCategoryDTO,
   })
-  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
+  // @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
   async findCategoryById(@Param('id') id: string): Promise<FoodCategoryEntity> {
     const category = await this.foodCategoriesService.findOne({
       where: { id: id },
@@ -71,19 +71,22 @@ export class FoodCategoriesController {
 
   @Put('/:id')
   @Public()
-  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
+  @ApiResponse({
+    status: 200,
+    description: 'Update category successfully',
+    type: String,
+  })
   async updateCategory(
     @Param('id') id: string,
     @Body() dto: FoodCategoryDTO,
   ): Promise<string> {
-    // return await this.categoriesService.save({ id: id, name: dto.name });
     return await this.foodCategoriesService.updateCategory(id, dto);
   }
 
   @Delete('/:id')
   @ApiResponse({
     status: 200,
-    description: 'Delete a Category by Id',
+    description: 'Delete Category by Id',
     type: String,
   })
   async removeCategory(@Param('id') id: string): Promise<string> {

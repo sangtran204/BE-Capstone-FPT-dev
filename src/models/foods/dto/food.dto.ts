@@ -19,6 +19,6 @@ export class FoodDTO extends BaseDTO {
   @AutoMap(() => FoodCategoryDTO)
   foodCategory: FoodCategoryDTO;
 
-  @AutoMap(() => [UrlImageDto])
-  images: UrlImageDto[];
+  // @AutoMap(() => [UrlImageDto])
+  // images: UrlImageDto[];
 }
