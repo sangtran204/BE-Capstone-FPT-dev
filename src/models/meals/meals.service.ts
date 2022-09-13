@@ -21,14 +21,16 @@ export class MealsService extends BaseService<MealEntity> {
   async getAllMeal(): Promise<MealEntity[]> {
     return await this.mealsRepository.find();
   }
-
-  async getMealByFlag(): Promise<MealEntity[]> {
-    return await this.mealsRepository.find({
-      relations: {
-        timeSlots: true,
-      },
-    });
-  }
+  // Thêm ===================================================
+  async getMealByFlag(flag: number): Promise<MealEntity[]> {
+    return await this.mealsRepository
+      .createQueryBuilder('meals')
+      .leftJoinAndSelect('meals.timeSlots', 'timeslots')
+      .where('timeslots.flag = :flag', {
+        flag: flag,
+      })
+      .getMany();
+  } // Thêm ===================================================
 
   async createMeal(dto: MealDTO): Promise<string> {
     try {
