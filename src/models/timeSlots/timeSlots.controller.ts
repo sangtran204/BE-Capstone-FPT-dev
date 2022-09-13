@@ -31,6 +31,7 @@ export class TimeSlotsController {
     description: 'GET ALL TIME SLOT',
     type: [TimeSlotDTO],
   })
+  // @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async findAll(): Promise<TimeSlotEntity[] | string> {
     const listTimeSlots = await this.timeSlotsService.getAllTimeSlot();
     if (!listTimeSlots || listTimeSlots.length == 0) {
@@ -47,11 +48,7 @@ export class TimeSlotsController {
     description: 'GET ALL TIME SLOT FOLLOW FLAG',
     type: [TimeSlotDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(TimeSlotEntity, TimeSlotDTO, {
-      isArray: true,
-    }),
-  )
+  // @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async getTimeSlotFlag(
     @Param('flag') flag: number,
   ): Promise<TimeSlotEntity[]> {
@@ -68,17 +65,10 @@ export class TimeSlotsController {
   @ApiResponse({
     status: 200,
     description: 'CREATE TIME SLOT',
-    type: boolean,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
-  async createTimeSlot(
-    @Body() dto: TimeSlotDTO,
-  ): Promise<TimeSlotEntity | string> {
-    if (await this.timeSlotsService.createTimeSlot(dto)) {
-      return 'Create time slot successfull';
-    } else {
-      return 'Create time slot fail';
-    }
+  async createTimeSlot(@Body() dto: TimeSlotDTO): Promise<string> {
+    return await this.timeSlotsService.createTimeSlot(dto);
   }
 
   //Delete time slot
@@ -87,9 +77,8 @@ export class TimeSlotsController {
   @ApiResponse({
     status: 200,
     description: 'DELETE TIME SLOT',
-    type: boolean,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async deleteTimeSlot(@Param('id') id: string): Promise<string> {
     return await this.timeSlotsService.deleteTimeSlot(id);
   }
@@ -101,7 +90,6 @@ export class TimeSlotsController {
     description: 'UPDATE TIME SLOT',
     type: boolean,
   })
-  @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
   async updateTimeSlot(
     @Param('id') id: string,
     @Body() dto: TimeSlotDTO,
