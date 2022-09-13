@@ -37,12 +37,7 @@ export class FoodCategoriesService extends BaseService<FoodCategoryEntity> {
     if (!cateId) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      await this.categoriesRepository
-        .createQueryBuilder()
-        .delete()
-        .from(FoodCategoryEntity)
-        .where('id = :id', { id: id })
-        .execute();
+      await this.deleteById(id);
       return `Delete Successfully : ${id}`;
     }
   }

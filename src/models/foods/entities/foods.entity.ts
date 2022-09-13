@@ -19,6 +19,11 @@ export class FoodEntity extends BaseEntity {
   @AutoMap()
   price: number;
 
+  //test==========================
+  @Column()
+  @AutoMap()
+  images: string;
+
   @Column({ default: IsActiveEnum.ACTIVE })
   @AutoMap()
   isActive: string;
@@ -27,7 +32,7 @@ export class FoodEntity extends BaseEntity {
   @ManyToOne(() => FoodCategoryEntity, (foodCategory) => foodCategory.foods)
   foodCategory: FoodCategoryEntity;
 
-  @AutoMap(() => [ImageEntity])
-  @OneToMany(() => ImageEntity, (image) => image.food)
-  images: ImageEntity[];
+  // @AutoMap(() => [ImageEntity])
+  // @OneToMany(() => ImageEntity, (image) => image.food)
+  // images: ImageEntity[];
 }

@@ -68,31 +68,75 @@ export class FoodsController {
     return listFood;
   }
 
-  @Public()
-  @Post('/images/:id')
-  @UseInterceptors(FilesInterceptor('images'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'List image',
-    type: ImagesUploadDto,
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Upload Images Successfully',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Upload Images fail',
-  })
-  async addImagesFood(
-    @Param('id') id: string,
-    @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<string> {
-    return await this.foodsService.addImagesFood(id, images);
-  }
+  // @Public()
+  // @Post('/images/:id')
+  // @UseInterceptors(FilesInterceptor('images'))
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'List image',
+  //   type: ImagesUploadDto,
+  // })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'Upload Images Successfully',
+  // })
+  // @ApiResponse({
+  //   status: 400,
+  //   description: 'Upload Images fail',
+  // })
+  // async addImagesFood(
+  //   @Param('id') id: string,
+  //   @UploadedFiles() images: Array<Express.Multer.File>,
+  // ): Promise<string> {
+  //   return await this.foodsService.addImagesFood(id, images);
+  // }
 
   // Create
+  @Public()
+  @Post('/createFood')
+  // @UseInterceptors(FilesInterceptor('images'))
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'List Created Food',
+  //   type: CreateFoodDTO,
+  // })
+  @ApiResponse({
+    status: 200,
+    description: 'Create new food successfully',
+    type: FoodDTO,
+  })
+  // @UseInterceptors(MapInterceptor(FoodDTO, FoodEntity))
+  async createFood(
+    @Body() createFoodDTO: FoodDTO,
+    // @UploadedFiles() images: Array<Express.Multer.File>,
+  ): Promise<FoodEntity> {
+    return await this.foodsService.createFood(createFoodDTO);
+  }
+
   // Update
-  // Delete
-  // Delete Image
+  @Put('/:id')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'Update category successfully',
+    type: String,
+  })
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() dto: FoodDTO,
+  ): Promise<string> {
+    return await this.foodsService.updateFood(id, dto);
+  }
+
+  // Remove Food = Update status
+  @Public()
+  @Put('/removeFood/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Remove Food STATUS',
+    type: String,
+  })
+  async deleteKitchen(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.removeFood(id);
+  }
 }
