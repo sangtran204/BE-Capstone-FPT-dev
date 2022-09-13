@@ -22,7 +22,6 @@ import {
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { ImagesUploadDto } from '../images/dto/images-upload.dto';
-import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
@@ -69,34 +68,34 @@ export class FoodsController {
     return listFood;
   }
 
-  @Public()
-  @Post('/images/:id')
-  @UseInterceptors(FilesInterceptor('images'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'List image',
-    type: ImagesUploadDto,
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Upload Images Successfully',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Upload Images fail',
-  })
-  async addImagesFood(
-    @Param('id') id: string,
-    @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<string> {
-    return await this.foodsService.addImagesFood(id, images);
-  }
+  // @Public()
+  // @Post('/images/:id')
+  // @UseInterceptors(FilesInterceptor('images'))
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'List image',
+  //   type: ImagesUploadDto,
+  // })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'Upload Images Successfully',
+  // })
+  // @ApiResponse({
+  //   status: 400,
+  //   description: 'Upload Images fail',
+  // })
+  // async addImagesFood(
+  //   @Param('id') id: string,
+  //   @UploadedFiles() images: Array<Express.Multer.File>,
+  // ): Promise<string> {
+  //   return await this.foodsService.addImagesFood(id, images);
+  // }
 
   // Create
   @Public()
   @Post('/createFood')
-  @UseInterceptors(FilesInterceptor('images'))
-  @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(FilesInterceptor('images'))
+  // @ApiConsumes('multipart/form-data')
   // @ApiBody({
   //   description: 'List Created Food',
   //   type: CreateFoodDTO,
@@ -106,15 +105,38 @@ export class FoodsController {
     description: 'Create new food successfully',
     type: FoodDTO,
   })
-  @UseInterceptors(MapInterceptor(FoodDTO, FoodEntity))
+  // @UseInterceptors(MapInterceptor(FoodDTO, FoodEntity))
   async createFood(
-    @Body() createFoodDTO: CreateFoodDTO,
-    @UploadedFiles() images: Array<Express.Multer.File>,
+    @Body() createFoodDTO: FoodDTO,
+    // @UploadedFiles() images: Array<Express.Multer.File>,
   ): Promise<FoodEntity> {
-    return await this.foodsService.createFood(createFoodDTO, images);
-    // return await 'hehe';
+    return await this.foodsService.createFood(createFoodDTO);
   }
+
   // Update
-  // Delete
-  // Delete Image
+  @Put('/:id')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'Update category successfully',
+    type: String,
+  })
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() dto: FoodDTO,
+  ): Promise<string> {
+    return await this.foodsService.updateFood(id, dto);
+  }
+
+  // Remove Food = Update status
+  @Public()
+  @Put('/removeFood/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Remove Food STATUS',
+    type: String,
+  })
+  async deleteKitchen(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.removeFood(id);
+  }
 }

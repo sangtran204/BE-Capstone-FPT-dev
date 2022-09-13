@@ -8,8 +8,8 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { ImagesService } from '../images/images.service';
 import { ImageEntity } from '../images/entities/images.entity';
-import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodCategoriesService } from '../food-categories/food-categories.service';
+import { FoodDTO } from './dto/food.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -24,12 +24,19 @@ export class FoodsService extends BaseService<FoodEntity> {
   }
 
   async getAllFood(): Promise<FoodEntity[]> {
-    return await this.foodsRepository.find();
+    return await this.foodsRepository.find({
+      relations: {
+        foodCategory: true,
+      },
+    });
   }
 
   async getAllActiveFood(): Promise<FoodEntity[]> {
     return await this.foodsRepository.find({
       where: { isActive: IsActiveEnum.ACTIVE },
+      relations: {
+        foodCategory: true,
+      },
     });
   }
 
@@ -60,11 +67,72 @@ export class FoodsService extends BaseService<FoodEntity> {
   }
 
   async createFood(
-    data: CreateFoodDTO,
-    images: Array<Express.Multer.File>,
+    data: FoodDTO,
+    // images: Array<Express.Multer.File>,
   ): Promise<FoodEntity> {
     const category = await this.foodCategoryService.findOne({
-      where: { id: data.foodCategory.id },
+      where: { id: data.foodCategoryId },
     });
+    if (!category) {
+      throw new HttpException(
+        `Category ID not found : ${data.foodCategoryId}`,
+        HttpStatus.NOT_FOUND,
+      );
+    } else {
+      return await this.save({
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        foodCategory: category,
+        images: data.images,
+      });
+    }
+  }
+
+  async updateFood(id: string, data: FoodDTO): Promise<string> {
+    const food = await this.findOne({
+      where: { id: id },
+    });
+    const category = await this.foodCategoryService.findOne({
+      where: { id: data.foodCategoryId },
+    });
+    if (!food) {
+      throw new HttpException(`${id} food not found`, HttpStatus.NOT_FOUND);
+    }
+    if (!category) {
+      throw new HttpException(`${id} category not found`, HttpStatus.NOT_FOUND);
+    }
+    await this.save({
+      id: id,
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      foodCategory: category,
+      images: data.images,
+    });
+    return `Update Food Sucessfully ${id}`;
+  }
+
+  async removeFood(id: string): Promise<string> {
+    const food = await this.foodsRepository.findOne({
+      where: { id: id },
+    });
+    if (!food) {
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    } else {
+      if (food.isActive == IsActiveEnum.ACTIVE) {
+        await this.foodsRepository.update(
+          { id: id },
+          { isActive: IsActiveEnum.IN_ACTIVE },
+        );
+        return 'Food now is inActive';
+      } else if (food.isActive == IsActiveEnum.IN_ACTIVE) {
+        await this.foodsRepository.update(
+          { id: id },
+          { isActive: IsActiveEnum.ACTIVE },
+        );
+        return 'Food now is active';
+      }
+    }
   }
 }

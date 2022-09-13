@@ -1,7 +1,5 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { FoodCategoryDTO } from 'src/models/food-categories/dto/food-category.dto';
-import { UrlImageDto } from 'src/models/images/dto/url-image.dto';
 import { BaseDTO } from '../../base/base.dto';
 export class FoodDTO extends BaseDTO {
   @ApiProperty()
@@ -16,8 +14,28 @@ export class FoodDTO extends BaseDTO {
   @AutoMap()
   price: number;
 
-  @AutoMap(() => FoodCategoryDTO)
-  foodCategory: FoodCategoryDTO;
+  @ApiProperty()
+  @AutoMap()
+  images: string;
+
+  @ApiProperty({ type: String, description: 'Food category' })
+  @AutoMap()
+  foodCategoryId: string;
+
+  // @ApiProperty({
+  //   type: [UrlImageDto],
+  //   description: 'List image food',
+  //   default: [
+  //     {
+  //       url: 'https://cdn5.vectorstock.com/i/1000x1000/05/24/healthy-food-banner-template-design-vector-32100524.jpg',
+  //     },
+  //     {
+  //       url: 'https://cdn5.vectorstock.com/i/1000x1000/05/24/healthy-food-banner-template-design-vector-32100524.jpg',
+  //     },
+  //   ],
+  // })
+  // @AutoMap(() => [UrlImageDto])
+  // images: [UrlImageDto];
 
   // @AutoMap(() => [UrlImageDto])
   // images: UrlImageDto[];
