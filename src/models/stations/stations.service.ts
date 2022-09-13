@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StationEntity } from './entities/stations.entity';
 import { BaseService } from '../base/base.service';
@@ -24,44 +24,38 @@ export class StationsService extends BaseService<StationEntity> {
     });
   }
 
-  async createStation(dto: StationDTO): Promise<boolean> {
+  async createStation(dto: StationDTO): Promise<StationEntity> {
     try {
-      await this.stationsRepository.save({
+      return await this.stationsRepository.save({
         name: dto.name,
         address: dto.address,
         phone: dto.phone,
         openTime: dto.openTime,
         closeTime: dto.closeTime,
       });
-      return true;
     } catch (error) {
-      return false;
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async deleteStation(id: string): Promise<boolean> {
+  async deleteStation(id: string): Promise<string> {
     const station = await this.stationsRepository.findOne({
       where: { id: id },
     });
     if (station == null) {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (station.isActive == IsActiveEnum.ACTIVE) {
+      {
         await this.stationsRepository.update(
           { id: id },
           { isActive: IsActiveEnum.IN_ACTIVE },
         );
-      } else if (station.isActive == IsActiveEnum.IN_ACTIVE) {
-        await this.stationsRepository.update(
-          { id: id },
-          { isActive: IsActiveEnum.ACTIVE },
-        );
       }
-      return true;
+      return 'Delete station successfull';
     }
   }
 
-  async updateStation(id: string, dto: StationDTO): Promise<boolean> {
+  async updateStation(id: string, dto: StationDTO): Promise<string> {
     const station = await this.stationsRepository.findOne({
       where: { id: id },
     });
@@ -74,11 +68,12 @@ export class StationsService extends BaseService<StationEntity> {
           phone: dto.phone,
           openTime: dto.openTime,
           closeTime: dto.closeTime,
+          isActive: dto.isActive,
         },
       );
-      return true;
+      return 'Update station successfull';
     } else {
-      return false;
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     }
   }
 }

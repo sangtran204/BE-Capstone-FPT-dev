@@ -7,6 +7,8 @@ import {
   Post,
   Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
@@ -29,15 +31,10 @@ export class ShippersController {
     description: 'GET ALL SHIPPER',
     type: [ShipperDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(ShipperEntity, ShipperDTO, {
-      isArray: true,
-    }),
-  )
-  async findAll(): Promise<ShipperEntity[] | { message: string }> {
+  async findAll(): Promise<ShipperEntity[] | string> {
     const listShippes = await this.shippersService.getAllShippers();
     if (listShippes.length == 0) {
-      return { message: 'No Data Shipper' };
+      throw new HttpException('No data shipper', HttpStatus.NOT_FOUND);
     } else {
       return listShippes;
     }
@@ -55,12 +52,7 @@ export class ShippersController {
   async createShipper(
     @Body() dto: ShipperDTO,
   ): Promise<ShipperEntity | { message: string }> {
-    const create = await this.shippersService.createShipper(dto);
-    if (create) {
-      return { message: 'Create shipper successfully' };
-    } else {
-      return { message: 'Create shipper fail' };
-    }
+    return await this.shippersService.createShipper(dto);
   }
 
   //Remove shipper
@@ -71,13 +63,8 @@ export class ShippersController {
     description: 'DELETE SHIPPER',
     type: boolean,
   })
-  @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
   async deleteShipper(@Param('id') id: string): Promise<string> {
-    if (await this.shippersService.deleteShipper(id)) {
-      return 'Delete successfully';
-    } else {
-      return 'Delete fail';
-    }
+    return await this.shippersService.deleteShipper(id);
   }
 
   //Update shipper
@@ -88,7 +75,6 @@ export class ShippersController {
     description: 'UPDATE SHIPPER',
     type: boolean,
   })
-  @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
   async updateShipper(
     @Param('id') id: string,
     @Body() dto: ShipperDTO,
@@ -97,24 +83,6 @@ export class ShippersController {
       return 'Update successfull';
     } else {
       return 'Update fail';
-    }
-  }
-
-  //Find shipper
-  @Public()
-  @Get('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'Find SHIPPER By Id',
-    type: boolean,
-  })
-  @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
-  async findById(@Param('id') id: string): Promise<ShipperEntity | string> {
-    const find = await this.shippersService.findOne({ where: { id: id } });
-    if (find != null) {
-      return find;
-    } else {
-      return 'No shipper found';
     }
   }
 }

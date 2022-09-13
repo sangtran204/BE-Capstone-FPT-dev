@@ -30,7 +30,6 @@ export class KitchenController {
     description: 'GET ALL KITCHEN',
     type: [KitchenDTO],
   })
-  @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO))
   async getAllKitchen(): Promise<KitchenEntity[] | string> {
     const listKitchen = await this.kitchenService.getAllKitchen();
     if (!listKitchen || listKitchen.length == 0) {
@@ -68,7 +67,7 @@ export class KitchenController {
     type: KitchenDTO,
   })
   @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO))
-  async createKitchen(@Body() dto: KitchenDTO): Promise<string> {
+  async createKitchen(@Body() dto: KitchenDTO): Promise<KitchenEntity> {
     return await this.kitchenService.createKitchen(dto);
   }
 
@@ -78,9 +77,8 @@ export class KitchenController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE KITCHEN',
-    type: KitchenDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO))
   async updateKitchen(
     @Param('id') id: string,
     @Body() dto: KitchenDTO,
@@ -94,10 +92,9 @@ export class KitchenController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE KITCHEN STATUS',
-    type: KitchenDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO))
   async deleteKitchen(@Param('id') id: string): Promise<string> {
-    return await this.kitchenService.updateKitchenStatus(id);
+    return await this.kitchenService.deleteKitchen(id);
   }
 }
