@@ -1,39 +1,28 @@
 import { AutoMap } from '@automapper/classes';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity } from 'typeorm';
+import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
+import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'shippers' })
 export class ShipperEntity extends BaseEntity {
   @Column()
   @AutoMap()
-  fullName: string;
+  noPlate: string;
 
   @Column()
   @AutoMap()
-  address: string;
-
-  @Column()
-  @AutoMap()
-  phone: string;
-
-  @Column()
-  @AutoMap()
-  email: string;
-
-  @Column()
-  @AutoMap()
-  gender: boolean;
-
-  @Column()
-  @AutoMap()
-  dob: Date;
-
-  @Column()
-  @AutoMap()
-  avatar: string;
+  vehicleType: string;
 
   @Column({ default: IsActiveEnum.ACTIVE })
   @AutoMap()
   isActive: string;
+
+  @AutoMap(() => KitchenEntity)
+  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.shippers)
+  kitchen: KitchenEntity;
+
+  @OneToMany(() => DeliveryTripEntity, (trip) => trip.shipper)
+  trips: DeliveryTripEntity[];
 }

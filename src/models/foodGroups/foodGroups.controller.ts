@@ -31,7 +31,6 @@ export class FoodGroupController {
     description: 'LIST ALL FOOD GROUP',
     type: [FoodGroupDTO],
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async listAllFoodGroup(): Promise<FoodGroupEntity[] | string> {
     const listFoodGroup = await this.foodGroupService.getAllFoodGroup();
     if (!listFoodGroup || listFoodGroup.length == 0) {
@@ -41,15 +40,32 @@ export class FoodGroupController {
     }
   }
 
+  //List all foodgroup active
+  @Public()
+  @Get('/available')
+  @ApiResponse({
+    status: 200,
+    description: 'LIST ALL FOOD GROUP ACTIVE',
+    type: [FoodGroupDTO],
+  })
+  async listFoodGroupActive(): Promise<FoodGroupEntity[]> {
+    const listFoodGroupActive =
+      await this.foodGroupService.getFoodGroupActive();
+    if (!listFoodGroupActive || listFoodGroupActive.length == 0) {
+      throw new HttpException('No food group active', HttpStatus.NOT_FOUND);
+    } else {
+      return listFoodGroupActive;
+    }
+  }
+
   //Create foodGroup
   @Public()
   @Post()
   @ApiResponse({
     status: 200,
     description: 'CREATE FOOD GROUP',
-    type: FoodGroupDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async createFoodGroup(@Body() dto: FoodGroupDTO): Promise<string> {
     return await this.foodGroupService.createFoodGroup(dto);
   }
@@ -60,9 +76,8 @@ export class FoodGroupController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE FOOD GROUP',
-    type: FoodGroupDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async updateFoodGroup(
     @Param('id') id: string,
     @Body() dto: FoodGroupDTO,
@@ -76,9 +91,8 @@ export class FoodGroupController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE FOOD GROUP STATUS',
-    type: FoodGroupDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async updateFoodGroupStatus(@Param('id') id: string): Promise<string> {
     return this.foodGroupService.updateFoodGroupStatus(id);
   }
@@ -89,9 +103,8 @@ export class FoodGroupController {
   @ApiResponse({
     status: 200,
     description: 'DELETE FOOD GROUP',
-    type: FoodGroupDTO,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async deleteFoodGroup(@Param('id') id: string): Promise<string> {
     return this.foodGroupService.deleteFoodGroup(id);
   }

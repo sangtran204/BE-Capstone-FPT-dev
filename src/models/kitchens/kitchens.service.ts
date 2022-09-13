@@ -19,20 +19,13 @@ export class KitchenService extends BaseService<KitchenEntity> {
     return await this.kitchensRepository.find();
   }
 
-  // async searchKitchenByName(name: string): Promise<KitchenEntity[]> {
-  //   return await this.kitchensRepository.find({
-  //     where: { name: '%' + name + '%' },
-  //   });
-  // }
-
-  async createKitchen(dto: KitchenDTO): Promise<string> {
+  async createKitchen(dto: KitchenDTO): Promise<KitchenEntity> {
     try {
-      await this.kitchensRepository.save({
+      return await this.kitchensRepository.save({
         name: dto.name,
         address: dto.address,
         phone: dto.phone,
       });
-      return 'Create kitchen successfull';
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -61,25 +54,21 @@ export class KitchenService extends BaseService<KitchenEntity> {
     }
   }
 
-  async updateKitchenStatus(id: string): Promise<string> {
+  async deleteKitchen(id: string): Promise<string> {
     const kitchen = await this.kitchensRepository.findOne({
       where: { id: id },
     });
     if (!kitchen) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (kitchen.isActive == IsActiveEnum.ACTIVE) {
+      try {
         await this.kitchensRepository.update(
           { id: id },
           { isActive: IsActiveEnum.IN_ACTIVE },
         );
         return 'Kitchen inActive';
-      } else if (kitchen.isActive == IsActiveEnum.IN_ACTIVE) {
-        await this.kitchensRepository.update(
-          { id: id },
-          { isActive: IsActiveEnum.ACTIVE },
-        );
-        return 'Kitchen active';
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
       }
     }
   }

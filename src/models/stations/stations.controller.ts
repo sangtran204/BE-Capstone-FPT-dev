@@ -7,13 +7,14 @@ import {
   Post,
   Put,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { StationEntity } from './entities/stations.entity';
 import { StationDTO } from './dto/stations.dto';
 import { StationsService } from './stations.service';
-import { boolean } from 'joi';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -29,15 +30,10 @@ export class StationsController {
     description: 'GET ALL STATION',
     type: [StationDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(StationDTO, StationEntity, {
-      isArray: true,
-    }),
-  )
-  async findAll(): Promise<StationEntity[] | { message: string }> {
+  async findAll(): Promise<StationEntity[] | string> {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {
-      return { message: 'No Station found' };
+      throw new HttpException('No data station', HttpStatus.NOT_FOUND);
     }
     return listStation;
   }
@@ -47,14 +43,9 @@ export class StationsController {
   @Get('/getAllActiveStation')
   @ApiResponse({
     status: 200,
-    description: 'GET ALL STATION',
+    description: 'GET ALL STATION ACTIVE',
     type: [StationDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(StationDTO, StationEntity, {
-      isArray: true,
-    }),
-  )
   async findAllActiveStation(): Promise<StationEntity[] | { message: string }> {
     const listStation = await this.stationsService.getAllActiveStations();
     if (listStation.length == 0) {
@@ -72,12 +63,8 @@ export class StationsController {
     type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async createStation(@Body() dto: StationDTO): Promise<string> {
-    if (await this.stationsService.createStation(dto)) {
-      return 'Create station successfull';
-    } else {
-      return 'Create station fail';
-    }
+  async createStation(@Body() dto: StationDTO): Promise<StationEntity> {
+    return this.stationsService.createStation(dto);
   }
 
   //Delete station
@@ -86,15 +73,11 @@ export class StationsController {
   @ApiResponse({
     status: 200,
     description: 'DELETE STATION',
-    type: boolean,
+    type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
   async deleteStation(@Param('id') id: string): Promise<string> {
-    if (await this.stationsService.deleteStation(id)) {
-      return 'Delete successfull';
-    } else {
-      return 'Delete fail';
-    }
+    return await this.stationsService.deleteStation(id);
   }
 
   //Update station
@@ -103,35 +86,13 @@ export class StationsController {
   @ApiResponse({
     status: 200,
     description: 'UPDATE STATION',
-    type: boolean,
+    type: String,
   })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
+  // @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
   async updateStation(
     @Param('id') id: string,
     @Body() dto: StationDTO,
   ): Promise<string> {
-    if (await this.stationsService.updateStation(id, dto)) {
-      return 'Update successfull';
-    } else {
-      return 'Update fail';
-    }
-  }
-
-  //Find Station By Id
-  @Public()
-  @Get('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'FIND STATION BY ID',
-    type: StationDTO,
-  })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async findById(@Param('id') id: string): Promise<StationEntity | string> {
-    const station = await this.stationsService.findOne({ where: { id: id } });
-    if (station != null) {
-      return station;
-    } else {
-      return `${id} not found`;
-    }
+    return this.stationsService.updateStation(id, dto);
   }
 }

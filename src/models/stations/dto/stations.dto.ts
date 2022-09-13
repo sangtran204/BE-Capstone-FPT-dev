@@ -22,4 +22,8 @@ export class StationDTO extends BaseDTO {
   @ApiProperty()
   @AutoMap()
   closeTime: string;
+
+  @ApiProperty()
+  @AutoMap()
+  isActive: string;
 }
