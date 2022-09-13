@@ -68,6 +68,24 @@ export class FoodsController {
     return listFood;
   }
 
+  @Public()
+  @Get('/getFoodById/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET FOOD BY ID',
+    type: FoodDTO,
+  })
+  async findFoodById(@Param('id') id: string): Promise<FoodEntity> {
+    const food = await this.foodsService.findOne({ where: { id: id } });
+    if (!food) {
+      throw new HttpException(
+        "Dont't have resource food",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return food;
+  }
+
   // @Public()
   // @Post('/images/:id')
   // @UseInterceptors(FilesInterceptor('images'))
