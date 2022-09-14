@@ -87,7 +87,7 @@ export class FoodGroupController {
 
   //Update food group status
   @Public()
-  @Put('/update.status/:id')
+  @Put('/updateStatus/:id')
   @ApiResponse({
     status: 200,
     description: 'UPDATE FOOD GROUP STATUS',

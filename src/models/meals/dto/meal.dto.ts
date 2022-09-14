@@ -1,21 +1,15 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 import { BaseDTO } from '../../base/base.dto';
 
-export class FoodGroupDTO extends BaseDTO {
+export class MealDTO extends BaseDTO {
+  @IsNotEmpty()
   @ApiProperty()
   @AutoMap()
-  name: string;
+  dateOfMeal: string;
 
   @ApiProperty()
   @AutoMap()
-  description: string;
-
-  @ApiProperty()
-  @AutoMap()
-  totalFood: number;
-
-  @ApiProperty()
-  @AutoMap()
-  img: string;
+  timeSlotId: string;
 }

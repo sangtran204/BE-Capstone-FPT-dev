@@ -30,7 +30,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
       await this.foodGroupRepository.save({
         name: dto.name,
         description: dto.description,
-        totalFood: dto.totoFood,
+        totalFood: dto.totalFood,
         img: dto.img,
       });
       return 'Create food group successfull';
@@ -52,7 +52,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
           {
             name: dto.name,
             description: dto.description,
-            totalFood: dto.totoFood,
+            totalFood: dto.totalFood,
             img: dto.img,
           },
         );

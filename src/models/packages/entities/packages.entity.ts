@@ -1,7 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity } from 'typeorm';
+import { HasFoodGroupEntity } from 'src/models/hasFoodGroup/entities/hasFoodGroup.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
 export class PackageEntity extends BaseEntity {
@@ -24,4 +25,7 @@ export class PackageEntity extends BaseEntity {
   @Column({ default: IsActiveEnum.WAITING })
   @AutoMap()
   isActive: string;
+
+  @OneToMany(() => HasFoodGroupEntity, (hasGroup) => hasGroup.package)
+  hasFoodGroup: HasFoodGroupEntity[];
 }
