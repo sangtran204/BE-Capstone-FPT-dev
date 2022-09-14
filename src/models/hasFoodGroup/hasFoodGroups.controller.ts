@@ -42,17 +42,17 @@ export class HasFoodGroupController {
 
   //Get hasFoodGroup by package
   @Public()
-  @Get('/:id')
+  @Get('/:packageId')
   @ApiResponse({
     status: 200,
     description: 'GET ALL HAS_FOOD_GROUP',
     type: [HasFoodGroupEntity],
   })
   async getHasFoodGroupByPackage(
-    @Param('id') id: string,
+    @Param('packageId') packageId: string,
   ): Promise<HasFoodGroupEntity[]> {
     const listHasFoodGroup =
-      await this.hasFoodGroupService.getHasFoodGroupByPackage(id);
+      await this.hasFoodGroupService.getHasFoodGroupByPackage(packageId);
     if (!listHasFoodGroup) {
       throw new HttpException('No hasFoodGroup data', HttpStatus.NOT_FOUND);
     } else {

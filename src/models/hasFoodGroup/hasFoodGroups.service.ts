@@ -20,7 +20,9 @@ export class HasFoodGroupService extends BaseService<HasFoodGroupEntity> {
 
   // Get all thiếu data trả về
   async getAllHasFoodGroup(): Promise<HasFoodGroupEntity[]> {
-    return await this.hasFoodGroupRepository.find();
+    return await this.hasFoodGroupRepository.find({
+      relations: { hasGroup: true, package: true },
+    });
   }
   //==================================================================
 
