@@ -21,6 +21,6 @@ export class TimeSlotEntity extends BaseEntity {
   @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.timeSlot)
   deliveryTrips: DeliveryTripEntity[];
 
-  @OneToOne(() => MealEntity, (meal) => meal.timeSlots)
-  meal: MealEntity;
+  @OneToMany(() => MealEntity, (meal) => meal.timeSlots)
+  meal: MealEntity[];
 }

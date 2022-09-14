@@ -5,7 +5,6 @@ import { BaseService } from '../base/base.service';
 import { MealDTO } from './dto/meal.dto';
 import { MealEntity } from './entities/meal.entity';
 import { UpdateStatusDTO } from './dto/updateStatus.dto';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { TimeSlotsService } from '../timeSlots/timeSlots.service';
 
 @Injectable()
@@ -22,12 +21,15 @@ export class MealsService extends BaseService<MealEntity> {
     return await this.mealsRepository.find();
   }
   // Thêm ===================================================
-  async getMealByFlag(flag: number): Promise<MealEntity[]> {
+  async getMealByFlag(flag: number, dto: MealDTO): Promise<MealEntity[]> {
     return await this.mealsRepository
       .createQueryBuilder('meals')
       .leftJoinAndSelect('meals.timeSlots', 'timeslots')
       .where('timeslots.flag = :flag', {
         flag: flag,
+      })
+      .andWhere('meals.dateOfMeal LIKE :dateOfMeal', {
+        dateOfMeal: dto.dateOfMeal,
       })
       .getMany();
   } // Thêm ===================================================

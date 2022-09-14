@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { TimeSlotEntity } from 'src/models/timeSlots/entities/timeSlots.entity';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 
@@ -14,7 +14,6 @@ export class MealEntity extends BaseEntity {
   @AutoMap()
   isActive: string;
 
-  @OneToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.meal)
-  @JoinColumn({ name: 'timeSlotId' })
+  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.meal)
   timeSlots: TimeSlotEntity;
 }

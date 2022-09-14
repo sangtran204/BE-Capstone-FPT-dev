@@ -43,14 +43,17 @@ export class MealsController {
   }
   // Thêm ===================================================
   @Public()
-  @Get('/getMealByFlag/:flag')
+  @Post('/getMealByFlag/:flag')
   @ApiResponse({
     status: 200,
     description: 'GET ALL MEAL',
     type: [MealDTO],
   })
-  async getMealByFlag(@Param('flag') flag: number): Promise<MealEntity[]> {
-    const listMeals = await this.mealsService.getMealByFlag(flag);
+  async getMealByFlag(
+    @Param('flag') flag: number,
+    @Body() dto: MealDTO,
+  ): Promise<MealEntity[]> {
+    const listMeals = await this.mealsService.getMealByFlag(flag, dto);
     if (!listMeals || listMeals.length == 0) {
       throw new HttpException('No data meal', HttpStatus.NOT_FOUND);
     } else {

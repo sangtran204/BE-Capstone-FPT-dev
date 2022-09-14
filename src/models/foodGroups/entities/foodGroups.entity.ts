@@ -2,7 +2,8 @@ import { AutoMap } from '@automapper/classes';
 import { IsInt, IsNotEmpty } from 'class-validator';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity } from 'typeorm';
+import { HasFoodGroupEntity } from 'src/models/hasFoodGroup/entities/hasFoodGroup.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'foodgroups' })
 export class FoodGroupEntity extends BaseEntity {
@@ -30,4 +31,7 @@ export class FoodGroupEntity extends BaseEntity {
   @IsNotEmpty()
   @IsInt()
   totalFood: number;
+
+  @OneToMany(() => HasFoodGroupEntity, (group) => group.hasGroup)
+  hasFoodGroup: HasFoodGroupEntity[];
 }

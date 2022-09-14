@@ -27,6 +27,7 @@ import { KitchenModule } from './models/kitchens/kitchens.module';
 import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 import { MealModule } from './models/meals/meals.module';
+import { HasFoodGroupModule } from './models/hasFoodGroup/hasFoodGroups.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -49,6 +50,7 @@ import { MealModule } from './models/meals/meals.module';
     KitchenModule, //-> update
     FoodGroupModule, //-> update
     MealModule,
+    HasFoodGroupModule,
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,
