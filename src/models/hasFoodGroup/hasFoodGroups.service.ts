@@ -18,9 +18,11 @@ export class HasFoodGroupService extends BaseService<HasFoodGroupEntity> {
     super(hasFoodGroupRepository);
   }
 
+  // Get all thiếu data trả về
   async getAllHasFoodGroup(): Promise<HasFoodGroupEntity[]> {
     return await this.hasFoodGroupRepository.find();
   }
+  //==================================================================
 
   async getHasFoodGroupByPackage(id: string): Promise<HasFoodGroupEntity[]> {
     return await this.hasFoodGroupRepository
@@ -36,7 +38,7 @@ export class HasFoodGroupService extends BaseService<HasFoodGroupEntity> {
         where: { id: dto.packageId },
       });
       const group = await this.foodGroupService.findOne({
-        where: { id: dto.hasGroupId },
+        where: { id: dto.foodGroupId },
       });
 
       if (!packages) {
@@ -46,7 +48,7 @@ export class HasFoodGroupService extends BaseService<HasFoodGroupEntity> {
         );
       } else if (!group) {
         throw new HttpException(
-          `foodGroup id ${dto.hasGroupId} not found`,
+          `foodGroup id ${dto.foodGroupId} not found`,
           HttpStatus.NOT_FOUND,
         );
       } else {

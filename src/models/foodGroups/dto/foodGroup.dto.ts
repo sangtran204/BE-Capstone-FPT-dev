@@ -13,7 +13,7 @@ export class FoodGroupDTO extends BaseDTO {
 
   @ApiProperty()
   @AutoMap()
-  totoFood: number;
+  totalFood: number;
 
   @ApiProperty()
   @AutoMap()
