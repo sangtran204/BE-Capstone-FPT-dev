@@ -36,6 +36,7 @@ export class PackageService extends BaseService<PackageEntity> {
         totalDate: dto.totalDate,
         totalFood: dto.totalFood,
         totalMeal: dto.totalMeal,
+        totalStation: dto.totalStation,
       });
       return 'Create package successfull';
     } catch (error) {
@@ -62,6 +63,7 @@ export class PackageService extends BaseService<PackageEntity> {
             totalDate: dto.totalDate,
             totalMeal: dto.totalMeal,
             totalFood: dto.totalFood,
+            totalStation: dto.totalStation,
           },
         );
         return 'Update package successfull';

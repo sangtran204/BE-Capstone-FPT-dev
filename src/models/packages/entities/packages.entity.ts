@@ -43,6 +43,11 @@ export class PackageEntity extends BaseEntity {
   @IsInt()
   totalMeal: number;
 
+  @Column()
+  @AutoMap()
+  @IsInt()
+  totalStation: number;
+
   @Column({ default: IsActiveEnum.WAITING })
   @AutoMap()
   isActive: string;

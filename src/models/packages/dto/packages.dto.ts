@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty } from 'class-validator';
+// import { IsInt, IsNotEmpty } from 'class-validator';
 import { BaseDTO } from '../../base/base.dto';
 
 export class PackageDTO extends BaseDTO {
@@ -8,6 +8,7 @@ export class PackageDTO extends BaseDTO {
   @AutoMap()
   startSale: string;
 
+  @ApiProperty()
   @AutoMap()
   endSale: string;
 
@@ -38,4 +39,9 @@ export class PackageDTO extends BaseDTO {
   @AutoMap()
   // @IsInt()
   totalFood: number;
+
+  @ApiProperty()
+  @AutoMap()
+  // @IsInt()
+  totalStation: number;
 }
