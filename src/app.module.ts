@@ -21,7 +21,7 @@ import { FoodCategoriesModule } from './models/food-categories/food-categories.m
 import { FoodsModule } from './models/foods/foods.module';
 import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
-import { ImagesModule } from './models/images/images.module';
+// import { ImagesModule } from './models/images/images.module';
 import { FireBaseConfigModule } from './config/firebase/config.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
 import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
@@ -50,7 +50,7 @@ import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,
-    ImagesModule,
+    // ImagesModule,
     // FirebaseProviderModule,
   ],
   controllers: [],

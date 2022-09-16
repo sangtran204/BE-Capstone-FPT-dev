@@ -13,7 +13,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { CreateFoodCategoryDTO } from './dto/create-food-category';
 import { FoodCategoryDTO } from './dto/food-category.dto';
+import { UpdateFoodCategoryDTO } from './dto/update-food-category';
 import { FoodCategoryEntity } from './entities/food-categories.entity';
 import { FoodCategoriesService } from './food-categories.service';
 
@@ -30,6 +32,9 @@ export class FoodCategoriesController {
     description: 'GET ALL CATEGORY',
     type: [FoodCategoryDTO],
   })
+  @UseInterceptors(
+    MapInterceptor(FoodCategoryEntity, FoodCategoryDTO, { isArray: true }),
+  )
   async findAll(): Promise<FoodCategoryEntity[]> {
     const listCategory = await this.foodCategoriesService.getCategories();
     if (!listCategory || listCategory.length == 0) {
@@ -45,7 +50,7 @@ export class FoodCategoriesController {
     description: 'Get detail Category by ID',
     type: FoodCategoryDTO,
   })
-  // @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
+  @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
   async findCategoryById(@Param('id') id: string): Promise<FoodCategoryEntity> {
     const category = await this.foodCategoriesService.findOne({
       where: { id: id },
@@ -55,8 +60,8 @@ export class FoodCategoriesController {
     return category;
   }
 
-  @Post()
   @Public()
+  @Post('/create-food-category')
   @ApiResponse({
     status: 200,
     description: 'Created new category successfully',
@@ -64,9 +69,11 @@ export class FoodCategoriesController {
   })
   @UseInterceptors(MapInterceptor(FoodCategoryEntity, FoodCategoryDTO))
   async createCategory(
-    @Body() dto: FoodCategoryDTO,
+    @Body() createFoodCategory: CreateFoodCategoryDTO,
   ): Promise<FoodCategoryEntity> {
-    return await this.foodCategoriesService.save({ name: dto.name });
+    return await this.foodCategoriesService.save({
+      name: createFoodCategory.name,
+    });
   }
 
   @Put('/:id')
@@ -78,9 +85,9 @@ export class FoodCategoriesController {
   })
   async updateCategory(
     @Param('id') id: string,
-    @Body() dto: FoodCategoryDTO,
+    @Body() update: UpdateFoodCategoryDTO,
   ): Promise<string> {
-    return await this.foodCategoriesService.updateCategory(id, dto);
+    return await this.foodCategoriesService.updateCategory(id, update);
   }
 
   @Delete('/:id')

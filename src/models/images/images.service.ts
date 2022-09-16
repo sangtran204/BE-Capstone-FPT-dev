@@ -49,6 +49,24 @@ export class ImagesService extends BaseService<ImageEntity> {
     return urlImage;
   }
 
+  async uploadToFirebase(image: Express.Multer.File): Promise<UrlImageDto> {
+    const imageName = image.originalname.split('.');
+    const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
+    const url = `images/${newImageName}`;
+
+    const bucket = getStorage().bucket();
+    const file = bucket.file(url);
+    const contents = image.buffer;
+    await file.save(contents);
+
+    // return urlImage;
+    const urlImage = new UrlImageDto();
+    urlImage.url = `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/o/${encodeURIComponent(url)}?alt=media`;
+    return urlImage;
+  }
+
   async getImageFromFirebase(
     urlImage: string,
   ): Promise<MakeFilePublicResponse> {

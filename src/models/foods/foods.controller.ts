@@ -2,27 +2,26 @@ import { MapInterceptor } from '@automapper/nestjs';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
   Post,
   Put,
-  UploadedFiles,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiConsumes,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { ImagesUploadDto } from '../images/dto/images-upload.dto';
+import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
+import { UpdateFoodDTO } from './dto/update-food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
 
@@ -39,6 +38,7 @@ export class FoodsController {
     description: 'GET ALL FOOD',
     type: [FoodDTO],
   })
+  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
   async findAll(): Promise<FoodEntity[]> {
     const listFood = await this.foodsService.getAllFood();
     if (!listFood || listFood.length == 0) {
@@ -57,6 +57,7 @@ export class FoodsController {
     description: 'GET ALL ACTIVE FOOD',
     type: [FoodDTO],
   })
+  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
   async findAllActiveFood(): Promise<FoodEntity[]> {
     const listFood = await this.foodsService.getAllActiveFood();
     if (!listFood || listFood.length == 0) {
@@ -69,14 +70,18 @@ export class FoodsController {
   }
 
   @Public()
-  @Get('/getFoodById/:id')
+  @Get('/:id')
   @ApiResponse({
     status: 200,
     description: 'GET FOOD BY ID',
     type: FoodDTO,
   })
+  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO))
   async findFoodById(@Param('id') id: string): Promise<FoodEntity> {
-    const food = await this.foodsService.findOne({ where: { id: id } });
+    const food = await this.foodsService.findOne({
+      where: { id: id },
+      relations: { foodCategory: true },
+    });
     if (!food) {
       throw new HttpException(
         "Dont't have resource food",
@@ -84,6 +89,53 @@ export class FoodsController {
       );
     }
     return food;
+  }
+
+  @Public()
+  @Post('/create-food')
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({
+    status: 200,
+    description: 'Create new food successfully',
+    type: FoodDTO,
+  })
+  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO))
+  async createFood(
+    @Body() createFoodDTO: CreateFoodDTO,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<FoodEntity> {
+    return await this.foodsService.createFood(createFoodDTO, image);
+  }
+
+  // Update
+  @Put('/update-food/:id')
+  @Public()
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({
+    status: 200,
+    description: 'Update category successfully',
+    type: String,
+  })
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() updateFood: UpdateFoodDTO,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<string> {
+    return await this.foodsService.updateFood(id, updateFood, image);
+  }
+
+  // Remove Food = Update status
+  @Public()
+  @Put('/remove-food/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Remove Food STATUS',
+    type: String,
+  })
+  async deleteKitchen(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.removeFood(id);
   }
 
   // @Public()
@@ -108,53 +160,4 @@ export class FoodsController {
   // ): Promise<string> {
   //   return await this.foodsService.addImagesFood(id, images);
   // }
-
-  // Create
-  @Public()
-  @Post('/createFood')
-  // @UseInterceptors(FilesInterceptor('images'))
-  // @ApiConsumes('multipart/form-data')
-  // @ApiBody({
-  //   description: 'List Created Food',
-  //   type: CreateFoodDTO,
-  // })
-  @ApiResponse({
-    status: 200,
-    description: 'Create new food successfully',
-    type: FoodDTO,
-  })
-  // @UseInterceptors(MapInterceptor(FoodDTO, FoodEntity))
-  async createFood(
-    @Body() createFoodDTO: FoodDTO,
-    // @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<FoodEntity> {
-    return await this.foodsService.createFood(createFoodDTO);
-  }
-
-  // Update
-  @Put('/:id')
-  @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'Update category successfully',
-    type: String,
-  })
-  async updateCategory(
-    @Param('id') id: string,
-    @Body() dto: FoodDTO,
-  ): Promise<string> {
-    return await this.foodsService.updateFood(id, dto);
-  }
-
-  // Remove Food = Update status
-  @Public()
-  @Put('/removeFood/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'Remove Food STATUS',
-    type: String,
-  })
-  async deleteKitchen(@Param('id') id: string): Promise<string> {
-    return await this.foodsService.removeFood(id);
-  }
 }
