@@ -1,11 +1,20 @@
 import { AutoMap } from '@automapper/classes';
+import { IsInt } from 'class-validator';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { HasFoodGroupEntity } from 'src/models/hasFoodGroup/entities/hasFoodGroup.entity';
+import { StationPackageItemEntity } from 'src/models/stationPackageItem/entiies/stationPackageItem.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
 export class PackageEntity extends BaseEntity {
+  @Column()
+  @AutoMap()
+  startSale: string;
+
+  @Column()
+  @AutoMap()
+  endSale: string;
+
   @Column()
   @AutoMap()
   name: string;
@@ -16,16 +25,36 @@ export class PackageEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  totalGroupItem: number;
+  @IsInt()
+  price: number;
 
   @Column()
   @AutoMap()
-  price: number;
+  @IsInt()
+  totalDate: number;
+
+  @Column()
+  @AutoMap()
+  @IsInt()
+  totalFood: number;
+
+  @Column()
+  @AutoMap()
+  @IsInt()
+  totalMeal: number;
+
+  @Column()
+  @AutoMap()
+  @IsInt()
+  totalStation: number;
 
   @Column({ default: IsActiveEnum.WAITING })
   @AutoMap()
   isActive: string;
 
-  @OneToMany(() => HasFoodGroupEntity, (hasGroup) => hasGroup.package)
-  hasFoodGroup: HasFoodGroupEntity[];
+  @OneToMany(
+    () => StationPackageItemEntity,
+    (stationPackageItem) => stationPackageItem.packagess,
+  )
+  stationPackageItems: StationPackageItemEntity[];
 }
