@@ -4,24 +4,38 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 import { BaseDTO } from '../../base/base.dto';
 
 export class PackageDTO extends BaseDTO {
-  @IsNotEmpty()
+  @ApiProperty()
+  @AutoMap()
+  startSale: string;
+
+  @AutoMap()
+  endSale: string;
+
   @ApiProperty()
   @AutoMap()
   name: string;
 
-  @IsNotEmpty()
   @ApiProperty()
   @AutoMap()
   description: string;
 
-  @IsNotEmpty()
   @ApiProperty()
   @AutoMap()
-  @IsInt()
-  totalGroupItem: number;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @AutoMap()
+  // @IsInt()
   price: number;
+
+  @ApiProperty()
+  @AutoMap()
+  // @IsInt()
+  totalDate: number;
+
+  @ApiProperty()
+  @AutoMap()
+  // @IsInt()
+  totalMeal: number;
+
+  @ApiProperty()
+  @AutoMap()
+  // @IsInt()
+  totalFood: number;
 }

@@ -28,10 +28,14 @@ export class PackageService extends BaseService<PackageEntity> {
   async createPackage(dto: PackageDTO): Promise<string> {
     try {
       await this.packagesRepository.save({
+        startSale: dto.startSale,
+        endSale: dto.endSale,
         name: dto.name,
         description: dto.description,
-        totalGroupItem: dto.totalGroupItem,
         price: dto.price,
+        totalDate: dto.totalDate,
+        totalFood: dto.totalFood,
+        totalMeal: dto.totalMeal,
       });
       return 'Create package successfull';
     } catch (error) {
@@ -50,10 +54,14 @@ export class PackageService extends BaseService<PackageEntity> {
         await this.packagesRepository.update(
           { id: id },
           {
+            startSale: dto.startSale,
+            endSale: dto.endSale,
             name: dto.name,
             description: dto.description,
-            totalGroupItem: dto.totalGroupItem,
             price: dto.price,
+            totalDate: dto.totalDate,
+            totalMeal: dto.totalMeal,
+            totalFood: dto.totalFood,
           },
         );
         return 'Update package successfull';
@@ -68,7 +76,10 @@ export class PackageService extends BaseService<PackageEntity> {
       where: { id: id },
     });
     if (!packages) {
-      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Package Id ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     } else {
       if (packages.isActive == IsActiveEnum.WAITING) {
         await this.packagesRepository.update(
