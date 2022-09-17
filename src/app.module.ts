@@ -28,6 +28,7 @@ import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 import { MealModule } from './models/meals/meals.module';
 import { HasFoodGroupModule } from './models/hasFoodGroup/hasFoodGroups.module';
+import { FoodGroupItemModule } from './models/food-group-item/food-group-item.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -38,22 +39,24 @@ import { HasFoodGroupModule } from './models/hasFoodGroup/hasFoodGroups.module';
     MySQLDatabaseProviderModule,
     // JwtProviderModule,
     AutomapperProviderModule,
+    FireBaseConfigModule,
     // AccountsModule,
     // ProfileModule,
+    FoodsModule,
+    FoodCategoriesModule,
+    FoodGroupItemModule,
+    FoodGroupModule,
     StationsModule, //-> update
     DeliveryTripModule,
     ShippersModule, //-> update
     TimeSlotsModule, //-> update
     PackagesModule, //-> update
-    FoodsModule,
-    FoodCategoriesModule,
     KitchenModule, //-> update
-    FoodGroupModule, //-> update
     MealModule,
     HasFoodGroupModule,
     // SharedModule,
     // AuthModule,
-    FireBaseConfigModule,
+
     // ImagesModule,
     // FirebaseProviderModule,
   ],
