@@ -2,6 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { IsInt } from 'class-validator';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { PackageItemEntity } from 'src/models/package-item/entities/packageItem.entity';
 import { StationPackageItemEntity } from 'src/models/stationPackageItem/entiies/stationPackageItem.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -57,4 +58,7 @@ export class PackageEntity extends BaseEntity {
     (stationPackageItem) => stationPackageItem.packagess,
   )
   stationPackageItems: StationPackageItemEntity[];
+
+  @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.packages)
+  packageItem: PackageItemEntity[];
 }

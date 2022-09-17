@@ -28,6 +28,8 @@ import { FoodGroupModule } from './models/foodGroups/foodGroups.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 import { MealModule } from './models/meals/meals.module';
 import { StationPackageItemModule } from './models/stationPackageItem/stationPackageItem.module';
+import { PackageItemModule } from './models/package-item/packageItem.module';
+import { PackageItemFoodModule } from './models/package-item-food/packageItemFood.module';
 // import { FireBaseConfigModule } from 'config/firebase/config.module';
 // import { ImagesModule } from 'models/images/images.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -51,6 +53,8 @@ import { StationPackageItemModule } from './models/stationPackageItem/stationPac
     FoodGroupModule, //-> update
     MealModule,
     StationPackageItemModule,
+    PackageItemModule,
+    PackageItemFoodModule,
     // SharedModule,
     // AuthModule,
     FireBaseConfigModule,
