@@ -22,28 +22,28 @@ import { ImagesService } from './images.service';
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Post('/upload')
-  @Public()
-  @UseInterceptors(FilesInterceptor('images'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'List image',
-    type: ImagesUploadDto,
-  })
-  async createImage(
-    @UploadedFiles() images: Express.Multer.File[],
-  ): Promise<UrlImageDto[]> {
-    return this.imagesService.uploadImagesToFirebase(images);
-  }
+  // @Post('/upload')
+  // @Public()
+  // @UseInterceptors(FilesInterceptor('images'))
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'List image',
+  //   type: ImagesUploadDto,
+  // })
+  // async createImage(
+  //   @UploadedFiles() images: Express.Multer.File[],
+  // ): Promise<UrlImageDto[]> {
+  //   return this.imagesService.uploadImagesToFirebase(images);
+  // }
 
   // Got Bug =================================================================
-  @Get('/:urlImage')
-  @Public()
-  async getImage(
-    @Param('urlImage') urlImage: string,
-  ): Promise<MakeFilePublicResponse> {
-    return this.imagesService.getImageFromFirebase(urlImage);
-  }
+  // @Get('/:urlImage')
+  // @Public()
+  // async getImage(
+  //   @Param('urlImage') urlImage: string,
+  // ): Promise<MakeFilePublicResponse> {
+  //   return this.imagesService.getImageFromFirebase(urlImage);
+  // }
   // Got Bug =================================================================
 
   // @Post('/upload')
@@ -65,9 +65,9 @@ export class ImagesController {
   // ): Promise<UrlImageDto> {
   //   return this.imagesService.uploadImageToFirebase(image, image.originalname);
   // }
-  @Delete('/:urlImage')
-  @Public()
-  removeImage(@Param('urlImage') urlImage: string): Promise<string> {
-    return this.imagesService.removeImageFireBase(urlImage);
-  }
+  // @Delete('/:urlImage')
+  // @Public()
+  // removeImage(@Param('urlImage') urlImage: string): Promise<string> {
+  //   return this.imagesService.removeImageFireBase(urlImage);
+  // }
 }

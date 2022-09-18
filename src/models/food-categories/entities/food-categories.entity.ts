@@ -9,6 +9,7 @@ export class FoodCategoryEntity extends BaseEntity {
   @AutoMap()
   name: string;
 
+  @AutoMap(() => FoodEntity)
   @OneToMany(() => FoodEntity, (food) => food.foodCategory)
   foods: FoodEntity[];
 }

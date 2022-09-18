@@ -15,6 +15,8 @@ import { Public } from 'src/decorators/public.decorator';
 import { StationEntity } from './entities/stations.entity';
 import { StationDTO } from './dto/stations.dto';
 import { StationsService } from './stations.service';
+import { CreateStationDTO } from './dto/create-station.dto';
+import { UpdateStationDTO } from './dto/update-station.dto';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -22,7 +24,6 @@ import { StationsService } from './stations.service';
 export class StationsController {
   constructor(private readonly stationsService: StationsService) {}
 
-  //Find all station
   @Public()
   @Get()
   @ApiResponse({
@@ -30,7 +31,8 @@ export class StationsController {
     description: 'GET ALL STATION',
     type: [StationDTO],
   })
-  async findAll(): Promise<StationEntity[] | string> {
+  @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
+  async findAll(): Promise<StationEntity[]> {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {
       throw new HttpException('No data station', HttpStatus.NOT_FOUND);
@@ -38,23 +40,46 @@ export class StationsController {
     return listStation;
   }
 
-  //Find ALL ACTIVE STATION
   @Public()
-  @Get('/getAllActiveStation')
+  @Get('/active')
   @ApiResponse({
     status: 200,
     description: 'GET ALL STATION ACTIVE',
     type: [StationDTO],
   })
-  async findAllActiveStation(): Promise<StationEntity[] | { message: string }> {
+  @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
+  async findAllActiveStation(): Promise<StationEntity[]> {
     const listStation = await this.stationsService.getAllActiveStations();
-    if (listStation.length == 0) {
-      return { message: 'No Station found' };
+    if (!listStation || listStation.length == 0) {
+      throw new HttpException(
+        "Dont't have resource station",
+        HttpStatus.NOT_FOUND,
+      );
     }
     return listStation;
   }
 
-  //Insert station
+  @Public()
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET STATION BY ID',
+    type: StationDTO,
+  })
+  @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
+  async findStationById(@Param('id') id: string): Promise<StationEntity> {
+    const station = await this.stationsService.findOne({
+      where: { id: id },
+    });
+    if (!station) {
+      throw new HttpException(
+        "Dont't have resource station",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return station;
+  }
+
   @Public()
   @Post()
   @ApiResponse({
@@ -63,36 +88,34 @@ export class StationsController {
     type: StationDTO,
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async createStation(@Body() dto: StationDTO): Promise<StationEntity> {
-    return this.stationsService.createStation(dto);
+  async createStation(
+    @Body() createDTO: CreateStationDTO,
+  ): Promise<StationEntity> {
+    return this.stationsService.createStation(createDTO);
   }
 
-  //Delete station
   @Public()
-  @Put('/removeStation/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'DELETE STATION',
-    type: StationDTO,
-  })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
-  async deleteStation(@Param('id') id: string): Promise<string> {
-    return await this.stationsService.deleteStation(id);
-  }
-
-  //Update station
-  @Public()
-  @Post('/:id')
+  @Put('/:id')
   @ApiResponse({
     status: 200,
     description: 'UPDATE STATION',
     type: String,
   })
-  // @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
   async updateStation(
     @Param('id') id: string,
-    @Body() dto: StationDTO,
+    @Body() updateDTO: UpdateStationDTO,
   ): Promise<string> {
-    return this.stationsService.updateStation(id, dto);
+    return this.stationsService.updateStation(id, updateDTO);
+  }
+
+  @Public()
+  @Put('/update-isActive/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'UPDATE STATUS STATION',
+    type: String,
+  })
+  async updateStatusStation(@Param('id') id: string): Promise<string> {
+    return await this.stationsService.updateStatusStation(id);
   }
 }

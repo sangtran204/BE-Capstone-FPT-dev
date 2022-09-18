@@ -11,11 +11,7 @@ export class ProfileEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  firstName: string;
-
-  @Column()
-  @AutoMap()
-  lastName: string;
+  fullName: string;
 
   @Column()
   @AutoMap()

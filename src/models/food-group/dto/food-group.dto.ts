@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
-import { FoodCategoryDTO } from 'src/models/food-categories/dto/food-category.dto';
 import { BaseDTO } from '../../base/base.dto';
-export class FoodDTO extends BaseDTO {
+
+export class FoodGroupDTO extends BaseDTO {
   @AutoMap()
   name: string;
 
@@ -9,14 +9,11 @@ export class FoodDTO extends BaseDTO {
   description: string;
 
   @AutoMap()
-  price: number;
+  totalFood: number;
 
   @AutoMap()
   image: string;
 
   @AutoMap()
   isActive: string;
-
-  @AutoMap(() => FoodCategoryDTO)
-  foodCategory: FoodCategoryDTO;
 }

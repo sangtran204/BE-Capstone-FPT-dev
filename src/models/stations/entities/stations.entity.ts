@@ -17,7 +17,7 @@ export class StationEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  phone: string;
+  phone: number;
 
   @Column()
   @AutoMap()

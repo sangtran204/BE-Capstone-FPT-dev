@@ -20,7 +20,10 @@ export class AccountsController {
   @Public()
   async getAll(): Promise<AccountEntity[]> {
     const accounts = await this.accountsService.query({
-      // do something here
+      relations: {
+        profile: true,
+        customer: true,
+      },
     });
     if (!accounts || accounts.length === 0)
       throw new HttpException("Don't have resource", HttpStatus.NOT_FOUND);

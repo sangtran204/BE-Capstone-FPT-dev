@@ -9,6 +9,6 @@ export class ImageEntity extends BaseEntity {
   @Column()
   url: string;
 
-  @ManyToOne(() => FoodEntity, (food) => food.images)
-  food: FoodEntity;
+  // @ManyToOne(() => FoodEntity, (food) => food.images)
+  // food: FoodEntity;
 }

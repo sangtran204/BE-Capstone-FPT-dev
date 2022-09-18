@@ -2,7 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodCategoryEntity } from 'src/models/food-categories/entities/food-categories.entity';
-import { ImageEntity } from 'src/models/images/entities/images.entity';
+import { FoodGroupItemEntity } from 'src/models/food-group-item/entities/food-group-item.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'foods' })
@@ -19,10 +19,9 @@ export class FoodEntity extends BaseEntity {
   @AutoMap()
   price: number;
 
-  //test==========================
   @Column()
   @AutoMap()
-  images: string;
+  image: string;
 
   @Column({ default: IsActiveEnum.ACTIVE })
   @AutoMap()
@@ -32,7 +31,7 @@ export class FoodEntity extends BaseEntity {
   @ManyToOne(() => FoodCategoryEntity, (foodCategory) => foodCategory.foods)
   foodCategory: FoodCategoryEntity;
 
-  // @AutoMap(() => [ImageEntity])
-  // @OneToMany(() => ImageEntity, (image) => image.food)
-  // images: ImageEntity[];
+  @AutoMap(() => FoodGroupItemEntity)
+  @OneToMany(() => FoodGroupItemEntity, (food) => food.food)
+  foodGroupItem: FoodGroupItemEntity[];
 }
