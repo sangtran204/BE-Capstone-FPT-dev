@@ -1,9 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { FoodGroupItemEntity } from 'src/models/food-group-item/entities/food-group-item.entity';
-import { PackageItemFoodEntity } from 'src/models/package-item-food/entities/package-item-food.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { FoodEntity } from 'src/models/foods/entities/foods.entity';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity({ name: 'food_group' })
 export class FoodGroupEntity extends BaseEntity {
@@ -27,11 +26,9 @@ export class FoodGroupEntity extends BaseEntity {
   @AutoMap()
   isActive: string;
 
-  @AutoMap(() => FoodGroupItemEntity)
-  @OneToMany(() => FoodGroupItemEntity, (foodGroup) => foodGroup.foodGroup)
-  foodGroupItem: FoodGroupItemEntity[];
-
-  @AutoMap(() => PackageItemFoodEntity)
-  @OneToMany(() => PackageItemFoodEntity, (foodGroup) => foodGroup.foodGroup)
-  packageItemFood: PackageItemFoodEntity[];
+  @ManyToMany(() => FoodEntity, (food) => food.foodGroups, {
+    cascade: ['insert', 'update'],
+  })
+  @JoinTable({ name: 'food_group_item' })
+  foods: FoodEntity[];
 }

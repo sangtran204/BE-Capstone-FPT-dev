@@ -4,7 +4,6 @@ import { StationEntity } from './entities/stations.entity';
 import { StationsController } from './stations.controller';
 import { StationsService } from './stations.service';
 import { StationProfile } from './profile/station.profile';
-// import { StationProfile } from './profile/station.profile';
 
 @Module({
   imports: [TypeOrmModule.forFeature([StationEntity])],

@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+import { FoodDTO } from 'src/models/foods/dto/food.dto';
 import { BaseDTO } from '../../base/base.dto';
 
 export class FoodGroupDTO extends BaseDTO {
@@ -16,4 +17,7 @@ export class FoodGroupDTO extends BaseDTO {
 
   @AutoMap()
   isActive: string;
+
+  @AutoMap(() => [FoodDTO])
+  foods: FoodDTO[];
 }
