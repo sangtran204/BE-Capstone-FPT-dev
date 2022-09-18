@@ -1,21 +1,21 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseDTO } from '../../base/base.dto';
+import { BaseDTO } from 'src/models/base/base.dto';
 
-export class FoodGroupDTO extends BaseDTO {
+export class PackageItemDTO extends BaseDTO {
   @ApiProperty()
   @AutoMap()
-  name: string;
-
-  @ApiProperty()
-  @AutoMap()
-  description: string;
+  startDate: string;
 
   @ApiProperty()
   @AutoMap()
-  totalFood: number;
+  endDate: string;
 
   @ApiProperty()
   @AutoMap()
-  img: string;
+  maxFood: number;
+
+  @ApiProperty()
+  @AutoMap()
+  maxAmount: number;
 }

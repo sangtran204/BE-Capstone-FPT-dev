@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
 import { createMap, Mapper, MappingProfile } from '@automapper/core';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { HasFoodGroupEntity } from '../entities/hasFoodGroup.entity';
-import { HasFoodGroupDTO } from '../dto/hasFoodGroup.dto';
+import { Injectable } from '@nestjs/common';
+import { PackageItemDTO } from '../dto/packageItem.dto';
+import { PackageItemEntity } from '../entities/packageItem.entity';
 
 @Injectable()
-export class HasFoodGroupProfile extends AutomapperProfile {
+export class PackageItemProfile extends AutomapperProfile {
   get profile(): MappingProfile {
     return (mapper) => {
-      createMap(mapper, HasFoodGroupEntity, HasFoodGroupDTO);
+      createMap(mapper, PackageItemEntity, PackageItemDTO);
     };
   }
   constructor(@InjectMapper() mapper: Mapper) {

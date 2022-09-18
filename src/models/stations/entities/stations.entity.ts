@@ -3,6 +3,7 @@ import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
+import { StationPackageItemEntity } from 'src/models/stationPackageItem/entiies/stationPackageItem.entity';
 
 @Entity({ name: 'stations' })
 export class StationEntity extends BaseEntity {
@@ -16,7 +17,7 @@ export class StationEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  phone: string;
+  phone: number;
 
   @Column()
   @AutoMap()
@@ -32,4 +33,10 @@ export class StationEntity extends BaseEntity {
 
   @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.station)
   deliveryTrips: DeliveryTripEntity[];
+
+  @OneToMany(
+    () => StationPackageItemEntity,
+    (stationPackageItem) => stationPackageItem.station,
+  )
+  stationPackageItems: StationPackageItemEntity[];
 }

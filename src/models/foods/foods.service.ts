@@ -8,8 +8,6 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { FoodCategoriesService } from '../food-categories/food-categories.service';
 import { CreateFoodDTO } from './dto/create-food.dto';
-import { randomUUID } from 'crypto';
-import { getStorage } from 'firebase-admin/storage';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 
 @Injectable()
@@ -21,25 +19,6 @@ export class FoodsService extends BaseService<FoodEntity> {
     private readonly foodCategoryService: FoodCategoriesService,
   ) {
     super(foodsRepository);
-  }
-
-  async uploadImageToFirebase(image: Express.Multer.File): Promise<string> {
-    try {
-      const imageName = image.originalname.split('.');
-      const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
-      const url = `images/${newImageName}`;
-
-      const bucket = getStorage().bucket();
-      const file = bucket.file(url);
-      const contents = image.buffer;
-      await file.save(contents);
-
-      return await `https://firebasestorage.googleapis.com/v0/b/${
-        bucket.name
-      }/o/${encodeURIComponent(url)}?alt=media`;
-    } catch (error) {
-      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
-    }
   }
 
   async getAllFood(): Promise<FoodEntity[]> {
@@ -112,7 +91,7 @@ export class FoodsService extends BaseService<FoodEntity> {
     return `Update Food Sucessfully ${id}`;
   }
 
-  async removeFood(id: string): Promise<string> {
+  async updateStatusFood(id: string): Promise<string> {
     const food = await this.foodsRepository.findOne({
       where: { id: id },
     });

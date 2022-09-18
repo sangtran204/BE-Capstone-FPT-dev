@@ -17,37 +17,56 @@ export class ImagesService extends BaseService<ImageEntity> {
     super(imageRepository);
   }
 
-  async uploadImagesToFirebase(
-    images: Express.Multer.File[],
-  ): Promise<UrlImageDto[]> {
-    const urlImages: UrlImageDto[] = [];
-    for (const image of images) {
-      const imageName = image.originalname.split('.');
-      const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
-      const urlImage = await this.uploadImageToFirebase(image, newImageName);
-      urlImages.push(urlImage);
-    }
-    return urlImages;
-  }
+  // async uploadImageToFirebase(image: Express.Multer.File): Promise<string> {
+  //   try {
+  //     const imageName = image.originalname.split('.');
+  //     const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
+  //     const url = `images/${newImageName}`;
 
-  async uploadImageToFirebase(
-    image: Express.Multer.File,
-    imageName: string,
-  ): Promise<UrlImageDto> {
-    const url = `images/${imageName}`;
+  //     const bucket = getStorage().bucket();
+  //     const file = bucket.file(url);
+  //     const contents = image.buffer;
+  //     await file.save(contents);
 
-    const bucket = getStorage().bucket();
-    const file = bucket.file(url);
-    const contents = image.buffer;
-    await file.save(contents);
+  //     return await `https://firebasestorage.googleapis.com/v0/b/${
+  //       bucket.name
+  //     }/o/${encodeURIComponent(url)}?alt=media`;
+  //   } catch (error) {
+  //     throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-    // return urlImage;
-    const urlImage = new UrlImageDto();
-    urlImage.url = `https://firebasestorage.googleapis.com/v0/b/${
-      bucket.name
-    }/o/${encodeURIComponent(url)}?alt=media`;
-    return urlImage;
-  }
+  // async uploadImagesToFirebase(
+  //   images: Express.Multer.File[],
+  // ): Promise<UrlImageDto[]> {
+  //   const urlImages: UrlImageDto[] = [];
+  //   for (const image of images) {
+  //     const imageName = image.originalname.split('.');
+  //     const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
+  //     const urlImage = await this.uploadImageToFirebase(image, newImageName);
+  //     urlImages.push(urlImage);
+  //   }
+  //   return urlImages;
+  // }
+
+  // async uploadImageToFirebase(
+  //   image: Express.Multer.File,
+  //   imageName: string,
+  // ): Promise<UrlImageDto> {
+  //   const url = `images/${imageName}`;
+
+  //   const bucket = getStorage().bucket();
+  //   const file = bucket.file(url);
+  //   const contents = image.buffer;
+  //   await file.save(contents);
+
+  //   // return urlImage;
+  //   const urlImage = new UrlImageDto();
+  //   urlImage.url = `https://firebasestorage.googleapis.com/v0/b/${
+  //     bucket.name
+  //   }/o/${encodeURIComponent(url)}?alt=media`;
+  //   return urlImage;
+  // }
 
   async uploadToFirebase(image: Express.Multer.File): Promise<UrlImageDto> {
     const imageName = image.originalname.split('.');

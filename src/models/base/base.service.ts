@@ -10,6 +10,8 @@ import {
 } from 'typeorm';
 import { EntityId } from 'typeorm/repository/EntityId';
 import { BaseEntity } from './base.entity';
+import { randomUUID } from 'crypto';
+import { getStorage } from 'firebase-admin/storage';
 export class BaseService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
@@ -51,6 +53,25 @@ export class BaseService<T extends BaseEntity> {
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  async uploadImageToFirebase(image: Express.Multer.File): Promise<string> {
+    try {
+      const imageName = image.originalname.split('.');
+      const newImageName = randomUUID() + '.' + imageName[imageName.length - 1];
+      const url = `images/${newImageName}`;
+
+      const bucket = getStorage().bucket();
+      const file = bucket.file(url);
+      const contents = image.buffer;
+      await file.save(contents);
+
+      return await `https://firebasestorage.googleapis.com/v0/b/${
+        bucket.name
+      }/o/${encodeURIComponent(url)}?alt=media`;
+    } catch (error) {
+      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
     }
   }
 }

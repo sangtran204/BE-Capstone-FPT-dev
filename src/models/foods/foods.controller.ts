@@ -51,7 +51,7 @@ export class FoodsController {
   }
 
   @Public()
-  @Get('/getAllActiveFood')
+  @Get('/active')
   @ApiResponse({
     status: 200,
     description: 'GET ALL ACTIVE FOOD',
@@ -92,7 +92,7 @@ export class FoodsController {
   }
 
   @Public()
-  @Post('/create-food')
+  @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
@@ -118,7 +118,7 @@ export class FoodsController {
     description: 'Update category successfully',
     type: String,
   })
-  async updateCategory(
+  async updateFood(
     @Param('id') id: string,
     @Body() updateFood: UpdateFoodDTO,
     @UploadedFile() image: Express.Multer.File,
@@ -128,14 +128,14 @@ export class FoodsController {
 
   // Remove Food = Update status
   @Public()
-  @Put('/remove-food/:id')
+  @Put('/update-isActive/:id')
   @ApiResponse({
     status: 200,
-    description: 'Remove Food STATUS',
+    description: 'Update Food isActive',
     type: String,
   })
-  async deleteKitchen(@Param('id') id: string): Promise<string> {
-    return await this.foodsService.removeFood(id);
+  async updateStatusFood(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.updateStatusFood(id);
   }
 
   // @Public()

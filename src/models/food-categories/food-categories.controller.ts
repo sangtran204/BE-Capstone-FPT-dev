@@ -61,7 +61,7 @@ export class FoodCategoriesController {
   }
 
   @Public()
-  @Post('/create-food-category')
+  @Post()
   @ApiResponse({
     status: 200,
     description: 'Created new category successfully',
