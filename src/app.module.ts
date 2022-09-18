@@ -18,19 +18,15 @@ import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 // import { AuthModule } from './auth/auth.module';
 import { FoodCategoriesModule } from './models/food-categories/food-categories.module';
 import { FoodsModule } from './models/foods/foods.module';
-import { FoodGroupItemModule } from './models/food-group-item/food-group-item.module';
 import { FoodGroupModule } from './models/food-group/food-group.module';
-import { PackageItemFoodModule } from './models/package-item-food/package-item-food.module';
 import { StationsModule } from './models/stations/stations.module';
 
 import { ShippersModule } from './models/shippers/shippers.module';
 import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
-// import { ImagesModule } from './models/images/images.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 import { MealModule } from './models/meals/meals.module';
-import { StationPackageItemModule } from './models/stationPackageItem/stationPackageItem.module';
 import { PackageItemModule } from './models/package-item/packageItem.module';
 
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
@@ -46,18 +42,15 @@ import { PackageItemModule } from './models/package-item/packageItem.module';
     // ProfileModule,
     FoodCategoriesModule,
     FoodsModule,
-    FoodGroupItemModule,
     FoodGroupModule,
-    PackageItemFoodModule,
     StationsModule,
-
+    // ====================================
     DeliveryTripModule,
     ShippersModule, //-> update
     TimeSlotsModule, //-> update
     PackagesModule, //-> update
     KitchenModule, //-> update
     MealModule,
-    StationPackageItemModule,
     PackageItemModule,
     // SharedModule,
     // AuthModule,
