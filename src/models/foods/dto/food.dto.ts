@@ -15,7 +15,7 @@ export class FoodDTO extends BaseDTO {
   image: string;
 
   @AutoMap()
-  isActive: string;
+  status: string;
 
   @AutoMap(() => FoodCategoryDTO)
   foodCategory: FoodCategoryDTO;

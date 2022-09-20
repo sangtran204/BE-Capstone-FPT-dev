@@ -1,5 +1,4 @@
 import { AutoMap } from '@automapper/classes';
-import { GenderEnum } from 'src/common/enums/gender.enum';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
@@ -15,15 +14,7 @@ export class ProfileEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  email: string;
-
-  @Column()
-  @AutoMap()
   DOB: Date;
-
-  @Column({ default: GenderEnum.MALE })
-  @AutoMap()
-  gender: string;
 
   @Column()
   @AutoMap()
@@ -33,11 +24,15 @@ export class ProfileEntity extends BaseEntity {
   @AutoMap()
   avatar: string;
 
-  @Column()
+  @Column({ unique: true })
   @AutoMap()
   phone: string;
 
-  @OneToOne(() => AccountEntity, (account) => account)
+  @Column({ unique: true })
+  @AutoMap()
+  email: string;
+
+  @OneToOne(() => AccountEntity, (account) => account.profile)
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 }

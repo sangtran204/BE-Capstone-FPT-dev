@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { PackageEntity } from './entities/packages.entity';
 import { PackageDTO } from './dto/packages.dto';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class PackageService extends BaseService<PackageEntity> {
@@ -21,7 +21,7 @@ export class PackageService extends BaseService<PackageEntity> {
 
   async listPackageStatus(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
-      where: { isActive: IsActiveEnum.ACTIVE },
+      where: { status: StatusEnum.ACTIVE },
     });
   }
 
@@ -83,11 +83,11 @@ export class PackageService extends BaseService<PackageEntity> {
         HttpStatus.NOT_FOUND,
       );
     } else {
-      if (packages.isActive == IsActiveEnum.WAITING) {
+      if (packages.status == StatusEnum.WAITING) {
         await this.packagesRepository.update(
           { id: id },
           {
-            isActive: IsActiveEnum.ACTIVE,
+            status: StatusEnum.ACTIVE,
           },
         );
         return 'Package is active';

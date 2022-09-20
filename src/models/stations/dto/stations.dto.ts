@@ -18,5 +18,5 @@ export class StationDTO extends BaseDTO {
   closeTime: string;
 
   @AutoMap()
-  isActive: string;
+  status: string;
 }

@@ -7,7 +7,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 // import { TestController } from 'src/app.controller';
 import { AppConfigModule } from 'src/config/app/config.module';
 import { AllExceptionsFilter } from 'src/exceptions/catch-all-exception.filter';
-// import { AccountsModule } from 'src/models/accounts/accounts.module';
+import { AccountsModule } from 'src/models/accounts/accounts.module';
 import { AutomapperProviderModule } from './providers/automapper/provider.module';
 import { MySQLDatabaseProviderModule } from 'src/providers/database/mysql/provider.module';
 import { FireBaseConfigModule } from './config/firebase/config.module';
@@ -26,8 +26,9 @@ import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
-import { MealModule } from './models/meals/meals.module';
-import { PackageItemModule } from './models/package-item/packageItem.module';
+import { PackageItemModule } from './models/package-item/package-item.module';
+import { ProfileModule } from './models/profiles/profile.module';
+// import { AuthModule } from './auth/auth.module';
 
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
@@ -38,22 +39,24 @@ import { PackageItemModule } from './models/package-item/packageItem.module';
     // JwtProviderModule,
     AutomapperProviderModule,
     FireBaseConfigModule,
-    // AccountsModule,
-    // ProfileModule,
+    AccountsModule,
+    ProfileModule,
+    // AuthModule,
+
     FoodCategoriesModule,
     FoodsModule,
     FoodGroupModule,
     StationsModule,
+    PackagesModule, //-> update
     // ====================================
     DeliveryTripModule,
     ShippersModule, //-> update
     TimeSlotsModule, //-> update
-    PackagesModule, //-> update
+
     KitchenModule, //-> update
-    MealModule,
     PackageItemModule,
     // SharedModule,
-    // AuthModule,
+
     // ImagesModule,
     // FirebaseProviderModule,
   ],

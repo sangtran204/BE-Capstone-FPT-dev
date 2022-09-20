@@ -92,6 +92,18 @@ export class FoodsController {
   }
 
   @Public()
+  @Get('category/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET FOOD BY CATEGORY',
+    type: [FoodDTO],
+  })
+  @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  async findFoodByCategory(@Param('id') idCate: string): Promise<FoodEntity[]> {
+    return await this.foodsService.getFoodByCategory(idCate);
+  }
+
+  @Public()
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -128,36 +140,13 @@ export class FoodsController {
 
   // Remove Food = Update status
   @Public()
-  @Put('/update-isActive/:id')
+  @Put('/update-status/:id')
   @ApiResponse({
     status: 200,
-    description: 'Update Food isActive',
+    description: 'Update Food Status',
     type: String,
   })
   async updateStatusFood(@Param('id') id: string): Promise<string> {
     return await this.foodsService.updateStatusFood(id);
   }
-
-  // @Public()
-  // @Post('/images/:id')
-  // @UseInterceptors(FilesInterceptor('images'))
-  // @ApiConsumes('multipart/form-data')
-  // @ApiBody({
-  //   description: 'List image',
-  //   type: ImagesUploadDto,
-  // })
-  // @ApiResponse({
-  //   status: 201,
-  //   description: 'Upload Images Successfully',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'Upload Images fail',
-  // })
-  // async addImagesFood(
-  //   @Param('id') id: string,
-  //   @UploadedFiles() images: Array<Express.Multer.File>,
-  // ): Promise<string> {
-  //   return await this.foodsService.addImagesFood(id, images);
-  // }
 }

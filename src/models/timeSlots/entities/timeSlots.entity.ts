@@ -2,7 +2,6 @@ import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
-import { MealEntity } from 'src/models/meals/entities/meal.entity';
 
 @Entity({ name: 'timeslots' })
 export class TimeSlotEntity extends BaseEntity {
@@ -18,9 +17,6 @@ export class TimeSlotEntity extends BaseEntity {
   @AutoMap()
   flag: number;
 
-  @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.timeSlot)
-  deliveryTrips: DeliveryTripEntity[];
-
-  @OneToMany(() => MealEntity, (meal) => meal.timeSlots)
-  meal: MealEntity[];
+  // @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.timeSlot)
+  // deliveryTrips: DeliveryTripEntity[];
 }

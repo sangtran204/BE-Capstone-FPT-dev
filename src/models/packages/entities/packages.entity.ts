@@ -1,8 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { IsInt } from 'class-validator';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { PackageItemEntity } from 'src/models/package-item/entities/packageItem.entity';
+import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
@@ -48,9 +48,9 @@ export class PackageEntity extends BaseEntity {
   @IsInt()
   totalStation: number;
 
-  @Column({ default: IsActiveEnum.WAITING })
+  @Column({ default: StatusEnum.WAITING })
   @AutoMap()
-  isActive: string;
+  status: string;
 
   @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.packages)
   packageItem: PackageItemEntity[];

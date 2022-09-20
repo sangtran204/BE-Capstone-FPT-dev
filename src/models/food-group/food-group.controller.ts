@@ -9,15 +9,8 @@ import {
   HttpException,
   HttpStatus,
   Controller,
-  UploadedFile,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBearerAuth,
-  ApiConsumes,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { CreateFoodGroupDTO } from './dto/create-food-group.dto';
 import { FoodGroupDTO } from './dto/food-group.dto';
@@ -83,6 +76,7 @@ export class FoodGroupController {
   async findFoodById(@Param('id') id: string): Promise<FoodGroupEntity> {
     const foodGroup = await this.foodGroupService.findOne({
       where: { id: id },
+      relations: { foods: { foodCategory: true } },
     });
     if (!foodGroup) {
       throw new HttpException(
@@ -96,26 +90,21 @@ export class FoodGroupController {
   //Create foodGroup
   @Public()
   @Post('/create')
-  @UseInterceptors(FileInterceptor('image'))
-  @ApiConsumes('multipart/form-data')
   @ApiResponse({
     status: 200,
-    description: 'CREATE FOOD GROUP',
+    description: 'Create food group',
     type: FoodGroupDTO,
   })
   @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async createFoodGroup(
     @Body() createDTO: CreateFoodGroupDTO,
-    @UploadedFile() image: Express.Multer.File,
   ): Promise<FoodGroupEntity> {
-    return await this.foodGroupService.createFoodGroup(createDTO, image);
+    return await this.foodGroupService.createFoodGroup(createDTO);
   }
 
   //Update food group
   @Public()
   @Put('/update/:id')
-  @UseInterceptors(FileInterceptor('image'))
-  @ApiConsumes('multipart/form-data')
   @ApiResponse({
     status: 200,
     description: 'UPDATE FOOD GROUP',
@@ -124,9 +113,8 @@ export class FoodGroupController {
   async updateFoodGroup(
     @Param('id') id: string,
     @Body() updateDTO: UpdateFoodGroupDTO,
-    @UploadedFile() image: Express.Multer.File,
   ): Promise<string> {
-    return await this.foodGroupService.updateFoodGroup(id, updateDTO, image);
+    return await this.foodGroupService.updateFoodGroup(id, updateDTO);
   }
 
   //Update food group status
@@ -141,7 +129,7 @@ export class FoodGroupController {
     return await this.foodGroupService.updateFoodGroupStatus(id);
   }
 
-  //Delet food group
+  //Remove food group
   @Public()
   @Put('/remove-food-group/:id')
   @ApiResponse({

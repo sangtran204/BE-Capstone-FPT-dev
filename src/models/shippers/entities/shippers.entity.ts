@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
@@ -15,14 +15,14 @@ export class ShipperEntity extends BaseEntity {
   @AutoMap()
   vehicleType: string;
 
-  @Column({ default: IsActiveEnum.ACTIVE })
+  @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()
-  isActive: string;
+  status: string;
 
-  @AutoMap(() => KitchenEntity)
-  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.shippers)
-  kitchen: KitchenEntity;
+  // @AutoMap(() => KitchenEntity)
+  // @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.shippers)
+  // kitchen: KitchenEntity;
 
-  @OneToMany(() => DeliveryTripEntity, (trip) => trip.shipper)
-  trips: DeliveryTripEntity[];
+  // @OneToMany(() => DeliveryTripEntity, (trip) => trip.shipper)
+  // trips: DeliveryTripEntity[];
 }

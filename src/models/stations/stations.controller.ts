@@ -109,7 +109,7 @@ export class StationsController {
   }
 
   @Public()
-  @Put('/update-isActive/:id')
+  @Put('/update-status/:id')
   @ApiResponse({
     status: 200,
     description: 'UPDATE STATUS STATION',

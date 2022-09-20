@@ -2,9 +2,9 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { KitchenEntity } from './entities/kitchens.entity';
 import { KitchenDTO } from './dto/kitchen.dto';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class KitchenService extends BaseService<KitchenEntity> {
@@ -64,7 +64,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
       try {
         await this.kitchensRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.IN_ACTIVE },
+          { status: StatusEnum.IN_ACTIVE },
         );
         return 'Kitchen inActive';
       } catch (error) {
