@@ -1,10 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { IsNotEmpty } from 'class-validator';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
-import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
-import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
+import { Column, Entity } from 'typeorm';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Entity({ name: 'kitchens' })
 export class KitchenEntity extends BaseEntity {
@@ -23,13 +21,13 @@ export class KitchenEntity extends BaseEntity {
   @IsNotEmpty()
   phone: string;
 
-  @Column({ default: IsActiveEnum.ACTIVE })
+  @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()
-  isActive: string;
+  status: string;
 
-  @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
-  shippers: ShipperEntity[];
+  // @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
+  // shippers: ShipperEntity[];
 
-  @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.kitchen)
-  deliveryTrips: DeliveryTripEntity[];
+  // @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.kitchen)
+  // deliveryTrips: DeliveryTripEntity[];
 }

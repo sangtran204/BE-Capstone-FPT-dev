@@ -9,21 +9,21 @@ import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
 export class DeliveryTripEntity extends BaseEntity {
   @Column()
   @AutoMap()
-  isActive: string;
+  status: string;
 
-  @AutoMap(() => StationEntity)
-  @ManyToOne(() => StationEntity, (station) => station.deliveryTrips)
-  station: StationEntity;
+  // @AutoMap(() => StationEntity)
+  // @ManyToOne(() => StationEntity, (station) => station.deliveryTrips)
+  // station: StationEntity;
 
-  @AutoMap(() => KitchenEntity)
-  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.deliveryTrips)
-  kitchen: KitchenEntity;
+  // @AutoMap(() => KitchenEntity)
+  // @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.deliveryTrips)
+  // kitchen: KitchenEntity;
 
-  @AutoMap(() => TimeSlotEntity)
-  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.deliveryTrips)
-  timeSlot: TimeSlotEntity;
+  // @AutoMap(() => TimeSlotEntity)
+  // @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.deliveryTrips)
+  // timeSlot: TimeSlotEntity;
 
-  @AutoMap(() => ShipperEntity)
-  @ManyToOne(() => ShipperEntity, (shipper) => shipper.trips)
-  shipper: ShipperEntity;
+  // @AutoMap(() => ShipperEntity)
+  // @ManyToOne(() => ShipperEntity, (shipper) => shipper.trips)
+  // shipper: ShipperEntity;
 }

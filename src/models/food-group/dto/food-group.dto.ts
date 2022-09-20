@@ -13,10 +13,7 @@ export class FoodGroupDTO extends BaseDTO {
   totalFood: number;
 
   @AutoMap()
-  image: string;
-
-  @AutoMap()
-  isActive: string;
+  status: string;
 
   @AutoMap(() => [FoodDTO])
   foods: FoodDTO[];

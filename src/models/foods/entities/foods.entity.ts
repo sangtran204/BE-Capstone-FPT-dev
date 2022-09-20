@@ -1,9 +1,9 @@
 import { AutoMap } from '@automapper/classes';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodCategoryEntity } from 'src/models/food-categories/entities/food-categories.entity';
 import { FoodGroupEntity } from 'src/models/food-group/entities/food-group.entity';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'foods' })
 export class FoodEntity extends BaseEntity {
@@ -23,15 +23,14 @@ export class FoodEntity extends BaseEntity {
   @AutoMap()
   image: string;
 
-  @Column({ default: IsActiveEnum.ACTIVE })
+  @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()
-  isActive: string;
+  status: string;
 
   @AutoMap(() => FoodCategoryEntity)
   @ManyToOne(() => FoodCategoryEntity, (foodCategory) => foodCategory.foods)
   foodCategory: FoodCategoryEntity;
 
-  @AutoMap(() => [FoodGroupEntity])
   @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.foods)
   foodGroups: FoodGroupEntity[];
 }

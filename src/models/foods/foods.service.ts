@@ -3,12 +3,12 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { FoodEntity } from './entities/foods.entity';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { FoodCategoriesService } from '../food-categories/food-categories.service';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -31,11 +31,37 @@ export class FoodsService extends BaseService<FoodEntity> {
 
   async getAllActiveFood(): Promise<FoodEntity[]> {
     return await this.foodsRepository.find({
-      where: { isActive: IsActiveEnum.ACTIVE },
+      where: { status: StatusEnum.ACTIVE },
       relations: {
         foodCategory: true,
       },
     });
+  }
+
+  async getFoodByCategory(idCate: string): Promise<FoodEntity[]> {
+    const category = await this.foodCategoryService.findOne({
+      where: { id: idCate },
+    });
+    if (!category) {
+      throw new HttpException('Not found category', HttpStatus.NOT_FOUND);
+    }
+    const foodList = await this.foodsRepository
+      .createQueryBuilder('foods')
+      .leftJoinAndSelect('foods.foodCategory', 'food_categories')
+      .where('food_categories.id = :id', {
+        id: idCate,
+      })
+      .andWhere('foods.status = :status', {
+        status: StatusEnum.ACTIVE,
+      })
+      .getMany();
+    if (!foodList || foodList.length === 0) {
+      throw new HttpException(
+        "Don't have resource food for this category",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return foodList;
   }
 
   async createFood(
@@ -98,16 +124,16 @@ export class FoodsService extends BaseService<FoodEntity> {
     if (!food) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (food.isActive == IsActiveEnum.ACTIVE) {
+      if (food.status == StatusEnum.ACTIVE) {
         await this.foodsRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.IN_ACTIVE },
+          { status: StatusEnum.IN_ACTIVE },
         );
         return 'Food now is inActive';
-      } else if (food.isActive == IsActiveEnum.IN_ACTIVE) {
+      } else if (food.status == StatusEnum.IN_ACTIVE) {
         await this.foodsRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.ACTIVE },
+          { status: StatusEnum.ACTIVE },
         );
         return 'Food now is active';
       }

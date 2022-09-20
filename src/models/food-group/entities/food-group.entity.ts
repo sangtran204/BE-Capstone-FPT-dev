@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodEntity } from 'src/models/foods/entities/foods.entity';
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
@@ -18,17 +18,12 @@ export class FoodGroupEntity extends BaseEntity {
   @AutoMap()
   totalFood: number;
 
-  @Column()
+  @Column({ default: StatusEnum.WAITING })
   @AutoMap()
-  image: string;
+  status: string;
 
-  @Column({ default: IsActiveEnum.WAITING })
-  @AutoMap()
-  isActive: string;
-
-  @ManyToMany(() => FoodEntity, (food) => food.foodGroups, {
-    cascade: ['insert', 'update'],
-  })
+  @AutoMap(() => [FoodEntity])
+  @ManyToMany(() => FoodEntity, (food) => food.foodGroups)
   @JoinTable({ name: 'food_group_item' })
   foods: FoodEntity[];
 }

@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsActiveEnum } from 'src/common/enums/isActive.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
@@ -16,9 +16,9 @@ export class AccountEntity extends BaseEntity {
   @AutoMap()
   password: string;
 
-  @Column({ default: IsActiveEnum.IN_ACTIVE })
+  @Column({ default: StatusEnum.IN_ACTIVE })
   @AutoMap()
-  isActive: string;
+  status: string;
 
   @Column({ nullable: true })
   @AutoMap()
@@ -28,14 +28,16 @@ export class AccountEntity extends BaseEntity {
   @AutoMap()
   deviceToken: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.accounts)
-  role: RoleEntity;
-
-  @OneToOne(() => ProfileEntity, (profile) => profile.account)
-  profile: ProfileEntity;
-
   @OneToOne(() => CustomerEntity, (customer) => customer.account, {
     onDelete: 'CASCADE',
   })
   customer: CustomerEntity;
+
+  @AutoMap(() => RoleEntity)
+  @ManyToOne(() => RoleEntity, (role) => role.accounts)
+  role: RoleEntity;
+
+  @OneToOne(() => ProfileEntity, (profile) => profile.account)
+  @AutoMap(() => ProfileEntity)
+  profile: ProfileEntity;
 }

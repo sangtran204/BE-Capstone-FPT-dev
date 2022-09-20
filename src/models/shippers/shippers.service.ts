@@ -3,8 +3,8 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { ShipperEntity } from './entities/shippers.entity';
-import { IsActiveEnum } from '../../common/enums/isActive.enum';
 import { ShipperDTO } from './dto/shippers.dto';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class ShippersService extends BaseService<ShipperEntity> {
@@ -40,7 +40,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
       try {
         await this.shippersRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.IN_ACTIVE },
+          { status: StatusEnum.IN_ACTIVE },
         );
         return 'Shipper is inactive';
       } catch (error) {

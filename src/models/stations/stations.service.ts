@@ -3,9 +3,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StationEntity } from './entities/stations.entity';
 import { BaseService } from '../base/base.service';
-import { IsActiveEnum } from '../../common/enums/isActive.enum';
 import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
+import { StatusEnum } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class StationsService extends BaseService<StationEntity> {
@@ -21,7 +21,7 @@ export class StationsService extends BaseService<StationEntity> {
   }
   async getAllActiveStations(): Promise<StationEntity[]> {
     return await this.stationsRepository.find({
-      where: { isActive: IsActiveEnum.ACTIVE },
+      where: { status: StatusEnum.ACTIVE },
     });
   }
 
@@ -45,16 +45,16 @@ export class StationsService extends BaseService<StationEntity> {
         HttpStatus.NOT_FOUND,
       );
     } else {
-      if (station.isActive == IsActiveEnum.ACTIVE) {
+      if (station.status == StatusEnum.ACTIVE) {
         await this.stationsRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.IN_ACTIVE },
+          { status: StatusEnum.IN_ACTIVE },
         );
         return 'Station now is inActive';
-      } else if (station.isActive == IsActiveEnum.IN_ACTIVE) {
+      } else if (station.status == StatusEnum.IN_ACTIVE) {
         await this.stationsRepository.update(
           { id: id },
-          { isActive: IsActiveEnum.ACTIVE },
+          { status: StatusEnum.ACTIVE },
         );
         return 'Station now is active';
       }

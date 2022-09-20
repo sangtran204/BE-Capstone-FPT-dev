@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-// import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class CreateFoodGroupDTO {
   @ApiProperty()
@@ -11,6 +11,7 @@ export class CreateFoodGroupDTO {
   @ApiProperty()
   totalFood: number;
 
-  @ApiProperty({ type: String, format: 'binary' })
-  image: object;
+  @ApiProperty({ type: [String] })
+  @IsUUID(null, { each: true })
+  foodIds: string[];
 }
