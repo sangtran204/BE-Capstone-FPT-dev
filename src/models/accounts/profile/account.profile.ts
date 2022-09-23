@@ -1,8 +1,9 @@
-import { AccountDto } from '../dto/accounts.dto';
 import { AccountEntity } from '../entities/account.entity';
 import { createMap, Mapper, MappingProfile } from '@automapper/core';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { Injectable } from '@nestjs/common';
+import { AccountInfoDTO } from '../dto/account-info..dto';
+import { AccountDTO } from '../dto/accounts.dto';
 
 @Injectable()
 export class AccountProfile extends AutomapperProfile {
@@ -12,7 +13,8 @@ export class AccountProfile extends AutomapperProfile {
 
   override get profile(): MappingProfile {
     return (mapper) => {
-      createMap(mapper, AccountEntity, AccountDto);
+      createMap(mapper, AccountEntity, AccountDTO);
+      createMap(mapper, AccountEntity, AccountInfoDTO);
     };
   }
 }

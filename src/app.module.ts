@@ -1,6 +1,4 @@
-// import { ProfileModule } from './models/profiles/profile.module';
 // import { JwtAuthGuard } from './guards/jwt-auth.guard';
-// import { JwtProviderModule } from './providers/jwt/provider.module';
 import { Module } from '@nestjs/common';
 import { RolesGuard } from './guards/role.guard';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -11,15 +9,14 @@ import { AccountsModule } from 'src/models/accounts/accounts.module';
 import { AutomapperProviderModule } from './providers/automapper/provider.module';
 import { MySQLDatabaseProviderModule } from 'src/providers/database/mysql/provider.module';
 import { FireBaseConfigModule } from './config/firebase/config.module';
-// import { SharedModule } from 'shared/shared.module';
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
-// import { ProfileModule } from './models/profiles/profile.module';
-// import { AuthModule } from './auth/auth.module';
 import { FoodCategoriesModule } from './models/food-categories/food-categories.module';
 import { FoodsModule } from './models/foods/foods.module';
 import { FoodGroupModule } from './models/food-group/food-group.module';
 import { StationsModule } from './models/stations/stations.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtProviderModule } from './providers/jwt/provider.module';
 
 import { ShippersModule } from './models/shippers/shippers.module';
 import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
@@ -28,7 +25,7 @@ import { KitchenModule } from './models/kitchens/kitchens.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';
 import { PackageItemModule } from './models/package-item/package-item.module';
 import { ProfileModule } from './models/profiles/profile.module';
-// import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
@@ -36,12 +33,14 @@ import { ProfileModule } from './models/profiles/profile.module';
   imports: [
     AppConfigModule,
     MySQLDatabaseProviderModule,
-    // JwtProviderModule,
+    JwtProviderModule,
     AutomapperProviderModule,
     FireBaseConfigModule,
     AccountsModule,
     ProfileModule,
-    // AuthModule,
+    SharedModule,
+    AuthModule,
+    KitchenModule,
 
     FoodCategoriesModule,
     FoodsModule,
@@ -55,7 +54,6 @@ import { ProfileModule } from './models/profiles/profile.module';
 
     KitchenModule, //-> update
     PackageItemModule,
-    // SharedModule,
 
     // ImagesModule,
     // FirebaseProviderModule,

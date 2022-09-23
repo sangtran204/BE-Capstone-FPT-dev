@@ -1,4 +1,5 @@
 export class Payload {
-  username: string;
+  // username: string;
+  phone: string;
   role: string;
 }

@@ -1,33 +1,26 @@
 import { AutoMap } from '@automapper/classes';
-import { IsNotEmpty } from 'class-validator';
+import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity } from 'typeorm';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'kitchens' })
 export class KitchenEntity extends BaseEntity {
-  @Column()
-  @AutoMap()
-  @IsNotEmpty()
-  name: string;
+  @PrimaryColumn()
+  id: string;
 
   @Column()
   @AutoMap()
-  @IsNotEmpty()
   address: string;
 
-  @Column({ length: 10 })
+  @Column()
   @AutoMap()
-  @IsNotEmpty()
-  phone: string;
+  ability: string;
 
-  @Column({ default: StatusEnum.ACTIVE })
-  @AutoMap()
-  status: string;
-
-  // @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
-  // shippers: ShipperEntity[];
-
-  // @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.kitchen)
-  // deliveryTrips: DeliveryTripEntity[];
+  @AutoMap(() => AccountEntity)
+  @OneToOne(() => AccountEntity, (account) => account.kitchen, {
+    onDelete: 'CASCADE',
+    createForeignKeyConstraints: true,
+  })
+  @JoinColumn({ name: 'id' })
+  account: AccountEntity;
 }
