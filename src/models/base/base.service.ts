@@ -49,8 +49,7 @@ export class BaseService<T extends BaseEntity> {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error(error);
-      throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     } finally {
       await queryRunner.release();
     }

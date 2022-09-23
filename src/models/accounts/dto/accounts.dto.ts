@@ -1,6 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 
-export class AccountDto {
+export class AccountDTO {
+  // @AutoMap()
+  // username: string;
   @AutoMap()
-  username: string;
+  phone: string;
 }

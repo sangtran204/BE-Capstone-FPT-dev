@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GoogleTokenDto {
+export class ChangePasswordDTO {
   @ApiProperty()
-  token: string;
+  password: string;
 }

@@ -1,17 +1,14 @@
 import { AutoMap } from '@automapper/classes';
-import { ApiProperty } from '@nestjs/swagger';
+import { ProfileDTO } from 'src/models/profiles/dto/profile.dto';
 import { BaseDTO } from '../../base/base.dto';
 
 export class KitchenDTO extends BaseDTO {
-  @ApiProperty()
-  @AutoMap()
-  name: string;
-
-  @ApiProperty()
   @AutoMap()
   address: string;
 
-  @ApiProperty()
   @AutoMap()
-  phone: string;
+  ability: string;
+
+  @AutoMap(() => ProfileDTO)
+  profile: ProfileDTO;
 }

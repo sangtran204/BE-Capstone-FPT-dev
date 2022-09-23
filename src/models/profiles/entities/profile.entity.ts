@@ -16,17 +16,9 @@ export class ProfileEntity extends BaseEntity {
   @AutoMap()
   DOB: Date;
 
-  @Column()
-  @AutoMap()
-  address: string;
-
   @Column({ nullable: true })
   @AutoMap()
   avatar: string;
-
-  @Column({ unique: true })
-  @AutoMap()
-  phone: string;
 
   @Column({ unique: true })
   @AutoMap()
