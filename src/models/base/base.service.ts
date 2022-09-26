@@ -36,26 +36,6 @@ export class BaseService<T extends BaseEntity> {
     return this.repository.delete(id);
   }
 
-  async transaction(
-    callback: (entityManager: EntityManager) => Promise<void>,
-    dataSource: DataSource,
-  ): Promise<void> {
-    const queryRunner = dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await callback(queryRunner.manager);
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
   async uploadImageToFirebase(image: Express.Multer.File): Promise<string> {
     try {
       const imageName = image.originalname.split('.');
@@ -73,6 +53,26 @@ export class BaseService<T extends BaseEntity> {
       }/o/${encodeURIComponent(url)}?alt=media`;
     } catch (error) {
       throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async transaction(
+    callback: (entityManager: EntityManager) => Promise<void>,
+    dataSource: DataSource,
+  ): Promise<void> {
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await callback(queryRunner.manager);
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
