@@ -126,56 +126,26 @@ export class FoodsService extends BaseService<FoodEntity> {
     return `Update Food Sucessfully ${id}`;
   }
 
-  // async updateStatusFood(id: string): Promise<string> {
-  //   const food = await this.foodsRepository.findOne({
-  //     where: { id: id },
-  //   });
-  //   if (!food) {
-  //     throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
-  //   } else {
-  //     if (food.status == StatusEnum.ACTIVE) {
-  //       await this.foodsRepository.update(
-  //         { id: id },
-  //         { status: StatusEnum.IN_ACTIVE },
-  //       );
-  //       return 'Food now is inActive';
-  //     } else if (food.status == StatusEnum.IN_ACTIVE) {
-  //       await this.foodsRepository.update(
-  //         { id: id },
-  //         { status: StatusEnum.ACTIVE },
-  //       );
-  //       return 'Food now is active';
-  //     }
-  //   }
-  // }
-
-  async confirmFood(id: string): Promise<string> {
+  async updateStatusFood(id: string): Promise<string> {
     const food = await this.foodsRepository.findOne({
       where: { id: id },
     });
     if (!food) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      await this.foodsRepository.update(
-        { id: id },
-        { status: StatusEnum.ACTIVE },
-      );
-      return 'Food now is active';
-    }
-  }
-
-  async removeFood(id: string): Promise<string> {
-    const food = await this.foodsRepository.findOne({
-      where: { id: id },
-    });
-    if (!food) {
-      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
-    } else {
-      await this.foodsRepository.update(
-        { id: id },
-        { status: StatusEnum.IN_ACTIVE },
-      );
-      return 'Food now is inActive';
+      if (food.status == StatusEnum.ACTIVE) {
+        await this.foodsRepository.update(
+          { id: id },
+          { status: StatusEnum.IN_ACTIVE },
+        );
+        return 'Food now is inActive';
+      } else if (food.status == StatusEnum.IN_ACTIVE) {
+        await this.foodsRepository.update(
+          { id: id },
+          { status: StatusEnum.ACTIVE },
+        );
+        return 'Food now is active';
+      }
     }
   }
 }
@@ -221,30 +191,4 @@ export class FoodsService extends BaseService<FoodEntity> {
 //       relations: { images: true },
 //     });
 //   }
-// }
-
-// async addImagesFood(
-//   id: string,
-//   images: Array<Express.Multer.File>,
-// ): Promise<string> {
-//   const foodId = await this.findOne({ where: { id: id } });
-//   if (!foodId) {
-//     throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
-//   }
-//   const urlImageDTO = await this.imageService.uploadImagesToFirebase(images);
-//   const promiseImages: Promise<ImageEntity>[] = [];
-//   for (const item of urlImageDTO) {
-//     promiseImages.push(
-//       this.imageService.save({ url: item.url, food: foodId }),
-//     );
-//   }
-//   let message = '';
-//   await Promise.all(promiseImages)
-//     .then(() => {
-//       message = 'Upload Images Successfully';
-//     })
-//     .catch(() => {
-//       throw new HttpException('Upload Images fail', HttpStatus.BAD_REQUEST);
-//     });
-//   return message;
 // }

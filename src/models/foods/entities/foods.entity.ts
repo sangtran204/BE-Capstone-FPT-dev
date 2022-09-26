@@ -23,7 +23,7 @@ export class FoodEntity extends BaseEntity {
   @AutoMap()
   image: string;
 
-  @Column({ default: StatusEnum.WAITING })
+  @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()
   status: string;
 
