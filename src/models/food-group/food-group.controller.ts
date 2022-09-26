@@ -88,7 +88,6 @@ export class FoodGroupController {
     description: 'GET FOODGROUP BY ID',
     type: FoodGroupDTO,
   })
-  // @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async findFoodById(@Param('id') id: string): Promise<FoodGroupEntity> {
     const foodGroup = await this.foodGroupService.findOne({
       where: { id: id },
