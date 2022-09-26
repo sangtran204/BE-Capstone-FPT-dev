@@ -38,69 +38,69 @@ export class PackageController {
   }
 
   //Get package
-  @Public()
-  @Get('/findByIsActive')
-  @ApiResponse({
-    status: 200,
-    description: 'GET ACTIVE PACKAGE',
-    type: [PackageDTO],
-  })
-  async getPackage(): Promise<PackageEntity[] | string> {
-    const listPackages = await this.packageService.listPackageStatus();
-    if (!listPackages || listPackages.length == 0) {
-      throw new HttpException('No data package', HttpStatus.NOT_FOUND);
-    }
-    return listPackages;
-  }
+  // @Public()
+  // @Get('/findByIsActive')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET ACTIVE PACKAGE',
+  //   type: [PackageDTO],
+  // })
+  // async getPackage(): Promise<PackageEntity[] | string> {
+  //   const listPackages = await this.packageService.listPackageStatus();
+  //   if (!listPackages || listPackages.length == 0) {
+  //     throw new HttpException('No data package', HttpStatus.NOT_FOUND);
+  //   }
+  //   return listPackages;
+  // }
 
   // Create package
-  @Public()
-  @Post()
-  @ApiResponse({
-    status: 200,
-    description: 'CREATE PACKAGE',
-    type: String,
-  })
-  async createPackage(@Body() dto: PackageDTO): Promise<string> {
-    return await this.packageService.createPackage(dto);
-  }
+  // @Public()
+  // @Post()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'CREATE PACKAGE',
+  //   type: String,
+  // })
+  // async createPackage(@Body() dto: PackageDTO): Promise<string> {
+  //   return await this.packageService.createPackage(dto);
+  // }
 
   //Update package
-  @Public()
-  @Post('/update/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'UPDATE PACKAGE',
-    type: String,
-  })
-  async updatePackage(
-    @Param('id') id: string,
-    @Body() dto: PackageDTO,
-  ): Promise<string> {
-    return await this.packageService.updatePackage(id, dto);
-  }
+  // @Public()
+  // @Post('/update/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'UPDATE PACKAGE',
+  //   type: String,
+  // })
+  // async updatePackage(
+  //   @Param('id') id: string,
+  //   @Body() dto: PackageDTO,
+  // ): Promise<string> {
+  //   return await this.packageService.updatePackage(id, dto);
+  // }
 
   //Update package status
-  @Public()
-  @Put('/updateStatus/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'UPDATE PACKAGE STATUS',
-    type: String,
-  })
-  async updatePackageStatus(@Param('id') id: string): Promise<string> {
-    return await this.packageService.updateStatus(id);
-  }
+  // @Public()
+  // @Put('/updateStatus/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'UPDATE PACKAGE STATUS',
+  //   type: String,
+  // })
+  // async updatePackageStatus(@Param('id') id: string): Promise<string> {
+  //   return await this.packageService.updateStatus(id);
+  // }
 
   //Delete package
-  @Public()
-  @Delete('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'DELETE PACKAGE',
-    type: String,
-  })
-  async deletePackage(@Param('id') id: string): Promise<string> {
-    return await this.packageService.deletePackage(id);
-  }
+  // @Public()
+  // @Delete('/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'DELETE PACKAGE',
+  //   type: String,
+  // })
+  // async deletePackage(@Param('id') id: string): Promise<string> {
+  //   return await this.packageService.deletePackage(id);
+  // }
 }

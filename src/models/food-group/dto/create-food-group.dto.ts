@@ -12,6 +12,6 @@ export class CreateFoodGroupDTO {
   totalFood: number;
 
   @ApiProperty({ type: [String] })
-  @IsUUID(null, { each: true })
+  @IsUUID(null, { each: true, message: 'ID food must be unique' })
   foodIds: string[];
 }

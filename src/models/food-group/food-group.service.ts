@@ -29,6 +29,13 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     });
   }
 
+  async getFoodGroupWaiting(): Promise<FoodGroupEntity[]> {
+    return await this.query({
+      where: { status: StatusEnum.WAITING },
+      relations: { foods: { foodCategory: true } },
+    });
+  }
+
   async createFoodGroup(data: CreateFoodGroupDTO): Promise<FoodGroupEntity> {
     const { foodIds, name, description, totalFood } = data;
     const foods = await this.foodsService.query({

@@ -1,19 +1,19 @@
 import { AutoMap } from '@automapper/classes';
-import { IsInt } from 'class-validator';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
+import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
 export class PackageEntity extends BaseEntity {
-  @Column()
+  @Column('datetime')
   @AutoMap()
-  startSale: string;
+  startSale: Date;
 
-  @Column()
+  @Column('datetime')
   @AutoMap()
-  endSale: string;
+  endSale: Date;
 
   @Column()
   @AutoMap()
@@ -25,27 +25,22 @@ export class PackageEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  @IsInt()
-  price: number;
+  price: string;
 
   @Column()
   @AutoMap()
-  @IsInt()
   totalDate: number;
 
   @Column()
   @AutoMap()
-  @IsInt()
   totalFood: number;
 
   @Column()
   @AutoMap()
-  @IsInt()
   totalMeal: number;
 
   @Column()
   @AutoMap()
-  @IsInt()
   totalStation: number;
 
   @Column({ default: StatusEnum.WAITING })
@@ -54,4 +49,7 @@ export class PackageEntity extends BaseEntity {
 
   @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.packages)
   packageItem: PackageItemEntity[];
+
+  @OneToMany(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
+  timeFrame: TimeFrameEntity[];
 }

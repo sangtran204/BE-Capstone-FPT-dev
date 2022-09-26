@@ -27,6 +27,7 @@ import { PackageItemModule } from './models/package-item/package-item.module';
 import { ProfileModule } from './models/profiles/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TimeFrameModule } from './models/time-frame/time-frame.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -41,19 +42,19 @@ import { ScheduleModule } from '@nestjs/schedule';
     SharedModule,
     AuthModule,
     KitchenModule,
-
     FoodCategoriesModule,
     FoodsModule,
     FoodGroupModule,
+    PackageItemModule,
+    TimeFrameModule,
+
     StationsModule,
     PackagesModule, //-> update
     // ====================================
     DeliveryTripModule,
     ShippersModule, //-> update
     TimeSlotsModule, //-> update
-
     KitchenModule, //-> update
-    PackageItemModule,
 
     // ImagesModule,
     // FirebaseProviderModule,
