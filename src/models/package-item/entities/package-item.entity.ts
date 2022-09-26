@@ -1,28 +1,36 @@
 import { AutoMap } from '@automapper/classes';
-import { IsInt } from 'class-validator';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { FoodGroupEntity } from 'src/models/food-group/entities/food-group.entity';
 import { PackageEntity } from 'src/models/packages/entities/packages.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'package_item' })
 export class PackageItemEntity extends BaseEntity {
-  @Column()
+  @Column('date')
   @AutoMap()
-  startDate: string;
+  startDate: Date;
+
+  @Column('date')
+  @AutoMap()
+  endDate: Date;
 
   @Column()
   @AutoMap()
-  endDate: string;
-
-  @Column()
-  @AutoMap()
-  @IsInt()
   maxFood: number;
 
   @Column()
   @AutoMap()
-  @IsInt()
-  maxAmount: number;
+  maxAmount: string;
+
+  @AutoMap(() => [FoodGroupEntity])
+  @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.packageItem)
+  @JoinTable({ name: 'package_item_group' })
+  foodGroups: FoodGroupEntity[];
+
+  @AutoMap(() => TimeFrameEntity)
+  @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packageItem)
+  timeFrame: TimeFrameEntity;
 
   @AutoMap(() => PackageEntity)
   @ManyToOne(() => PackageEntity, (packages) => packages.packageItem)

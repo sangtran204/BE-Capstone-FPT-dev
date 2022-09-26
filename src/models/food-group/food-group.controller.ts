@@ -19,8 +19,8 @@ import { FoodGroupEntity } from './entities/food-group.entity';
 import { FoodGroupService } from './food-group.service';
 
 @ApiBearerAuth()
-@ApiTags('food-group')
-@Controller('food-group')
+@ApiTags('food-groups')
+@Controller('food-groups')
 export class FoodGroupController {
   constructor(private readonly foodGroupService: FoodGroupService) {}
 
@@ -32,9 +32,9 @@ export class FoodGroupController {
     description: 'LIST ALL FOOD GROUP',
     type: [FoodGroupDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
-  )
+  // @UseInterceptors(
+  //   MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
+  // )
   async listAllFoodGroup(): Promise<FoodGroupEntity[]> {
     const listFoodGroup = await this.foodGroupService.getAllFoodGroup();
     if (!listFoodGroup || listFoodGroup.length == 0) {
@@ -52,9 +52,9 @@ export class FoodGroupController {
     description: 'LIST ALL FOOD GROUP ACTIVE',
     type: [FoodGroupDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
-  )
+  // @UseInterceptors(
+  //   MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
+  // )
   async listFoodGroupActive(): Promise<FoodGroupEntity[]> {
     const listFoodGroupActive =
       await this.foodGroupService.getFoodGroupActive();
@@ -66,13 +66,29 @@ export class FoodGroupController {
   }
 
   @Public()
+  @Get('/waiting')
+  @ApiResponse({
+    status: 200,
+    description: 'LIST ALL FOOD GROUP WAITING',
+    type: [FoodGroupDTO],
+  })
+  async listFoodGroupWaiting(): Promise<FoodGroupEntity[]> {
+    const listFoodGroup = await this.foodGroupService.getFoodGroupWaiting();
+    if (!listFoodGroup || listFoodGroup.length == 0) {
+      throw new HttpException('No food group waiting', HttpStatus.NOT_FOUND);
+    } else {
+      return listFoodGroup;
+    }
+  }
+
+  @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
     description: 'GET FOODGROUP BY ID',
     type: FoodGroupDTO,
   })
-  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
+  // @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async findFoodById(@Param('id') id: string): Promise<FoodGroupEntity> {
     const foodGroup = await this.foodGroupService.findOne({
       where: { id: id },

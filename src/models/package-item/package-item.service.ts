@@ -15,7 +15,9 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
   }
 
   async getAllPackageItem(): Promise<PackageItemEntity[]> {
-    return await this.packageItemRepository.find();
+    return await this.packageItemRepository.find({
+      relations: { foodGroups: true },
+    });
   }
 
   async deletePackageItem(id: string): Promise<string> {

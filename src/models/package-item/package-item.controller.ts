@@ -43,18 +43,8 @@ export class PackageItemController {
     }
   }
 
-  //Delete package item
-
-  @Public()
-  @Delete('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'DELETE PACKAGE ITEM',
-    type: String,
-  })
-  async deletePackageItem(@Param('id') id: string): Promise<string> {
-    return this.packageItemService.deletePackageItem(id);
-  }
+  // ==============================================================================
+  //NEED Review Again
 
   //Update package item
   @Public()
@@ -70,4 +60,18 @@ export class PackageItemController {
   ): Promise<string> {
     return await this.packageItemService.updatePackageItem(id, dto);
   }
+
+  //Delete package item
+  @Public()
+  @Delete('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'DELETE PACKAGE ITEM',
+    type: String,
+  })
+  async deletePackageItem(@Param('id') id: string): Promise<string> {
+    return this.packageItemService.deletePackageItem(id);
+  }
+
+  // ==============================================================================
 }

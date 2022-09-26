@@ -3,4 +3,5 @@ export enum RoleEnum {
   KITCHEN = 'kitchen',
   SHIPPER = 'shipper',
   CUSTOMER = 'customer',
+  MANAGER = 'manager',
 }

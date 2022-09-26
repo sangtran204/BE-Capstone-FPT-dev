@@ -70,6 +70,25 @@ export class FoodsController {
   }
 
   @Public()
+  @Get('/waiting')
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL WAITING FOOD',
+    type: [FoodDTO],
+  })
+  // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  async findAllWaitingFood(): Promise<FoodEntity[]> {
+    const listFood = await this.foodsService.getAllWaitingFood();
+    if (!listFood || listFood.length == 0) {
+      throw new HttpException(
+        "Dont't have resource waiting food",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return listFood;
+  }
+
+  @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -139,14 +158,36 @@ export class FoodsController {
   }
 
   // Remove Food = Update status
+  // @Public()
+  // @Put('/update-status/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Update Food Status',
+  //   type: String,
+  // })
+  // async updateStatusFood(@Param('id') id: string): Promise<string> {
+  //   return await this.foodsService.updateStatusFood(id);
+  // }
+
   @Public()
-  @Put('/update-status/:id')
+  @Put('confirm-food/:id')
   @ApiResponse({
     status: 200,
-    description: 'Update Food Status',
+    description: 'Confirm Status Food Active',
     type: String,
   })
-  async updateStatusFood(@Param('id') id: string): Promise<string> {
-    return await this.foodsService.updateStatusFood(id);
+  async confirmFood(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.confirmFood(id);
+  }
+
+  @Public()
+  @Put('remove-food/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Remove food',
+    type: String,
+  })
+  async removeFood(@Param('id') id: string): Promise<string> {
+    return await this.foodsService.removeFood(id);
   }
 }

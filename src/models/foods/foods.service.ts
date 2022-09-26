@@ -38,6 +38,15 @@ export class FoodsService extends BaseService<FoodEntity> {
     });
   }
 
+  async getAllWaitingFood(): Promise<FoodEntity[]> {
+    return await this.foodsRepository.find({
+      where: { status: StatusEnum.WAITING },
+      relations: {
+        foodCategory: true,
+      },
+    });
+  }
+
   async getFoodByCategory(idCate: string): Promise<FoodEntity[]> {
     const category = await this.foodCategoryService.findOne({
       where: { id: idCate },
@@ -117,26 +126,56 @@ export class FoodsService extends BaseService<FoodEntity> {
     return `Update Food Sucessfully ${id}`;
   }
 
-  async updateStatusFood(id: string): Promise<string> {
+  // async updateStatusFood(id: string): Promise<string> {
+  //   const food = await this.foodsRepository.findOne({
+  //     where: { id: id },
+  //   });
+  //   if (!food) {
+  //     throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+  //   } else {
+  //     if (food.status == StatusEnum.ACTIVE) {
+  //       await this.foodsRepository.update(
+  //         { id: id },
+  //         { status: StatusEnum.IN_ACTIVE },
+  //       );
+  //       return 'Food now is inActive';
+  //     } else if (food.status == StatusEnum.IN_ACTIVE) {
+  //       await this.foodsRepository.update(
+  //         { id: id },
+  //         { status: StatusEnum.ACTIVE },
+  //       );
+  //       return 'Food now is active';
+  //     }
+  //   }
+  // }
+
+  async confirmFood(id: string): Promise<string> {
     const food = await this.foodsRepository.findOne({
       where: { id: id },
     });
     if (!food) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      if (food.status == StatusEnum.ACTIVE) {
-        await this.foodsRepository.update(
-          { id: id },
-          { status: StatusEnum.IN_ACTIVE },
-        );
-        return 'Food now is inActive';
-      } else if (food.status == StatusEnum.IN_ACTIVE) {
-        await this.foodsRepository.update(
-          { id: id },
-          { status: StatusEnum.ACTIVE },
-        );
-        return 'Food now is active';
-      }
+      await this.foodsRepository.update(
+        { id: id },
+        { status: StatusEnum.ACTIVE },
+      );
+      return 'Food now is active';
+    }
+  }
+
+  async removeFood(id: string): Promise<string> {
+    const food = await this.foodsRepository.findOne({
+      where: { id: id },
+    });
+    if (!food) {
+      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    } else {
+      await this.foodsRepository.update(
+        { id: id },
+        { status: StatusEnum.IN_ACTIVE },
+      );
+      return 'Food now is inActive';
     }
   }
 }
