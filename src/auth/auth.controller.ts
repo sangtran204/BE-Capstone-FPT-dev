@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDTO } from './dto/refresh-token.dto';
 import { RegisterCustomerDto } from './dto/register-customer.dto';
-import { VerifySignUp } from './dto/verify-signup.dto';
+// import { VerifySignUp } from './dto/verify-signup.dto';
 import { LoginResponseDto } from './response/login-response.dto';
 import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
 
@@ -48,6 +48,12 @@ export class AuthenticationController {
   @Public()
   async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.SHIPPER);
+  }
+
+  @Post('login-in/manager')
+  @Public()
+  async loginManager(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+    return await this.authService.login(dto, RoleEnum.MANAGER);
   }
 
   @Post('login-in/admin')

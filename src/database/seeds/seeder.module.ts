@@ -5,6 +5,7 @@ import { MySQLDatabaseProviderModule } from 'src/providers/database/mysql/provid
 import { Seeder } from './seeder';
 // import { VehicleTypesSeederModule } from './vehicle-types/vehicle-types.module';
 import { RolesSeederModule } from './roles/roles.module';
+import { AccountsSeederModule } from './accounts/accounts.module';
 // import { LocationsSeederModule } from './locations/locations.module';
 
 @Module({
@@ -14,7 +15,7 @@ import { RolesSeederModule } from './roles/roles.module';
     // LocationCategoriesSeederModule,
     RolesSeederModule,
     // LocationsSeederModule,
-    // AccountsSeederModule,
+    AccountsSeederModule,
   ],
   providers: [Seeder],
 })

@@ -10,17 +10,9 @@ export class ProfileDTO extends BaseDTO {
   @ApiProperty()
   DOB: Date;
 
-  // @AutoMap()
-  // @ApiProperty()
-  // address: string;
-
   @AutoMap()
   @ApiProperty()
   avatar: string;
-
-  // @AutoMap()
-  // @ApiProperty()
-  // phone: string;
 
   @AutoMap()
   @ApiProperty()
