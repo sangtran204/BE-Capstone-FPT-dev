@@ -8,13 +8,13 @@ async function bootstrap(): Promise<void> {
   try {
     // await seeder.insertLocationCategories();
     await seeder.insertRoles();
+    await seeder.insertAccount();
     // await seeder.insertVehicleTypes();
     // await seeder.insertLocations(12);
     // await seeder.insertLocationCategory('hotel');
     // await seeder.insertLocationCategory('shopping');
     // await seeder.insertLocationCategory('restaurant');
     // await seeder.insertLocationCategory('visit');
-    // await seeder.insertAccount();
   } catch (error) {
     console.error(error);
   } finally {

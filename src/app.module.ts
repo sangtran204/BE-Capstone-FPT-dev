@@ -42,6 +42,7 @@ import { TimeFrameModule } from './models/time-frame/time-frame.module';
     SharedModule,
     AuthModule,
     KitchenModule,
+    // ShippersModule,
     FoodCategoriesModule,
     FoodsModule,
     FoodGroupModule,
@@ -52,9 +53,7 @@ import { TimeFrameModule } from './models/time-frame/time-frame.module';
     PackagesModule, //-> update
     // ====================================
     DeliveryTripModule,
-    ShippersModule, //-> update
     TimeSlotsModule, //-> update
-    KitchenModule, //-> update
 
     // ImagesModule,
     // FirebaseProviderModule,

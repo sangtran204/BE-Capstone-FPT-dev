@@ -11,4 +11,7 @@ export const getDataRole = (): { name: string }[] => [
   {
     name: 'customer',
   },
+  {
+    name: 'manager',
+  },
 ];
