@@ -18,13 +18,13 @@ import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
 export class AuthenticationController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('sign-up/customer')
-  @Public()
-  async signUpCustomer(
-    @Body() dto: RegisterCustomerDto,
-  ): Promise<AccountEntity> {
-    return await this.authService.signUpCustomer(dto);
-  }
+  // @Post('sign-up/customer')
+  // @Public()
+  // async signUpCustomer(
+  //   @Body() dto: RegisterCustomerDto,
+  // ): Promise<AccountEntity> {
+  //   return await this.authService.signUpCustomer(dto);
+  // }
 
   // @Post('/verify/sign-up/customer')
   // @Public()
