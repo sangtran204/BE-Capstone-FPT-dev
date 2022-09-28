@@ -27,8 +27,9 @@ export class JwtStratery extends PassportStrategy(Strategy) {
       relations: {
         role: true,
         customer: true,
-        kitchen: true,
+        // kitchen: true,
         profile: true,
+        shipper: true,
       },
       where: { phone, status: StatusEnum.ACTIVE },
     });

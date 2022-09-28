@@ -64,7 +64,8 @@ export class AccountsService extends BaseService<AccountEntity> {
         profile: true,
         role: true,
         customer: true,
-        kitchen: true,
+        shipper: true,
+        // kitchen: true,
       },
       where: {
         phone: Like(`%${Boolean(phone) ? phone : ''}%`),

@@ -40,6 +40,7 @@ export class AccountsController {
         role: true,
         profile: true,
         customer: true,
+        shipper: true,
         kitchen: true,
       },
     });
