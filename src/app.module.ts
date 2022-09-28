@@ -18,7 +18,7 @@ import { StationsModule } from './models/stations/stations.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtProviderModule } from './providers/jwt/provider.module';
 
-import { ShippersModule } from './models/shippers/shippers.module';
+// import { ShipperModule } from './models/shippers/shippers.module';
 import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
 import { PackagesModule } from './models/packages/packages.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
@@ -28,6 +28,7 @@ import { ProfileModule } from './models/profiles/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TimeFrameModule } from './models/time-frame/time-frame.module';
+import { ShippersModule } from './models/shippers/shipper.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -41,8 +42,8 @@ import { TimeFrameModule } from './models/time-frame/time-frame.module';
     ProfileModule,
     SharedModule,
     AuthModule,
+    ShippersModule,
     KitchenModule,
-    // ShippersModule,
     FoodCategoriesModule,
     FoodsModule,
     FoodGroupModule,

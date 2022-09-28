@@ -4,6 +4,7 @@ import { AutoMap } from '@automapper/classes';
 import { ProfileDTO } from '../../profiles/dto/profile.dto';
 import { CustomerInfoDTO } from 'src/models/customers/dto/customer.info.dto';
 import { KitchenInfoDTO } from 'src/models/kitchens/dto/kitchen.info.dto';
+import { ShipperInfoDTO } from 'src/models/shippers/dto/shipper.info.dto';
 
 export class AccountInfoDTO extends BaseDTO {
   @AutoMap()
@@ -24,6 +25,6 @@ export class AccountInfoDTO extends BaseDTO {
   @AutoMap(() => KitchenInfoDTO)
   kitchen: KitchenInfoDTO;
 
-  // @AutoMap(() => ShipperInfoDTO)
-  // shipper: ShipperInfoDTO;
+  @AutoMap(() => ShipperInfoDTO)
+  shipper: ShipperInfoDTO;
 }

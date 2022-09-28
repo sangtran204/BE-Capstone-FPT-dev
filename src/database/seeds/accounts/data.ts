@@ -35,17 +35,16 @@ export const getData = (): {
     avatar: '/images/default.png',
     email: 'nhi123@gmail.com',
   },
-
-  // {
-  //   phone: faker.phone.number(),
-  //   password: pass,
-  //   role: RoleEnum.SHIPPER,
-  //   status: StatusEnum.ACTIVE,
-  //   fullName: faker.name.firstName(),
-  //   dob: faker.date.birthdate(),
-  //   avatar: '/images/default.png',
-  //   email: 'shipper@gmail.com',
-  // },
+  {
+    phone: '0111222333',
+    password: pass,
+    role: RoleEnum.SHIPPER,
+    status: StatusEnum.ACTIVE,
+    fullName: faker.name.firstName(),
+    dob: faker.date.birthdate(),
+    avatar: '/images/default.png',
+    email: 'shipper@gmail.com',
+  },
   {
     phone: '0123456787',
     password: pass,

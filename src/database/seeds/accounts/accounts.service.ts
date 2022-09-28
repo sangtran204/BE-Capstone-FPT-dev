@@ -8,7 +8,8 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
-import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
+import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+// import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
 
 @Injectable()
 export class AccountsSeederService {
@@ -53,7 +54,7 @@ export class AccountsSeederService {
           }),
         );
 
-        if (account.role?.name === RoleEnum.CUSTOMER) {
+        if (account.role.name === RoleEnum.CUSTOMER) {
           await manager.save(
             CustomerEntity,
             manager.create(CustomerEntity, {
@@ -63,7 +64,7 @@ export class AccountsSeederService {
           );
         }
 
-        if (account.role?.name === RoleEnum.KITCHEN) {
+        if (account.role.name === RoleEnum.KITCHEN) {
           await manager.save(
             KitchenEntity,
             manager.create(KitchenEntity, {
@@ -74,17 +75,17 @@ export class AccountsSeederService {
           );
         }
 
-        // if (account.role.name === RoleEnum.SHIPPER) {
-        //   await manager.save(
-        //     ShipperEntity,
-        //     manager.create(ShipperEntity, {
-        //       id: account.id,
-        //       noPlate: 'ABC123',
-        //       vehicleType: 'wave',
-        //       ready: StatusEnum.WAITING,
-        //     }),
-        //   );
-        // }
+        if (account.role.name === RoleEnum.SHIPPER) {
+          await manager.save(
+            ShipperEntity,
+            manager.create(ShipperEntity, {
+              id: account.id,
+              noPlate: 'ABC123',
+              vehicleType: 'wave',
+              status: StatusEnum.WAITING,
+            }),
+          );
+        }
       }
       await queryRunner.commitTransaction();
       console.info('create account success');
