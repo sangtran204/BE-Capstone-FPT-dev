@@ -15,15 +15,15 @@ export class StationEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  phone: number;
+  phone: string;
 
-  @Column()
+  @Column('time')
   @AutoMap()
-  openTime: string;
+  openTime: Date;
 
-  @Column()
+  @Column('time')
   @AutoMap()
-  closeTime: string;
+  closeTime: Date;
 
   @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()

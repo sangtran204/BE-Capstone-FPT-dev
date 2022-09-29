@@ -9,13 +9,13 @@ export class StationDTO extends BaseDTO {
   address: string;
 
   @AutoMap()
-  phone: number;
+  phone: string;
 
   @AutoMap()
-  openTime: string;
+  openTime: Date;
 
   @AutoMap()
-  closeTime: string;
+  closeTime: Date;
 
   @AutoMap()
   status: string;

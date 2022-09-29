@@ -8,11 +8,11 @@ export class CreateStationDTO {
   address: string;
 
   @ApiProperty()
-  phone: number;
+  phone: string;
 
   @ApiProperty()
-  openTime: string;
+  openTime: Date;
 
   @ApiProperty()
-  closeTime: string;
+  closeTime: Date;
 }
