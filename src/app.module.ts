@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtProviderModule } from './providers/jwt/provider.module';
 
 // import { ShipperModule } from './models/shippers/shippers.module';
-import { TimeSlotsModule } from './models/timeSlots/timeSlots.module';
+import { TimeSlotsModule } from './models/time-slots/time-slots.module';
 import { PackagesModule } from './models/packages/packages.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
 import { DeliveryTripModule } from './models/deliveryTrips/deliveryTrip.module';

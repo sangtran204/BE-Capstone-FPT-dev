@@ -11,7 +11,8 @@ import {
 import { EntityId } from 'typeorm/repository/EntityId';
 import { BaseEntity } from './base.entity';
 import * as firebase from 'firebase-admin';
-import * as crypto from 'crypto';
+// import * as crypto from 'crypto';
+import { randomUUID } from 'crypto';
 
 export class BaseService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
@@ -38,9 +39,11 @@ export class BaseService<T extends BaseEntity> {
 
   async uploadImageToFirebase(image: Express.Multer.File): Promise<string> {
     try {
+      const uuid = randomUUID();
       const imageName = image.originalname.split('.');
-      const newImageName =
-        crypto.randomUUID() + '.' + imageName[imageName.length - 1];
+      // const newImageName =
+      //   crypto.randomUUID() + '.' + imageName[imageName.length - 1];
+      const newImageName = uuid + '.' + imageName[imageName.length - 1];
       const url = `images/${newImageName}`;
 
       const bucket = firebase.storage().bucket();

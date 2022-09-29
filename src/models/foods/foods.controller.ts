@@ -18,7 +18,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
@@ -105,6 +107,7 @@ export class FoodsController {
 
   @Public()
   @Post()
+  // @Roles(RoleEnum.MANAGER)
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
@@ -122,6 +125,7 @@ export class FoodsController {
 
   // Update
   @Put('/update-food/:id')
+  // @Roles(RoleEnum.MANAGER)
   @Public()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -139,8 +143,9 @@ export class FoodsController {
   }
 
   // Remove Food = Update status
-  @Public()
+  // @Public()
   @Put('/update-status/:id')
+  @Roles(RoleEnum.MANAGER)
   @ApiResponse({
     status: 200,
     description: 'Update Food Status',

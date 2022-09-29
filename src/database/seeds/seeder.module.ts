@@ -1,21 +1,16 @@
-// import { AccountsSeederModule } from './accounts/accounts.module';
-// import { LocationCategoriesSeederModule } from './location-categories/location-categories.module';
 import { Module } from '@nestjs/common';
 import { MySQLDatabaseProviderModule } from 'src/providers/database/mysql/provider.module';
 import { Seeder } from './seeder';
-// import { VehicleTypesSeederModule } from './vehicle-types/vehicle-types.module';
 import { RolesSeederModule } from './roles/roles.module';
 import { AccountsSeederModule } from './accounts/accounts.module';
-// import { LocationsSeederModule } from './locations/locations.module';
+import { TimeSlotsSeederModule } from './time-slots/time-slots.module';
 
 @Module({
   imports: [
     MySQLDatabaseProviderModule,
-    // VehicleTypesSeederModule,
-    // LocationCategoriesSeederModule,
     RolesSeederModule,
-    // LocationsSeederModule,
     AccountsSeederModule,
+    TimeSlotsSeederModule,
   ],
   providers: [Seeder],
 })

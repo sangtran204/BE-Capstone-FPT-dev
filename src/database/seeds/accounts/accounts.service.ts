@@ -9,7 +9,6 @@ import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
-// import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
 
 @Injectable()
 export class AccountsSeederService {
