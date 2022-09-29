@@ -6,9 +6,9 @@ async function bootstrap(): Promise<void> {
 
   const seeder = appContext.get(Seeder);
   try {
-    // await seeder.insertLocationCategories();
     await seeder.insertRoles();
     await seeder.insertAccount();
+    await seeder.insertTimeSlot();
     // await seeder.insertVehicleTypes();
     // await seeder.insertLocations(12);
     // await seeder.insertLocationCategory('hotel');

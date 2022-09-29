@@ -3,7 +3,7 @@ import { BaseEntity } from 'src/models/base/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
-import { TimeSlotEntity } from 'src/models/timeSlots/entities/timeSlots.entity';
+import { TimeSlotEntity } from 'src/models/time-slots/entities/time-slots.entity';
 // import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
 @Entity({ name: 'delivery_trips' })
 export class DeliveryTripEntity extends BaseEntity {

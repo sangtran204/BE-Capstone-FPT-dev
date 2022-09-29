@@ -1,7 +1,15 @@
 import { AutoMap } from '@automapper/classes';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity({ name: 'kitchens' })
 export class KitchenEntity extends BaseEntity {
@@ -23,4 +31,8 @@ export class KitchenEntity extends BaseEntity {
   })
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
+
+  // @AutoMap(() => ShipperEntity)
+  @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
+  shippers: ShipperEntity[];
 }
