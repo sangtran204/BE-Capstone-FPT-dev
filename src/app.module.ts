@@ -53,7 +53,7 @@ import { ShippersModule } from './models/shippers/shipper.module';
     StationsModule,
     PackagesModule, //-> update
     // ====================================
-    DeliveryTripModule,
+    // DeliveryTripModule,
     TimeSlotsModule, //-> update
 
     // ImagesModule,
