@@ -3,77 +3,91 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { PackageEntity } from './entities/packages.entity';
-import { PackageDTO } from './dto/packages.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
+import { CreatePackageDTO } from './dto/create-package.dto';
+import { TimeFrameService } from '../time-frame/time-frame.service';
 
 @Injectable()
 export class PackageService extends BaseService<PackageEntity> {
   constructor(
     @InjectRepository(PackageEntity)
     private readonly packagesRepository: Repository<PackageEntity>,
+    private readonly frameService: TimeFrameService,
   ) {
     super(packagesRepository);
   }
 
   async listAllPackage(): Promise<PackageEntity[]> {
-    return await this.packagesRepository.find();
-  }
-
-  async listPackageStatus(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
-      where: { status: StatusEnum.ACTIVE },
+      relations: { timeFrame: true },
     });
   }
 
-  async createPackage(dto: PackageDTO): Promise<string> {
-    try {
-      await this.packagesRepository.save({
-        startSale: dto.startSale,
-        endSale: dto.endSale,
-        name: dto.name,
-        description: dto.description,
-        price: dto.price,
-        totalDate: dto.totalDate,
-        totalFood: dto.totalFood,
-        totalMeal: dto.totalMeal,
-        totalStation: dto.totalStation,
-      });
-      return 'Create package successfull';
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async updatePackage(id: string, dto: PackageDTO): Promise<string> {
-    const packageId = await this.packagesRepository.findOne({
-      where: { id: id },
+  async createPackage(
+    data: CreatePackageDTO,
+    image: Express.Multer.File,
+  ): Promise<PackageEntity> {
+    const frame = await this.frameService.findOne({
+      where: { id: data.timeFrameID },
     });
-    if (!packageId) {
-      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    if (data.startSale > data.endSale)
+      throw new HttpException(
+        'start Sale must less than end Sale',
+        HttpStatus.BAD_REQUEST,
+      );
+    if (!frame) {
+      throw new HttpException(
+        `Frame ID not found : ${data.timeFrameID}`,
+        HttpStatus.NOT_FOUND,
+      );
     } else {
-      try {
-        await this.packagesRepository.update(
-          { id: id },
-          {
-            startSale: dto.startSale,
-            endSale: dto.endSale,
-            name: dto.name,
-            description: dto.description,
-            price: dto.price,
-            totalDate: dto.totalDate,
-            totalMeal: dto.totalMeal,
-            totalFood: dto.totalFood,
-            totalStation: dto.totalStation,
-          },
-        );
-        return 'Update package successfull';
-      } catch (error) {
-        throw new HttpException(error, HttpStatus.BAD_REQUEST);
-      }
+      const imageRes = await this.uploadImageToFirebase(image);
+      return await this.save({
+        startSale: data.startSale,
+        endSale: data.endSale,
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        image: imageRes,
+        totalDate: data.totalDate,
+        totalFood: data.totalFood,
+        totalMeal: data.totalMeal,
+        totalStation: data.totalStation,
+        timeFrame: frame,
+      });
     }
   }
 
-  async updateStatus(id: string): Promise<string> {
+  // async updatePackage(id: string, dto: PackageDTO): Promise<string> {
+  //   const packageId = await this.packagesRepository.findOne({
+  //     where: { id: id },
+  //   });
+  //   if (!packageId) {
+  //     throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+  //   } else {
+  //     try {
+  //       await this.packagesRepository.update(
+  //         { id: id },
+  //         {
+  //           startSale: dto.startSale,
+  //           endSale: dto.endSale,
+  //           name: dto.name,
+  //           description: dto.description,
+  //           price: dto.price,
+  //           totalDate: dto.totalDate,
+  //           totalMeal: dto.totalMeal,
+  //           totalFood: dto.totalFood,
+  //           totalStation: dto.totalStation,
+  //         },
+  //       );
+  //       return 'Update package successfull';
+  //     } catch (error) {
+  //       throw new HttpException(error, HttpStatus.BAD_REQUEST);
+  //     }
+  //   }
+  // }
+
+  async confirmPackage(id: string): Promise<string> {
     const packages = await this.packagesRepository.findOne({
       where: { id: id },
     });

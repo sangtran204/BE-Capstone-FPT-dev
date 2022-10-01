@@ -17,8 +17,6 @@ import { FoodGroupModule } from './models/food-group/food-group.module';
 import { StationsModule } from './models/stations/stations.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtProviderModule } from './providers/jwt/provider.module';
-
-// import { ShipperModule } from './models/shippers/shippers.module';
 import { TimeSlotsModule } from './models/time-slots/time-slots.module';
 import { PackagesModule } from './models/packages/packages.module';
 import { KitchenModule } from './models/kitchens/kitchens.module';
@@ -47,14 +45,14 @@ import { ShippersModule } from './models/shippers/shipper.module';
     FoodCategoriesModule,
     FoodsModule,
     FoodGroupModule,
-    PackageItemModule,
     TimeFrameModule,
-
+    PackagesModule,
+    PackageItemModule,
     StationsModule,
-    PackagesModule, //-> update
+    TimeSlotsModule,
     // ====================================
-    // DeliveryTripModule,
-    TimeSlotsModule, //-> update
+    DeliveryTripModule,
+    //-> update
 
     // ImagesModule,
     // FirebaseProviderModule,

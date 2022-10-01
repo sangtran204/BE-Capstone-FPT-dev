@@ -1,28 +1,24 @@
-import { MapInterceptor } from '@automapper/nestjs';
 import {
-  Body,
   Controller,
   Get,
   Param,
-  Delete,
-  Post,
-  UseInterceptors,
   HttpException,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { TimeSlotsService } from './time-slots.service';
 import { TimeSlotDTO } from './dto/time-slot.dto';
 import { TimeSlotEntity } from './entities/time-slots.entity';
+import { MapInterceptor } from '@automapper/nestjs';
 
 @ApiBearerAuth()
 @ApiTags('time-slots')
-@Controller('times-slots')
+@Controller('time-slots')
 export class TimeSlotsController {
   constructor(private readonly timeSlotsService: TimeSlotsService) {}
 
-  //List all timeSlot
   @Public()
   @Get()
   @ApiResponse({
@@ -30,69 +26,60 @@ export class TimeSlotsController {
     description: 'GET ALL TIME SLOT',
     type: [TimeSlotDTO],
   })
-  // @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
+  @UseInterceptors(
+    MapInterceptor(TimeSlotEntity, TimeSlotDTO, { isArray: true }),
+  )
   async findAll(): Promise<TimeSlotEntity[] | string> {
-    const listTimeSlots = await this.timeSlotsService.getAllTimeSlot();
+    const listTimeSlots = await this.timeSlotsService.query();
     if (!listTimeSlots || listTimeSlots.length == 0) {
       throw new HttpException('No data time slot', HttpStatus.NOT_FOUND);
     }
     return listTimeSlots;
   }
 
-  //List time slot follow flag
-  // @Public()
-  // @Get('/:flag')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'GET ALL TIME SLOT FOLLOW FLAG',
-  //   type: [TimeSlotDTO],
-  // })
-  // // @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
-  // async getTimeSlotFlag(
-  //   @Param('flag') flag: number,
-  // ): Promise<TimeSlotEntity[]> {
-  //   const listTimeSlotFlag = await this.timeSlotsService.getTimeSlotFlag(flag);
-  //   if (!listTimeSlotFlag || listTimeSlotFlag.length == 0) {
-  //     throw new HttpException('No data time slot', HttpStatus.NOT_FOUND);
-  //   }
-  //   return listTimeSlotFlag;
-  // }
+  @Public()
+  @Get('/:flag')
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL TIME SLOT FOLLOW FLAG',
+    type: [TimeSlotDTO],
+  })
+  @UseInterceptors(
+    MapInterceptor(TimeSlotEntity, TimeSlotDTO, { isArray: true }),
+  )
+  async getTimeSlotFlag(
+    @Param('flag') flag: number,
+  ): Promise<TimeSlotEntity[]> {
+    const listTimeSlotFlag = await this.timeSlotsService.query({
+      where: { flag: flag },
+    });
+    if (!listTimeSlotFlag || listTimeSlotFlag.length == 0) {
+      throw new HttpException(
+        "Don't have resource Time-slot",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return listTimeSlotFlag;
+  }
 
-  //Create time slot
-  // @Public()
-  // @Post()
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'CREATE TIME SLOT',
-  //   type: String,
-  // })
-  // async createTimeSlot(@Body() dto: TimeSlotDTO): Promise<string> {
-  //   return await this.timeSlotsService.createTimeSlot(dto);
-  // }
-
-  //Delete time slot
-  // @Public()
-  // @Delete('/:id')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'DELETE TIME SLOT',
-  //   type: String,
-  // })
-  // async deleteTimeSlot(@Param('id') id: string): Promise<string> {
-  //   return await this.timeSlotsService.deleteTimeSlot(id);
-  // }
-
-  // @Public()
-  // @Post('/:id')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'UPDATE TIME SLOT',
-  //   type: boolean,
-  // })
-  // async updateTimeSlot(
-  //   @Param('id') id: string,
-  //   @Body() dto: TimeSlotDTO,
-  // ): Promise<string> {
-  //   return await this.timeSlotsService.updateTimeSlot(id, dto);
-  // }
+  @Public()
+  @Get('find-by-id/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET TIME SLOT By ID',
+    type: TimeSlotDTO,
+  })
+  @UseInterceptors(MapInterceptor(TimeSlotEntity, TimeSlotDTO))
+  async finById(@Param('id') id: string): Promise<TimeSlotEntity> {
+    const timeSlot = await this.timeSlotsService.findOne({
+      where: { id: id },
+    });
+    if (!timeSlot) {
+      throw new HttpException(
+        "Don't have resource Time-slot",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return timeSlot;
+  }
 }

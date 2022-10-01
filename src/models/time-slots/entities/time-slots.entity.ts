@@ -4,13 +4,13 @@ import { Column, Entity } from 'typeorm';
 
 @Entity({ name: 'time_slots' })
 export class TimeSlotEntity extends BaseEntity {
-  @Column()
+  @Column('time')
   @AutoMap()
-  startTime: string;
+  startTime: Date;
 
-  @Column()
+  @Column('time')
   @AutoMap()
-  endTime: string;
+  endTime: Date;
 
   @Column()
   @AutoMap()

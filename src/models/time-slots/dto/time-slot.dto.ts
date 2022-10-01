@@ -3,10 +3,10 @@ import { BaseDTO } from '../../base/base.dto';
 
 export class TimeSlotDTO extends BaseDTO {
   @AutoMap()
-  startTime: string;
+  startTime: Date;
 
   @AutoMap()
-  endTime: string;
+  endTime: Date;
 
   @AutoMap()
   flag: number;

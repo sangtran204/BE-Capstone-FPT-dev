@@ -3,15 +3,15 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
 export class PackageEntity extends BaseEntity {
-  @Column('datetime')
+  @Column('date')
   @AutoMap()
   startSale: Date;
 
-  @Column('datetime')
+  @Column('date')
   @AutoMap()
   endSale: Date;
 
@@ -26,6 +26,10 @@ export class PackageEntity extends BaseEntity {
   @Column()
   @AutoMap()
   price: string;
+
+  @Column()
+  @AutoMap()
+  image: string;
 
   @Column()
   @AutoMap()
@@ -50,6 +54,7 @@ export class PackageEntity extends BaseEntity {
   @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.packages)
   packageItem: PackageItemEntity[];
 
-  @OneToMany(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
-  timeFrame: TimeFrameEntity[];
+  @AutoMap(() => TimeFrameEntity)
+  @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
+  timeFrame: TimeFrameEntity;
 }
