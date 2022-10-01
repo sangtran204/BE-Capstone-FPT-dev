@@ -32,7 +32,7 @@ export class PackageItemController {
   @ApiResponse({
     status: 200,
     description: 'GET ALL PACKAGE ITEM',
-    type: [PackageItemEntity],
+    type: [PackageItemDTO],
   })
   async getAllPackagaItem(): Promise<PackageItemEntity[]> {
     const list = await this.packageItemService.getAllPackageItem();
@@ -47,31 +47,31 @@ export class PackageItemController {
   //NEED Review Again
 
   //Update package item
-  @Public()
-  @Put('/:id')
-  @ApiOkResponse({
-    status: 200,
-    description: 'UPDATE PACKAGE ITEM',
-    type: String,
-  })
-  async updatePackageItem(
-    @Param('id') id: string,
-    @Body() dto: PackageItemDTO,
-  ): Promise<string> {
-    return await this.packageItemService.updatePackageItem(id, dto);
-  }
+  // @Public()
+  // @Put('/:id')
+  // @ApiOkResponse({
+  //   status: 200,
+  //   description: 'UPDATE PACKAGE ITEM',
+  //   type: String,
+  // })
+  // async updatePackageItem(
+  //   @Param('id') id: string,
+  //   @Body() dto: PackageItemDTO,
+  // ): Promise<string> {
+  //   return await this.packageItemService.updatePackageItem(id, dto);
+  // }
 
   //Delete package item
-  @Public()
-  @Delete('/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'DELETE PACKAGE ITEM',
-    type: String,
-  })
-  async deletePackageItem(@Param('id') id: string): Promise<string> {
-    return this.packageItemService.deletePackageItem(id);
-  }
+  // @Public()
+  // @Delete('/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'DELETE PACKAGE ITEM',
+  //   type: String,
+  // })
+  // async deletePackageItem(@Param('id') id: string): Promise<string> {
+  //   return this.packageItemService.deletePackageItem(id);
+  // }
 
   // ==============================================================================
 }

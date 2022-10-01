@@ -12,8 +12,4 @@ export class TimeFrameService extends BaseService<TimeFrameEntity> {
   ) {
     super(timeFrameRepository);
   }
-
-  async getAll(): Promise<TimeFrameEntity[]> {
-    return await this.query();
-  }
 }

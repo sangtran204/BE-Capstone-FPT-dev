@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import * as adminFirebase from 'firebase-admin';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { JwtConfigService } from 'src/config/jwt/config.service';
@@ -10,7 +9,6 @@ import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { CustomersService } from 'src/models/customers/customers.service';
 import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
-import { ProfileService } from 'src/models/profiles/profile.service';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { RolesService } from 'src/models/roles/roles.service';
 import { SharedService } from 'src/shared/shared.service';

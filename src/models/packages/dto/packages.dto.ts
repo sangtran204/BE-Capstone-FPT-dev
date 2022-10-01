@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+import { TimeFrameDTO } from 'src/models/time-frame/dto/time-frame.dto';
 import { BaseDTO } from '../../base/base.dto';
 
 export class PackageDTO extends BaseDTO {
@@ -18,6 +19,9 @@ export class PackageDTO extends BaseDTO {
   price: string;
 
   @AutoMap()
+  image: string;
+
+  @AutoMap()
   totalDate: number;
 
   @AutoMap()
@@ -31,4 +35,7 @@ export class PackageDTO extends BaseDTO {
 
   @AutoMap()
   status: string;
+
+  @AutoMap(() => TimeFrameDTO)
+  timeFrame: TimeFrameDTO;
 }

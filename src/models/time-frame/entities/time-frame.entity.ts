@@ -1,28 +1,18 @@
 import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { PackageEntity } from 'src/models/packages/entities/packages.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'time_frame' })
 export class TimeFrameEntity extends BaseEntity {
-  @Column('date')
+  @Column()
   @AutoMap()
-  startDelivery: Date;
-
-  @Column('date')
-  @AutoMap()
-  endDelivery: Date;
+  name: string;
 
   @Column()
   @AutoMap()
-  dateFilter: string;
+  dateFilter: number;
 
-  @AutoMap(() => PackageItemEntity)
-  @OneToMany(() => PackageItemEntity, (packageItem) => packageItem.timeFrame)
-  packageItem: PackageItemEntity[];
-
-  @AutoMap(() => PackageEntity)
-  @ManyToOne(() => PackageEntity, (packages) => packages.timeFrame)
-  packages: PackageEntity;
+  @OneToMany(() => PackageEntity, (packages) => packages.timeFrame)
+  packages: PackageEntity[];
 }

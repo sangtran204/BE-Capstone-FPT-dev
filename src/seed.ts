@@ -9,7 +9,7 @@ async function bootstrap(): Promise<void> {
     await seeder.insertRoles();
     await seeder.insertAccount();
     await seeder.insertTimeSlot();
-    // await seeder.insertVehicleTypes();
+    await seeder.insertTimeFrame();
     // await seeder.insertLocations(12);
     // await seeder.insertLocationCategory('hotel');
     // await seeder.insertLocationCategory('shopping');

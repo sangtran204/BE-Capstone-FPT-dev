@@ -8,7 +8,7 @@ import { PackageEntity } from '../entities/packages.entity';
 export class PackageProfile extends AutomapperProfile {
   get profile(): MappingProfile {
     return (mapper) => {
-      createMap(mapper, PackageDTO, PackageEntity);
+      createMap(mapper, PackageEntity, PackageDTO);
     };
   }
   constructor(@InjectMapper() mapper: Mapper) {
