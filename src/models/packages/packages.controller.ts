@@ -26,6 +26,7 @@ import { MapInterceptor } from '@automapper/nestjs';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { UpdatePackageDTO } from './dto/update-package.dto';
 
 @ApiBearerAuth()
 @ApiTags('packages')
@@ -49,6 +50,26 @@ export class PackageController {
     return listPackages;
   }
 
+  @Public()
+  @Get('find-by-id/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET PACKAGE BY ID',
+    type: PackageDTO,
+  })
+  async getPackageByID(@Param('id') id: string): Promise<PackageEntity> {
+    const packageRes = await this.packageService.findOne({
+      where: { id: id },
+      relations: {
+        timeFrame: true,
+      },
+    });
+    if (!packageRes) {
+      throw new HttpException("Dont't have resource", HttpStatus.NOT_FOUND);
+    }
+    return packageRes;
+  }
+
   //Get package
   @Public()
   @Get('/waiting')
@@ -64,7 +85,7 @@ export class PackageController {
         timeFrame: true,
       },
     });
-    if (!listPackages) {
+    if (!listPackages || listPackages.length == 0) {
       throw new HttpException(
         "Dont't have resource waiting",
         HttpStatus.NOT_FOUND,
@@ -77,19 +98,19 @@ export class PackageController {
   @Get('/active')
   @ApiResponse({
     status: 200,
-    description: 'GET WAITING PACKAGE',
+    description: 'GET ACTIVE PACKAGE',
     type: [PackageDTO],
   })
   async getPackageActive(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.query({
-      where: { status: StatusEnum.WAITING },
+      where: { status: StatusEnum.ACTIVE },
       relations: {
         timeFrame: true,
       },
     });
-    if (!listPackages) {
+    if (!listPackages || listPackages.length == 0) {
       throw new HttpException(
-        "Dont't have resource waiting",
+        "Dont't have resource Active",
         HttpStatus.NOT_FOUND,
       );
     }
@@ -116,18 +137,22 @@ export class PackageController {
 
   //Update package
   // @Public()
-  // @Post('/update/:id')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'UPDATE PACKAGE',
-  //   type: String,
-  // })
-  // async updatePackage(
-  //   @Param('id') id: string,
-  //   @Body() dto: PackageDTO,
-  // ): Promise<string> {
-  //   return await this.packageService.updatePackage(id, dto);
-  // }
+  @Roles(RoleEnum.MANAGER)
+  @Put('/update/:id')
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({
+    status: 200,
+    description: 'UPDATE PACKAGE',
+    type: String,
+  })
+  async updatePackage(
+    @Param('id') id: string,
+    @Body() data: UpdatePackageDTO,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<string> {
+    return await this.packageService.updatePackage(id, data, image);
+  }
 
   //Update package status
   // @Public()
