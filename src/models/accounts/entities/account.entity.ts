@@ -3,11 +3,12 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
+import { NotificationEntity } from 'src/models/notifications/entities/notification.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 // import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 @Entity({ name: 'accounts' })
 export class AccountEntity extends BaseEntity {
@@ -71,4 +72,7 @@ export class AccountEntity extends BaseEntity {
   @OneToOne(() => ProfileEntity, (profile) => profile.account)
   @AutoMap(() => ProfileEntity)
   profile: ProfileEntity;
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.account)
+  notifications: NotificationEntity[];
 }

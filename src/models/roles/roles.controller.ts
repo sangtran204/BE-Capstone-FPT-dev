@@ -15,7 +15,7 @@ export class RolesController {
   @Get()
   @Public()
   @UseInterceptors(MapInterceptor(RoleEntity, RoleDTO, { isArray: true }))
-  getAll(): Promise<RoleEntity[]> {
-    return this.rolesService.query();
+  async getAll(): Promise<RoleEntity[]> {
+    return await this.rolesService.query();
   }
 }

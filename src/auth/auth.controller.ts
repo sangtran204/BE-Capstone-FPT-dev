@@ -32,31 +32,31 @@ export class AuthenticationController {
   //   return await this.authService.verifySignUp(dto);
   // }
 
-  @Post('logn-in/customer')
+  @Post('login/customer')
   @Public()
   async loginCustomer(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.CUSTOMER);
   }
 
-  @Post('login-in/kitchen')
+  @Post('login/kitchen')
   @Public()
   async loginKitchen(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.KITCHEN);
   }
 
-  @Post('login-in/shipper')
+  @Post('login/shipper')
   @Public()
   async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.SHIPPER);
   }
 
-  @Post('login-in/manager')
+  @Post('login/manager')
   @Public()
   async loginManager(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.MANAGER);
   }
 
-  @Post('login-in/admin')
+  @Post('login/admin')
   @Public()
   async loginAdmin(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(dto, RoleEnum.ADMIN);

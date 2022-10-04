@@ -26,7 +26,9 @@ import { ProfileModule } from './models/profiles/profile.module';
 import { SharedModule } from './shared/shared.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TimeFrameModule } from './models/time-frame/time-frame.module';
-import { ShippersModule } from './models/shippers/shipper.module';
+import { ShippersModule } from './models/shippers/shippers.module';
+import { OrdersModule } from './models/orders/order.module';
+import { FirebaseProviderModule } from './providers/firebase/provider.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -51,6 +53,8 @@ import { ShippersModule } from './models/shippers/shipper.module';
     StationsModule,
     TimeSlotsModule,
     // ====================================
+    OrdersModule,
+    FirebaseProviderModule,
     DeliveryTripModule,
     //-> update
 
