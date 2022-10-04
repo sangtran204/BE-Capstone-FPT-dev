@@ -46,6 +46,16 @@ export const getData = (): {
     email: 'shipper@gmail.com',
   },
   {
+    phone: '0456789123',
+    password: pass,
+    role: RoleEnum.SHIPPER,
+    status: StatusEnum.ACTIVE,
+    fullName: faker.name.firstName(),
+    dob: faker.date.birthdate(),
+    avatar: '/images/default.png',
+    email: 'shipper123@gmail.com',
+  },
+  {
     phone: '0123456787',
     password: pass,
     role: RoleEnum.KITCHEN,
@@ -54,6 +64,16 @@ export const getData = (): {
     dob: faker.date.birthdate(),
     avatar: '/images/default.png',
     email: 'kitchen@gmail.com',
+  },
+  {
+    phone: '0111223344',
+    password: pass,
+    role: RoleEnum.KITCHEN,
+    status: StatusEnum.ACTIVE,
+    fullName: faker.name.firstName(),
+    dob: faker.date.birthdate(),
+    avatar: '/images/default.png',
+    email: 'kitchen1213@gmail.com',
   },
   {
     phone: '0123456786',

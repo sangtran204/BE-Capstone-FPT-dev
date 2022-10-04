@@ -106,7 +106,7 @@ export class AuthService {
       throw new HttpException('Account invalid', HttpStatus.BAD_REQUEST);
     const isCorrectPassword = await bcrypt.compare(password, user.password);
     if (!isCorrectPassword)
-      throw new HttpException('Account invalid', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
     const payload: Payload = { phone, role };
     const refreshToken = this.jwtService.sign(
       { id: user.id },

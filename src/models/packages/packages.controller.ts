@@ -42,7 +42,7 @@ export class PackageController {
     description: 'GET ALL PACKAGE',
     type: [PackageDTO],
   })
-  async getAllPackage(): Promise<PackageEntity[] | string> {
+  async getAllPackage(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.listAllPackage();
     if (!listPackages || listPackages.length == 0) {
       throw new HttpException('No data package', HttpStatus.NOT_FOUND);

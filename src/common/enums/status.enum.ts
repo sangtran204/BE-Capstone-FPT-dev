@@ -4,9 +4,15 @@ export const enum StatusEnum {
   BAN = 'ban',
   DELETE = 'delete',
   WAITING = 'waiting',
+
+  NOT_SEEN = 'notSeen',
+  SEEN = 'seen',
+  UNCONFIRMED = 'unconfirmed',
+  WAIT_PAYMENT = 'waitPayment',
+  PENDING = 'pending',
   READY = 'ready',
   DELIVERY = 'delivery',
-  ARRIVED = 'arrived',
+  PROGRESS = 'progress',
   RECEIVED = 'received',
   CANCEL = 'cancel',
 }
