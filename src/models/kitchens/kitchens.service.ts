@@ -16,7 +16,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
   async findAll(): Promise<KitchenEntity[]> {
     return await this.kitchensRepository.find({
       relations: {
-        account: { profile: true },
+        account: true,
       },
     });
   }

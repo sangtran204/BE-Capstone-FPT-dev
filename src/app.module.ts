@@ -57,8 +57,6 @@ import { FirebaseProviderModule } from './providers/firebase/provider.module';
     FirebaseProviderModule,
     DeliveryTripModule,
     //-> update
-
-    // ImagesModule,
     // FirebaseProviderModule,
     ScheduleModule.forRoot(),
   ],
