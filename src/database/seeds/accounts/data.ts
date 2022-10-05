@@ -36,6 +36,16 @@ export const getData = (): {
     email: 'nhi123@gmail.com',
   },
   {
+    phone: '0777888999',
+    password: pass,
+    role: RoleEnum.MANAGER,
+    status: StatusEnum.ACTIVE,
+    fullName: faker.name.firstName(),
+    dob: faker.date.birthdate(),
+    avatar: '/images/default.png',
+    email: 'tsama@gmail.com',
+  },
+  {
     phone: '0111222333',
     password: pass,
     role: RoleEnum.SHIPPER,

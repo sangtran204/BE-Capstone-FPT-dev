@@ -36,7 +36,7 @@ export class ShipperEntity extends BaseEntity {
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 
-  // @AutoMap(() => KitchenEntity)
+  @AutoMap(() => KitchenEntity)
   @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.shippers)
   kitchen: KitchenEntity;
 }

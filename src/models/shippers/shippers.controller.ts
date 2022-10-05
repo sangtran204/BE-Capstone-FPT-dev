@@ -8,11 +8,8 @@ import {
   Param,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
-import { GetUser } from 'src/decorators/user.decorator';
-import { AccountEntity } from '../accounts/entities/account.entity';
 import { ShipperDTO } from './dto/shipper.dto';
 import { ShipperEntity } from './entities/shipper.entity';
 import { ShippersService } from './shippers.service';
@@ -51,41 +48,17 @@ export class ShippersController {
     type: ShipperDTO,
   })
   @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
-  async findKitchenByID(@Param('id') id: string): Promise<ShipperEntity> {
-    const listKitchen = await this.shippersService.findOne({
+  async findShipperByID(@Param('id') id: string): Promise<ShipperEntity> {
+    const shipper = await this.shippersService.findOne({
       where: { id: id },
       relations: { account: { profile: true } },
     });
-    if (!listKitchen) {
-      throw new HttpException(
-        "Dont't have resource Kitchen",
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return listKitchen;
-  }
-
-  @Roles(RoleEnum.KITCHEN)
-  @Get('/kitchen/:idHotel')
-  @ApiResponse({
-    status: 200,
-    description: 'GET SHIPPER BY KITCHEN',
-    type: [ShipperDTO],
-  })
-  async getShipperByKitchenID(
-    @Param('idHotel') idHotel: string,
-    @GetUser() user: AccountEntity,
-  ): Promise<ShipperEntity[]> {
-    const listShip = await this.shippersService.getShipperByKitchenID(
-      idHotel,
-      user,
-    );
-    if (!listShip) {
+    if (!shipper) {
       throw new HttpException(
         "Dont't have resource shipper",
         HttpStatus.NOT_FOUND,
       );
     }
-    return listShip;
+    return shipper;
   }
 }

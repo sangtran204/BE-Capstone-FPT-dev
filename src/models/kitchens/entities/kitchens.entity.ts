@@ -27,7 +27,6 @@ export class KitchenEntity extends BaseEntity {
   // @AutoMap(() => AccountEntity)
   @OneToOne(() => AccountEntity, (account) => account.kitchen, {
     onDelete: 'CASCADE',
-    createForeignKeyConstraints: true,
   })
   @JoinColumn({ name: 'id' })
   account: AccountEntity;

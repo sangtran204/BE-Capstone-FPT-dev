@@ -35,7 +35,7 @@ export class AccountsController {
   @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
   async getUserById(@Param('id') id: string): Promise<AccountEntity> {
     const accounts = await this.accountsService.findOne({
-      where: { id },
+      where: { id: id },
       relations: {
         role: true,
         profile: true,

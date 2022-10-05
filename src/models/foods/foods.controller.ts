@@ -19,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
@@ -33,7 +32,6 @@ import { FoodsService } from './foods.service';
 export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
 
-  @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -52,7 +50,6 @@ export class FoodsController {
     return listFood;
   }
 
-  @Public()
   @Get('/active')
   @ApiResponse({
     status: 200,
@@ -71,7 +68,6 @@ export class FoodsController {
     return listFood;
   }
 
-  @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -93,7 +89,6 @@ export class FoodsController {
     return food;
   }
 
-  @Public()
   @Get('category/:id')
   @ApiResponse({
     status: 200,
@@ -105,9 +100,8 @@ export class FoodsController {
     return await this.foodsService.getFoodByCategory(idCate);
   }
 
-  @Public()
   @Post()
-  // @Roles(RoleEnum.MANAGER)
+  @Roles(RoleEnum.MANAGER)
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
@@ -124,9 +118,8 @@ export class FoodsController {
   }
 
   // Update
-  @Put('/update-food/:id')
-  // @Roles(RoleEnum.MANAGER)
-  @Public()
+  @Put('/:id')
+  @Roles(RoleEnum.MANAGER)
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
@@ -143,7 +136,6 @@ export class FoodsController {
   }
 
   // Remove Food = Update status
-  // @Public()
   @Put('/update-status/:id')
   @Roles(RoleEnum.MANAGER)
   @ApiResponse({
