@@ -11,7 +11,7 @@ export class TimeFrameEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  dateFilter: number;
+  dateFilter: string;
 
   @OneToMany(() => PackageEntity, (packages) => packages.timeFrame)
   packages: PackageEntity[];
