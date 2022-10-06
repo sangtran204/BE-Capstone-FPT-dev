@@ -6,7 +6,7 @@ export class CreateFrameDTO {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ type: Number })
+  @ApiProperty()
   @IsNotEmpty()
-  dateFilter: number;
+  dateFilter: string;
 }

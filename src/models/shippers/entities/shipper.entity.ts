@@ -17,7 +17,7 @@ export class ShipperEntity extends BaseEntity {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   @AutoMap()
   noPlate: string;
 

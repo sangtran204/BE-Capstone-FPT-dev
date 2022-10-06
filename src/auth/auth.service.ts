@@ -14,6 +14,7 @@ import { ProfileService } from 'src/models/profiles/profile.service';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { RolesService } from 'src/models/roles/roles.service';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import { ShippersService } from 'src/models/shippers/shippers.service';
 import { SharedService } from 'src/shared/shared.service';
 import { DataSource, EntityManager } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly profileService: ProfileService,
     private readonly rolesService: RolesService,
     private readonly customerService: CustomersService,
+    private readonly shipperService: ShippersService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
     private readonly sharedService: SharedService, // private readonly mailService: MailService,
@@ -97,6 +99,14 @@ export class AuthService {
     if (Boolean(checkEmail)) {
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
+
+    const checkNoPlate = await this.shipperService.findOne({
+      where: { noPlate: register.noPlate },
+    });
+    if (Boolean(checkNoPlate)) {
+      throw new HttpException('noPlate already exists', HttpStatus.BAD_REQUEST);
+    }
+
     register.password = await bcrypt.hash(register.password, 10);
     const callback = async (entityManager: EntityManager): Promise<void> => {
       const role = await entityManager.findOne(RoleEntity, {
@@ -108,6 +118,7 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           phone: register.phone,
           password: register.password,
+          status: StatusEnum.ACTIVE,
           role,
         }),
       );
@@ -163,6 +174,7 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           phone: register.phone,
           password: register.password,
+          status: StatusEnum.ACTIVE,
           role,
         }),
       );
