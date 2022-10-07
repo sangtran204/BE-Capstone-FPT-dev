@@ -31,7 +31,7 @@ export class PackageCategoriesService extends BaseService<PackageCategoryEntity>
   async getCategoryHasPackageActive(): Promise<PackageCategoryEntity[]> {
     const categoryList = await this.packgeCategoriesRepository
       .createQueryBuilder('package_categories')
-      .leftJoinAndSelect('package_categories.packagess', 'packages')
+      .leftJoinAndSelect('package_categories.packages', 'packages')
       .where('packages.status = :status', { status: 'active' })
       .getMany();
     if (!categoryList || categoryList.length == 0) {
