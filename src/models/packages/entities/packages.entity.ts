@@ -2,6 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
+import { PackageCategoryEntity } from 'src/models/package-categories/entities/package-categories.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
@@ -61,4 +62,11 @@ export class PackageEntity extends BaseEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.packages)
   orders: OrderEntity[];
+
+  @AutoMap(() => PackageCategoryEntity)
+  @ManyToOne(
+    () => PackageCategoryEntity,
+    (packageCategory) => packageCategory.packagess,
+  )
+  packageCategory: PackageCategoryEntity;
 }

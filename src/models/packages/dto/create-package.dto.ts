@@ -42,4 +42,8 @@ export class CreatePackageDTO {
   @ApiProperty({ type: String })
   @IsNotEmpty()
   timeFrameID: string;
+
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  categoryID: string;
 }
