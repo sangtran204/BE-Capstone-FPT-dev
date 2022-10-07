@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+import { PackageCategoryDTO } from 'src/models/package-categories/dto/package-category.dto';
 import { TimeFrameDTO } from 'src/models/time-frame/dto/time-frame.dto';
 import { BaseDTO } from '../../base/base.dto';
 
@@ -38,4 +39,7 @@ export class PackageDTO extends BaseDTO {
 
   @AutoMap(() => TimeFrameDTO)
   timeFrame: TimeFrameDTO;
+
+  @AutoMap(() => PackageCategoryDTO)
+  packageCategory: PackageCategoryDTO;
 }

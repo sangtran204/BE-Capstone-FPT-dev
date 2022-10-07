@@ -29,6 +29,7 @@ import { TimeFrameModule } from './models/time-frame/time-frame.module';
 import { ShippersModule } from './models/shippers/shippers.module';
 import { OrdersModule } from './models/orders/order.module';
 import { FirebaseProviderModule } from './providers/firebase/provider.module';
+import { PackageCategoriesModule } from './models/package-categories/package-categories.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -52,6 +53,7 @@ import { FirebaseProviderModule } from './providers/firebase/provider.module';
     PackageItemModule,
     StationsModule,
     TimeSlotsModule,
+    PackageCategoriesModule,
     // ====================================
     OrdersModule,
     FirebaseProviderModule,

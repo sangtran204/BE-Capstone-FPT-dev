@@ -7,6 +7,9 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { CreatePackageDTO } from './dto/create-package.dto';
 import { TimeFrameService } from '../time-frame/time-frame.service';
 import { UpdatePackageDTO } from './dto/update-package.dto';
+import { InjectMapper } from '@automapper/nestjs';
+import { PackageCategoriesService } from '../package-categories/package-categories.service';
+import { Mapper } from '@automapper/core';
 
 @Injectable()
 export class PackageService extends BaseService<PackageEntity> {
@@ -14,13 +17,15 @@ export class PackageService extends BaseService<PackageEntity> {
     @InjectRepository(PackageEntity)
     private readonly packagesRepository: Repository<PackageEntity>,
     private readonly frameService: TimeFrameService,
+    @InjectMapper() private readonly mapper: Mapper,
+    private readonly categoryService: PackageCategoriesService,
   ) {
     super(packagesRepository);
   }
 
   async listAllPackage(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
-      relations: { timeFrame: true },
+      relations: { timeFrame: true, packageCategory: true },
     });
   }
 
@@ -31,6 +36,9 @@ export class PackageService extends BaseService<PackageEntity> {
     const frame = await this.frameService.findOne({
       where: { id: data.timeFrameID },
     });
+    const category = await this.categoryService.findOne({
+      where: { id: data.categoryID },
+    });
     if (data.startSale > data.endSale)
       throw new HttpException(
         'start Sale must less than end Sale',
@@ -39,6 +47,11 @@ export class PackageService extends BaseService<PackageEntity> {
     if (!frame) {
       throw new HttpException(
         `Frame ID not found : ${data.timeFrameID}`,
+        HttpStatus.NOT_FOUND,
+      );
+    } else if (!category) {
+      throw new HttpException(
+        `Category ID not found: ${data.categoryID}`,
         HttpStatus.NOT_FOUND,
       );
     } else {
@@ -55,6 +68,7 @@ export class PackageService extends BaseService<PackageEntity> {
         totalMeal: data.totalMeal,
         totalStation: data.totalStation,
         timeFrame: frame,
+        packageCategory: category,
       });
     }
   }
@@ -73,6 +87,9 @@ export class PackageService extends BaseService<PackageEntity> {
       const frame = await this.frameService.findOne({
         where: { id: data.timeFrameID },
       });
+      const category = await this.categoryService.findOne({
+        where: { id: data.categoryID },
+      });
       if (data.startSale > data.endSale)
         throw new HttpException(
           'start Sale must less than end Sale',
@@ -81,6 +98,11 @@ export class PackageService extends BaseService<PackageEntity> {
       if (!frame) {
         throw new HttpException(
           `Frame ID not found : ${data.timeFrameID}`,
+          HttpStatus.NOT_FOUND,
+        );
+      } else if (!category) {
+        throw new HttpException(
+          `Category ID not found: ${data.categoryID}`,
           HttpStatus.NOT_FOUND,
         );
       } else {
@@ -98,6 +120,7 @@ export class PackageService extends BaseService<PackageEntity> {
           totalMeal: data.totalMeal,
           totalStation: data.totalStation,
           timeFrame: frame,
+          packageCategory: category,
         });
         return 'Update Package Successful';
       }
