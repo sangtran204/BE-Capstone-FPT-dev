@@ -14,6 +14,6 @@ export class PackageCategoryEntity extends BaseEntity {
   image: string;
 
   @AutoMap(() => PackageEntity)
-  @OneToMany(() => PackageEntity, (packagess) => packagess.packageCategory)
-  packagess: PackageEntity[];
+  @OneToMany(() => PackageEntity, (packages) => packages.packageCategory)
+  packages: PackageEntity[];
 }

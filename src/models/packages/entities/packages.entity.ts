@@ -66,7 +66,7 @@ export class PackageEntity extends BaseEntity {
   @AutoMap(() => PackageCategoryEntity)
   @ManyToOne(
     () => PackageCategoryEntity,
-    (packageCategory) => packageCategory.packagess,
+    (packageCategory) => packageCategory.packages,
   )
   packageCategory: PackageCategoryEntity;
 }
