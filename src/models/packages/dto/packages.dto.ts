@@ -17,7 +17,7 @@ export class PackageDTO extends BaseDTO {
   description: string;
 
   @AutoMap()
-  price: string;
+  price: number;
 
   @AutoMap()
   image: string;

@@ -1,4 +1,3 @@
-// import {} from
 import {
   Controller,
   Get,
@@ -8,14 +7,11 @@ import {
   Put,
   Param,
   Body,
+  Post,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { CreatePackageItemDTO } from './dto/create-package-item.dto';
 import { PackageItemDTO } from './dto/package-item.dto';
 import { PackageItemEntity } from './entities/package-item.entity';
 import { PackageItemService } from './package-item.service';
@@ -26,7 +22,6 @@ import { PackageItemService } from './package-item.service';
 export class PackageItemController {
   constructor(private readonly packageItemService: PackageItemService) {}
 
-  //Get all package item.
   @Public()
   @Get()
   @ApiResponse({
@@ -42,6 +37,19 @@ export class PackageItemController {
       return list;
     }
   }
+
+  // @Public()
+  // @Post()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Create Package Item',
+  //   type: PackageItemDTO,
+  // })
+  // async createPackageItem(
+  //   @Body() createDTO: CreatePackageItemDTO,
+  // ): Promise<PackageItemEntity> {
+  //   return await this.packageItemService.createPackageItem(createDTO);
+  // }
 
   // ==============================================================================
   //NEED Review Again

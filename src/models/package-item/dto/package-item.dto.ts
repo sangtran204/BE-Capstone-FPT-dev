@@ -4,16 +4,13 @@ import { FoodGroupDTO } from 'src/models/food-group/dto/food-group.dto';
 
 export class PackageItemDTO extends BaseDTO {
   @AutoMap()
-  startDate: Date;
-
-  @AutoMap()
-  endDate: Date;
+  deliveryDate: Date;
 
   @AutoMap()
   maxFood: number;
 
   @AutoMap()
-  maxAmount: string;
+  totalGroup: number;
 
   @AutoMap(() => [FoodGroupDTO])
   foodGroups: FoodGroupDTO[];

@@ -27,7 +27,7 @@ export class PackageEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  price: string;
+  price: number;
 
   @Column()
   @AutoMap()
