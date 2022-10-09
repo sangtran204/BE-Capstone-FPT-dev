@@ -69,7 +69,7 @@ export class TimeFrameController {
 
   // @Public()
   @Post()
-  @Roles(RoleEnum.ADMIN)
+  @Roles(RoleEnum.MANAGER)
   @ApiResponse({
     status: 200,
     description: 'Created new frame successfully',
