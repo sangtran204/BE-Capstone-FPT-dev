@@ -5,5 +5,5 @@ export class TimeFrameDTO extends BaseDTO {
   name: string;
 
   @AutoMap()
-  dateFilter: number;
+  dateFilter: string;
 }

@@ -17,8 +17,7 @@ export class CreatePackageDTO {
   description: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  price: string;
+  price: number;
 
   @ApiProperty({ type: String, format: 'binary' })
   image: object;

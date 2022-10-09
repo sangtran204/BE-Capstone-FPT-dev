@@ -2,17 +2,14 @@ import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodGroupEntity } from 'src/models/food-group/entities/food-group.entity';
 import { PackageEntity } from 'src/models/packages/entities/packages.entity';
+import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'package_item' })
 export class PackageItemEntity extends BaseEntity {
   @Column('date')
   @AutoMap()
-  startDate: Date;
-
-  @Column('date')
-  @AutoMap()
-  endDate: Date;
+  deliveryDate: Date;
 
   @Column()
   @AutoMap()
@@ -20,7 +17,7 @@ export class PackageItemEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  maxAmount: string;
+  totalGroup: number;
 
   @AutoMap(() => [FoodGroupEntity])
   @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.packageItem)
@@ -30,4 +27,8 @@ export class PackageItemEntity extends BaseEntity {
   @AutoMap(() => PackageEntity)
   @ManyToOne(() => PackageEntity, (packages) => packages.packageItem)
   packages: PackageEntity;
+
+  @AutoMap(() => TimeFrameEntity)
+  @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packageItem)
+  timeFrame: TimeFrameEntity;
 }
