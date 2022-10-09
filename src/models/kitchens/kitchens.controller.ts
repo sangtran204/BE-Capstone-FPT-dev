@@ -32,8 +32,11 @@ export class KitchenController {
     description: 'GET ALL KITCHEN',
     type: [KitchenDTO],
   })
+  @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO, { isArray: true }))
   async fidnAll(): Promise<KitchenEntity[]> {
-    const listKitchen = await this.kitchenService.findAll();
+    const listKitchen = await this.kitchenService.query({
+      relations: { account: { profile: true } },
+    });
     if (!listKitchen || listKitchen.length == 0) {
       throw new HttpException(
         "Dont't have resource Kitchen",
@@ -50,6 +53,7 @@ export class KitchenController {
     description: 'GET KITCHEN BY ID',
     type: KitchenDTO,
   })
+  // @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO))
   async findKitchenByID(@Param('id') id: string): Promise<KitchenEntity> {
     const listKitchen = await this.kitchenService.findOne({
       where: { id: id },
