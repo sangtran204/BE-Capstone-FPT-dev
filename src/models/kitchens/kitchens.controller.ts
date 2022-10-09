@@ -32,7 +32,7 @@ export class KitchenController {
     description: 'GET ALL KITCHEN',
     type: [KitchenDTO],
   })
-  @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO, { isArray: true }))
   async fidnAll(): Promise<KitchenEntity[]> {
     const listKitchen = await this.kitchenService.query({
       relations: { account: { profile: true } },
