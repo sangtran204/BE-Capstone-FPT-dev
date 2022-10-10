@@ -49,28 +49,28 @@ export class PackageService extends BaseService<PackageEntity> {
         `Frame ID not found : ${data.timeFrameID}`,
         HttpStatus.NOT_FOUND,
       );
-    } else if (!category) {
+    }
+    if (!category) {
       throw new HttpException(
         `Category ID not found: ${data.categoryID}`,
         HttpStatus.NOT_FOUND,
       );
-    } else {
-      const imageRes = await this.uploadImageToFirebase(image);
-      return await this.save({
-        startSale: data.startSale,
-        endSale: data.endSale,
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        image: imageRes,
-        totalDate: data.totalDate,
-        totalFood: data.totalFood,
-        totalMeal: data.totalMeal,
-        totalStation: data.totalStation,
-        timeFrame: frame,
-        packageCategory: category,
-      });
     }
+    const imageRes = await this.uploadImageToFirebase(image);
+    return await this.save({
+      startSale: data.startSale,
+      endSale: data.endSale,
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      image: imageRes,
+      totalDate: data.totalDate,
+      totalFood: data.totalFood,
+      totalMeal: data.totalMeal,
+      totalStation: data.totalStation,
+      timeFrame: frame,
+      packageCategory: category,
+    });
   }
 
   async updatePackage(

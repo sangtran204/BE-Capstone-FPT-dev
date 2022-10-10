@@ -187,7 +187,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       relations: {
         customer: { account: { profile: true } },
         packages: {
-          packageItem: { foodGroups: { foods: true } },
+          packageItem: { foodGroup: { foods: true } },
         },
       },
     });

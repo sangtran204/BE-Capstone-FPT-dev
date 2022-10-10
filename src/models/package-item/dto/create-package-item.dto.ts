@@ -1,17 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, Max, Min } from 'class-validator';
+import { IsNotEmpty, Max, Min } from 'class-validator';
 
 export class CreatePackageItemDTO {
   @ApiProperty()
-  deliveryDate: Date;
-
-  @ApiProperty()
-  totalGroup: number;
-
-  @ApiProperty()
-  @Max(10)
+  @Max(4)
   @Min(1)
-  maxFood: number;
+  maxAmount: number;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()
@@ -21,7 +15,11 @@ export class CreatePackageItemDTO {
   @IsNotEmpty()
   timeFrameID: string;
 
-  @ApiProperty({ type: [String] })
-  @IsUUID(null, { each: true, message: 'ID FoodGroup must be unique' })
-  foodGroupIds: string[];
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  foodGroupID: string;
+
+  // @ApiProperty({ type: [String] })
+  // @IsUUID(null, { each: true, message: 'ID FoodGroup must be unique' })
+  // foodGroupIds: string[];
 }

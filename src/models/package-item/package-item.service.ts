@@ -1,11 +1,13 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { StatusEnum } from 'src/common/enums/status.enum';
 import { Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
 import { FoodGroupService } from '../food-group/food-group.service';
 import { PackageService } from '../packages/packages.service';
+import { TimeFrameService } from '../time-frame/time-frame.service';
 import { CreatePackageItemDTO } from './dto/create-package-item.dto';
-import { PackageItemDTO } from './dto/package-item.dto';
+import { UpdatePackageItemDTO } from './dto/update-package-item';
 import { PackageItemEntity } from './entities/package-item.entity';
 
 @Injectable()
@@ -15,29 +17,29 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     private readonly packageItemRepository: Repository<PackageItemEntity>,
     private readonly foodGroupService: FoodGroupService,
     private readonly packageService: PackageService,
+    private readonly frameService: TimeFrameService,
   ) {
     super(packageItemRepository);
   }
 
   async getAllPackageItem(): Promise<PackageItemEntity[]> {
     return await this.packageItemRepository.find({
-      relations: { foodGroups: true },
+      relations: { foodGroup: true },
     });
   }
 
   async createPackageItem(
     data: CreatePackageItemDTO,
   ): Promise<PackageItemEntity> {
-    const {
-      deliveryDate,
-      maxFood,
-      totalGroup,
-      packageID,
-      timeFrameID,
-      foodGroupIds,
-    } = data;
+    const { maxAmount, packageID, timeFrameID, foodGroupID } = data;
     const packageCheck = await this.packageService.findOne({
       where: { id: packageID },
+    });
+    const foodGroupCheck = await this.foodGroupService.findOne({
+      where: { id: foodGroupID },
+    });
+    const frameCheck = await this.frameService.findOne({
+      where: { id: timeFrameID },
     });
     if (!packageCheck) {
       throw new HttpException(
@@ -45,30 +47,42 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
         HttpStatus.NOT_FOUND,
       );
     }
-    const foodGroup = await this.foodGroupService.query({
-      where: foodGroupIds.map((id) => ({ id })),
-    });
-    if (!foodGroup || foodGroup.length === 0) {
+
+    if (!frameCheck) {
       throw new HttpException(
-        'Not found FoodGroup in system',
+        `${timeFrameID} frame:  not found`,
         HttpStatus.NOT_FOUND,
       );
     }
-    if (foodGroup.length > totalGroup) {
+
+    if (packageCheck.timeFrame.id !== timeFrameID) {
       throw new HttpException(
-        'FoodGroups must be less than or equal to TotalFood',
+        'Time Frame in Package must be like timeFrame ID',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!foodGroupCheck) {
+      throw new HttpException(
+        `${foodGroupID} foodGroup: Not found`,
         HttpStatus.NOT_FOUND,
       );
     }
-    const newPackage = await this.packageItemRepository.save({
-      deliveryDate: deliveryDate,
-      totalGroup: totalGroup,
-      maxFood: maxFood,
-      foodGroup,
+    if (foodGroupCheck.status !== StatusEnum.ACTIVE) {
+      throw new HttpException(
+        'Food Group is InActive can not add',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const newPackageItem = await this.packageItemRepository.save({
+      maxAmount: maxAmount,
+      packageCheck,
+      frameCheck,
+      foodGroupCheck,
     });
     return await this.findOne({
-      where: { id: newPackage.id },
-      relations: { foodGroups: true },
+      where: { id: newPackageItem.id },
+      relations: { foodGroup: true },
     });
   }
 
@@ -96,31 +110,71 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
   //   }
   // }
 
-  // async updatePackageItem(id: string, dto: PackageItemDTO): Promise<string> {
-  //   const item = await this.packageItemRepository.findOne({
-  //     where: { id: id },
-  //   });
+  async updatePackageItem(
+    id: string,
+    dto: UpdatePackageItemDTO,
+  ): Promise<string> {
+    const { maxAmount, packageID, timeFrameID, foodGroupID } = dto;
+    const item = await this.packageItemRepository.findOne({
+      where: { id: id },
+    });
 
-  //   if (!item) {
-  //     throw new HttpException(
-  //       `Package item ${id} not found`,
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   } else {
-  //     try {
-  //       await this.packageItemRepository.update(
-  //         { id: id },
-  //         {
-  //           startDate: dto.startDate,
-  //           endDate: dto.endDate,
-  //           maxFood: dto.maxFood,
-  //           maxAmount: dto.maxAmount,
-  //         },
-  //       );
-  //       return 'Package item updated';
-  //     } catch (error) {
-  //       throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //     }
-  //   }
-  // }
+    if (!item) {
+      throw new HttpException(
+        `Package item ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const packageCheck = await this.packageService.findOne({
+      where: { id: packageID },
+    });
+    const foodGroupCheck = await this.foodGroupService.findOne({
+      where: { id: foodGroupID },
+    });
+    const frameCheck = await this.frameService.findOne({
+      where: { id: timeFrameID },
+    });
+    if (!packageCheck) {
+      throw new HttpException(
+        `${packageID} package:  not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (!frameCheck) {
+      throw new HttpException(
+        `${timeFrameID} frame:  not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (packageCheck.timeFrame.id !== timeFrameID) {
+      throw new HttpException(
+        'Time Frame in Package must be like timeFrame ID',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!foodGroupCheck) {
+      throw new HttpException(
+        `${foodGroupID} foodGroup: Not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (foodGroupCheck.status !== StatusEnum.ACTIVE) {
+      throw new HttpException(
+        'Food Group is InActive can not add',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.packageItemRepository.save({
+      id: id,
+      maxAmount: maxAmount,
+      packageCheck,
+      frameCheck,
+      foodGroupCheck,
+    });
+    return 'Package item updated successful';
+  }
 }

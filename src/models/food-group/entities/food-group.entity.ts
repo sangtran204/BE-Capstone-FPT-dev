@@ -3,7 +3,7 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodEntity } from 'src/models/foods/entities/foods.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity({ name: 'food_groups' })
 export class FoodGroupEntity extends BaseEntity {
@@ -28,6 +28,9 @@ export class FoodGroupEntity extends BaseEntity {
   @JoinTable({ name: 'food_group_item' })
   foods: FoodEntity[];
 
-  @ManyToMany(() => PackageItemEntity, (packageItem) => packageItem.foodGroups)
+  @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.foodGroup)
   packageItem: PackageItemEntity[];
+
+  // @ManyToMany(() => PackageItemEntity, (packageItem) => packageItem.foodGroups)
+  // packageItem: PackageItemEntity[];
 }
