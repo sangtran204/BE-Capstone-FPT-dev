@@ -27,15 +27,15 @@ export class OrderEntity extends BaseEntity {
   @AutoMap()
   status: string;
 
-  @ManyToOne(() => CustomerEntity, (customer) => customer.orders, {
-    nullable: false,
-  })
+  // @ManyToOne(() => CustomerEntity, (customer) => customer.orders, {
+  //   nullable: false,
+  // })
   @AutoMap(() => CustomerEntity)
   customer: CustomerEntity;
 
-  @ManyToOne(() => PackageEntity, (packages) => packages.orders, {
-    nullable: false,
-  })
+  // @ManyToOne(() => PackageEntity, (packages) => packages.orders, {
+  //   nullable: false,
+  // })
   @AutoMap(() => PackageEntity)
   packages: PackageEntity;
 
