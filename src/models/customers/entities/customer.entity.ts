@@ -1,7 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { OrderEntity } from 'src/models/orders/entities/order.entity';
+// import { OrderEntity } from 'src/models/orders/entities/order.entity';
+import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
 import {
   Column,
   Entity,
@@ -27,6 +28,6 @@ export class CustomerEntity extends BaseEntity {
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 
-  @OneToMany(() => OrderEntity, (order) => order.customer)
-  orders: OrderEntity[];
+  @OneToMany(() => SubscriptionEntity, (subscription) => subscription.customer)
+  subscriptions: SubscriptionEntity[];
 }
