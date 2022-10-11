@@ -30,6 +30,7 @@ import { ShippersModule } from './models/shippers/shippers.module';
 import { OrdersModule } from './models/orders/order.module';
 import { FirebaseProviderModule } from './providers/firebase/provider.module';
 import { PackageCategoriesModule } from './models/package-categories/package-categories.module';
+import { SubscriptionModule } from './models/subscriptions/subscriptions.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -54,6 +55,7 @@ import { PackageCategoriesModule } from './models/package-categories/package-cat
     StationsModule,
     TimeSlotsModule,
     PackageCategoriesModule,
+    SubscriptionModule,
     // ====================================
     OrdersModule,
     FirebaseProviderModule,
