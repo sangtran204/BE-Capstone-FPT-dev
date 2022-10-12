@@ -60,7 +60,7 @@ export class PackageEntity extends BaseEntity {
   @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
   timeFrame: TimeFrameEntity;
 
-  @OneToMany(() => OrderEntity, (subscription) => subscription.packages)
+  @OneToMany(() => OrderEntity, (subscriptions) => subscriptions.packages)
   subscriptions: OrderEntity[];
 
   @AutoMap(() => PackageCategoryEntity)
