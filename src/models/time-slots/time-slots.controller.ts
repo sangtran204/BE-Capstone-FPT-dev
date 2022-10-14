@@ -19,7 +19,7 @@ import { MapInterceptor } from '@automapper/nestjs';
 export class TimeSlotsController {
   constructor(private readonly timeSlotsService: TimeSlotsService) {}
 
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -37,7 +37,7 @@ export class TimeSlotsController {
     return listTimeSlots;
   }
 
-  @Public()
+  // @Public()
   @Get('/:flag')
   @ApiResponse({
     status: 200,
@@ -62,7 +62,7 @@ export class TimeSlotsController {
     return listTimeSlotFlag;
   }
 
-  @Public()
+  // @Public()
   @Get('find-by-id/:id')
   @ApiResponse({
     status: 200,

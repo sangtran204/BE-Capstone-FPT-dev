@@ -17,6 +17,8 @@ import { StationDTO } from './dto/stations.dto';
 import { StationsService } from './stations.service';
 import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -24,7 +26,7 @@ import { UpdateStationDTO } from './dto/update-station.dto';
 export class StationsController {
   constructor(private readonly stationsService: StationsService) {}
 
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -40,7 +42,7 @@ export class StationsController {
     return listStation;
   }
 
-  @Public()
+  // @Public()
   @Get('/active')
   @ApiResponse({
     status: 200,
@@ -59,7 +61,7 @@ export class StationsController {
     return listStation;
   }
 
-  @Public()
+  // @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -80,8 +82,9 @@ export class StationsController {
     return station;
   }
 
-  @Public()
+  // @Public()
   @Post()
+  @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'CREATE STATION',
@@ -94,8 +97,9 @@ export class StationsController {
     return this.stationsService.createStation(createDTO);
   }
 
-  @Public()
+  // @Public()
   @Put('/:id')
+  @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'UPDATE STATION',
@@ -108,8 +112,9 @@ export class StationsController {
     return this.stationsService.updateStation(id, updateDTO);
   }
 
-  @Public()
+  // @Public()
   @Put('/update-status/:id')
+  @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'UPDATE STATUS STATION',

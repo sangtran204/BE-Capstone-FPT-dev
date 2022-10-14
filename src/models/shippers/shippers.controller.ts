@@ -21,7 +21,7 @@ export class ShippersController {
   constructor(private readonly shippersService: ShippersService) {}
 
   @Get()
-  @Public()
+  // @Public()
   // @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
@@ -41,7 +41,7 @@ export class ShippersController {
   }
 
   @Get('/:id')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET SHIPPER BY ID',

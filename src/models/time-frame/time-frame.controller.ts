@@ -27,7 +27,7 @@ import { TimeFrameService } from './time-frame.service';
 export class TimeFrameController {
   constructor(private readonly timeFrameService: TimeFrameService) {}
 
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -49,7 +49,7 @@ export class TimeFrameController {
     }
   }
 
-  @Public()
+  // @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,

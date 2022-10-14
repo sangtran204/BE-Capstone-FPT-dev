@@ -25,7 +25,7 @@ export class KitchenController {
   constructor(private readonly kitchenService: KitchenService) {}
 
   @Get()
-  @Public()
+  // @Public()
   // @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
@@ -47,7 +47,7 @@ export class KitchenController {
   }
 
   @Get('/:id')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET KITCHEN BY ID',
@@ -69,7 +69,7 @@ export class KitchenController {
   }
 
   @Get('shipper/:id')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET KITCHEN BY ID',

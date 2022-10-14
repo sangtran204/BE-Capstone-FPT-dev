@@ -33,7 +33,7 @@ export class PackgeCategoriesController {
     private readonly packageCategoriesService: PackageCategoriesService,
   ) {}
 
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -54,7 +54,7 @@ export class PackgeCategoriesController {
     return listPackageCategories;
   }
 
-  @Public()
+  // @Public()
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -74,7 +74,7 @@ export class PackgeCategoriesController {
     );
   }
 
-  @Public()
+  // @Public()
   @Get('/hasPackage')
   @ApiResponse({
     status: 200,
@@ -91,7 +91,7 @@ export class PackgeCategoriesController {
   }
 
   @Put('/:id')
-  @Public()
+  // @Public()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
