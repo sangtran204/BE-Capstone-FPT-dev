@@ -66,7 +66,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       where: { id: id },
       relations: {
         customer: { account: { profile: true } },
-        // packages: { packageItem: { foodGroups: { foods: true } } },
+        packages: { packageItem: { foodGroup: { foods: true } } },
       },
     });
     if (!subscription) {
