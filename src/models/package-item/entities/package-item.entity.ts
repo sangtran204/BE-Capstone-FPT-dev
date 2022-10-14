@@ -9,12 +9,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 export class PackageItemEntity extends BaseEntity {
   @Column()
   @AutoMap()
-  maxAmount: number;
-
-  // @AutoMap(() => [FoodGroupEntity])
-  // @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.packageItem)
-  // @JoinTable({ name: 'package_item_group' })
-  // foodGroups: FoodGroupEntity[];
+  itemCode: number;
 
   @AutoMap(() => FoodGroupEntity)
   @ManyToOne(() => FoodGroupEntity, (foodGroup) => foodGroup.packageItem)
@@ -24,7 +19,7 @@ export class PackageItemEntity extends BaseEntity {
   @ManyToOne(() => PackageEntity, (packages) => packages.packageItem)
   packages: PackageEntity;
 
-  @AutoMap(() => TimeFrameEntity)
+  // @AutoMap(() => TimeFrameEntity)
   @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packageItem)
   timeFrame: TimeFrameEntity;
 }

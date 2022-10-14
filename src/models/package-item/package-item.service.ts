@@ -31,7 +31,7 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
   async createPackageItem(
     data: CreatePackageItemDTO,
   ): Promise<PackageItemEntity> {
-    const { maxAmount, packageID, timeFrameID, foodGroupID } = data;
+    const { itemCode, packageID, timeFrameID, foodGroupID } = data;
     const packageCheck = await this.packageService.findOne({
       where: { id: packageID },
     });
@@ -55,30 +55,23 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
       );
     }
 
-    if (packageCheck.timeFrame.id !== timeFrameID) {
-      throw new HttpException(
-        'Time Frame in Package must be like timeFrame ID',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     if (!foodGroupCheck) {
       throw new HttpException(
         `${foodGroupID} foodGroup: Not found`,
         HttpStatus.NOT_FOUND,
       );
     }
-    if (foodGroupCheck.status !== StatusEnum.ACTIVE) {
+    if (foodGroupCheck.status == StatusEnum.IN_ACTIVE) {
       throw new HttpException(
         'Food Group is InActive can not add',
         HttpStatus.BAD_REQUEST,
       );
     }
     const newPackageItem = await this.packageItemRepository.save({
-      maxAmount: maxAmount,
-      packageCheck,
-      frameCheck,
-      foodGroupCheck,
+      itemCode: itemCode,
+      timeFrame: frameCheck,
+      packages: packageCheck,
+      foodGroup: foodGroupCheck,
     });
     return await this.findOne({
       where: { id: newPackageItem.id },
@@ -86,35 +79,35 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     });
   }
 
-  // async deletePackageItem(id: string): Promise<string> {
-  //   const item = await this.packageItemRepository.findOne({
-  //     where: { id: id },
-  //   });
-  //   if (!item) {
-  //     throw new HttpException(
-  //       `PackageItem id ${id} not found`,
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   } else {
-  //     try {
-  //       await this.packageItemRepository
-  //         .createQueryBuilder()
-  //         .delete()
-  //         .from(PackageItemEntity)
-  //         .where('id = :id', { id: id })
-  //         .execute();
-  //       return 'Package item deleted';
-  //     } catch (error) {
-  //       throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //     }
-  //   }
-  // }
+  async deletePackageItem(id: string): Promise<string> {
+    const item = await this.packageItemRepository.findOne({
+      where: { id: id },
+    });
+    if (!item) {
+      throw new HttpException(
+        `PackageItem id ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    } else {
+      try {
+        await this.packageItemRepository
+          .createQueryBuilder()
+          .delete()
+          .from(PackageItemEntity)
+          .where('id = :id', { id: id })
+          .execute();
+        return 'Package item deleted';
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
+    }
+  }
 
   async updatePackageItem(
     id: string,
     dto: UpdatePackageItemDTO,
   ): Promise<string> {
-    const { maxAmount, packageID, timeFrameID, foodGroupID } = dto;
+    const { itemCode, packageID, timeFrameID, foodGroupID } = dto;
     const item = await this.packageItemRepository.findOne({
       where: { id: id },
     });
@@ -162,7 +155,7 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
         HttpStatus.NOT_FOUND,
       );
     }
-    if (foodGroupCheck.status !== StatusEnum.ACTIVE) {
+    if (foodGroupCheck.status == StatusEnum.IN_ACTIVE) {
       throw new HttpException(
         'Food Group is InActive can not add',
         HttpStatus.BAD_REQUEST,
@@ -170,10 +163,10 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     }
     await this.packageItemRepository.save({
       id: id,
-      maxAmount: maxAmount,
-      packageCheck,
-      frameCheck,
-      foodGroupCheck,
+      itemCode: itemCode,
+      timeFrame: frameCheck,
+      packages: packageCheck,
+      foodGroup: foodGroupCheck,
     });
     return 'Package item updated successful';
   }

@@ -3,9 +3,9 @@ import { IsNotEmpty, Max, Min } from 'class-validator';
 
 export class CreatePackageItemDTO {
   @ApiProperty()
-  @Max(4)
+  @Max(18)
   @Min(1)
-  maxAmount: number;
+  itemCode: number;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()

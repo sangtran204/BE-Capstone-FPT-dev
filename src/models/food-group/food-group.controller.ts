@@ -27,7 +27,7 @@ export class FoodGroupController {
   constructor(private readonly foodGroupService: FoodGroupService) {}
 
   //List all foodGroup
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -46,29 +46,27 @@ export class FoodGroupController {
     }
   }
 
-  @Public()
-  @Get('/:id')
+  // @Public()
+  @Get('find/:id')
   @ApiResponse({
     status: 200,
     description: 'GET FOODGROUP BY ID',
     type: FoodGroupDTO,
   })
+  @UseInterceptors(MapInterceptor(FoodGroupEntity, FoodGroupDTO))
   async findFoodById(@Param('id') id: string): Promise<FoodGroupEntity> {
     const foodGroup = await this.foodGroupService.findOne({
       where: { id: id },
       relations: { foods: { foodCategory: true } },
     });
     if (!foodGroup) {
-      throw new HttpException(
-        "Dont't have resource foodGroup",
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException("Dont't have resource", HttpStatus.NOT_FOUND);
     }
     return foodGroup;
   }
 
   //List all foodgroup active
-  @Public()
+  // @Public()
   @Get('/active')
   @ApiResponse({
     status: 200,

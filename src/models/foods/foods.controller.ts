@@ -19,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
@@ -33,6 +34,7 @@ export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
 
   @Get()
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET ALL FOOD',
@@ -51,6 +53,7 @@ export class FoodsController {
   }
 
   @Get('/active')
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET ALL ACTIVE FOOD',
@@ -69,6 +72,7 @@ export class FoodsController {
   }
 
   @Get('/:id')
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET FOOD BY ID',
