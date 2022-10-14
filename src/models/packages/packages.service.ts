@@ -165,4 +165,21 @@ export class PackageService extends BaseService<PackageEntity> {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     }
   }
+
+  async getActivePackageByCategory(
+    categoryId: string,
+  ): Promise<PackageEntity[]> {
+    const listPackage = await this.packagesRepository
+      .createQueryBuilder('packages')
+      .leftJoinAndSelect('packages.packageCategory', 'package_categories')
+      .where('packages.packageCategory.id = :id', {
+        id: categoryId,
+      })
+      .andWhere('packages.status = :status', { status: 'active' })
+      .getMany();
+    if (!listPackage || listPackage.length == 0) {
+      throw new HttpException('No package found', HttpStatus.NOT_FOUND);
+    }
+    return listPackage;
+  }
 }
