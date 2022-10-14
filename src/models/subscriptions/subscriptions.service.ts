@@ -27,7 +27,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     return await this.subscriptionRepository.find({
       relations: {
         customer: { account: { profile: true } },
-        // packages: { packageItem: { foodGroups: { foods: true } } },
+        packages: { packageItem: { foodGroup: { foods: true } } },
       },
     });
   }
