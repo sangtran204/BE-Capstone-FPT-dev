@@ -27,6 +27,7 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { UpdatePackageDTO } from './dto/update-package.dto';
+import { string } from 'joi';
 
 @ApiBearerAuth()
 @ApiTags('packages')
@@ -211,4 +212,17 @@ export class PackageController {
   // async deletePackage(@Param('id') id: string): Promise<string> {
   //   return await this.packageService.deletePackage(id);
   // }
+
+  @Public()
+  @Get('/packageActiveByCategory/:categoryId')
+  @ApiResponse({
+    status: 200,
+    description: 'GET ACTIVE PACKAGE',
+    type: [PackageEntity],
+  })
+  async getPackageActiveByCate(
+    @Param('categoryId') categoryId: string,
+  ): Promise<PackageEntity[]> {
+    return await this.packageService.getActivePackageByCategory(categoryId);
+  }
 }
