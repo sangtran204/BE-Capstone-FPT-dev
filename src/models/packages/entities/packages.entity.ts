@@ -53,15 +53,16 @@ export class PackageEntity extends BaseEntity {
   @AutoMap()
   status: string;
 
-  @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.packages)
+  @AutoMap(() => [PackageItemEntity])
+  @OneToMany(() => PackageItemEntity, (packageItem) => packageItem.packages)
   packageItem: PackageItemEntity[];
 
   @AutoMap(() => TimeFrameEntity)
   @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
   timeFrame: TimeFrameEntity;
 
-  @OneToMany(() => OrderEntity, (subscriptions) => subscriptions.packages)
-  subscriptions: OrderEntity[];
+  // @OneToMany(() => OrderEntity, (subscriptions) => subscriptions.packages)
+  // subscriptions: OrderEntity[];
 
   @AutoMap(() => PackageCategoryEntity)
   @ManyToOne(

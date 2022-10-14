@@ -4,16 +4,15 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Delete,
   Put,
   Param,
+  Delete,
   Body,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreatePackageItemDTO } from './dto/create-package-item.dto';
 import { PackageItemDTO } from './dto/package-item.dto';
@@ -27,13 +26,15 @@ import { PackageItemService } from './package-item.service';
 export class PackageItemController {
   constructor(private readonly packageItemService: PackageItemService) {}
 
-  @Public()
   @Get()
   @ApiResponse({
     status: 200,
     description: 'GET ALL PACKAGE ITEM',
     type: [PackageItemDTO],
   })
+  @UseInterceptors(
+    MapInterceptor(PackageItemEntity, PackageItemDTO, { isArray: true }),
+  )
   async getAllPackageItem(): Promise<PackageItemEntity[]> {
     const list = await this.packageItemService.getAllPackageItem();
     if (!list || list.length == 0) {
@@ -43,7 +44,6 @@ export class PackageItemController {
     }
   }
 
-  @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -56,7 +56,7 @@ export class PackageItemController {
   ): Promise<PackageItemEntity> {
     const list = await this.packageItemService.findOne({
       where: { id: id },
-      relations: { foodGroup: true, packages: true },
+      relations: { foodGroup: true },
     });
     if (!list) {
       throw new HttpException(
@@ -68,13 +68,14 @@ export class PackageItemController {
     }
   }
 
-  @Public()
+  @Roles(RoleEnum.MANAGER)
   @Post()
   @ApiResponse({
     status: 200,
     description: 'Create Package Item',
     type: PackageItemDTO,
   })
+  @UseInterceptors(MapInterceptor(PackageItemEntity, PackageItemDTO))
   async createPackageItem(
     @Body() createDTO: CreatePackageItemDTO,
   ): Promise<PackageItemEntity> {
@@ -95,17 +96,16 @@ export class PackageItemController {
     return await this.packageItemService.updatePackageItem(id, dto);
   }
 
-  //Delete package item
-  // @Public()
-  // @Delete('/:id')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'DELETE PACKAGE ITEM',
-  //   type: String,
-  // })
-  // async deletePackageItem(@Param('id') id: string): Promise<string> {
-  //   return this.packageItemService.deletePackageItem(id);
-  // }
+  @Roles(RoleEnum.MANAGER)
+  @Delete('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'DELETE PACKAGE ITEM',
+    type: String,
+  })
+  async deletePackageItem(@Param('id') id: string): Promise<string> {
+    return await this.packageItemService.deletePackageItem(id);
+  }
 
   // ==============================================================================
 }

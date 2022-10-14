@@ -35,13 +35,14 @@ export class PackageController {
   constructor(private readonly packageService: PackageService) {}
 
   //Get all package
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
     description: 'GET ALL PACKAGE',
     type: [PackageDTO],
   })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getAllPackage(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.listAllPackage();
     if (!listPackages || listPackages.length == 0) {
@@ -50,18 +51,21 @@ export class PackageController {
     return listPackages;
   }
 
-  @Public()
-  @Get('find-by-id/:id')
+  // @Public()
+  @Get('find/:id')
   @ApiResponse({
     status: 200,
     description: 'GET PACKAGE BY ID',
     type: PackageDTO,
   })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async getPackageByID(@Param('id') id: string): Promise<PackageEntity> {
     const packageRes = await this.packageService.findOne({
       where: { id: id },
       relations: {
         timeFrame: true,
+        packageCategory: true,
+        packageItem: { foodGroup: true },
       },
     });
     if (!packageRes) {
@@ -71,41 +75,47 @@ export class PackageController {
   }
 
   //Get package
-  @Public()
+  // @Public()
   @Get('/waiting')
   @ApiResponse({
     status: 200,
     description: 'GET WAITING PACKAGE',
     type: [PackageDTO],
   })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getPackageWaiting(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.query({
       where: { status: StatusEnum.WAITING },
       relations: {
         timeFrame: true,
+        packageCategory: true,
+        packageItem: true,
       },
     });
     if (!listPackages || listPackages.length == 0) {
       throw new HttpException(
-        "Dont't have resource waiting",
+        "Dont't have resource Waiting",
         HttpStatus.NOT_FOUND,
       );
     }
     return listPackages;
   }
 
-  @Public()
+  // @Public()
   @Get('/active')
   @ApiResponse({
     status: 200,
     description: 'GET ACTIVE PACKAGE',
     type: [PackageDTO],
   })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getPackageActive(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.query({
       where: { status: StatusEnum.ACTIVE },
       relations: {
         timeFrame: true,
+        packageCategory: true,
+        packageItem: true,
       },
     });
     if (!listPackages || listPackages.length == 0) {
@@ -117,8 +127,31 @@ export class PackageController {
     return listPackages;
   }
 
+  @Get('item/:id')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET Package Item BY ID PACKAGE',
+    type: PackageDTO,
+  })
+  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
+  async findItemOfPackage(@Param('id') id: string): Promise<PackageEntity> {
+    const item = await this.packageService.findOne({
+      where: { id: id },
+      relations: { packageItem: true },
+    });
+    if (!item) {
+      throw new HttpException(
+        "Dont't have resource PackageItem",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return item;
+  }
+
   // Create package
-  @Public()
+  // @Public()
+  @Roles(RoleEnum.MANAGER)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')

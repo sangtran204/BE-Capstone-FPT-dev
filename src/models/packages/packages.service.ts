@@ -25,7 +25,11 @@ export class PackageService extends BaseService<PackageEntity> {
 
   async listAllPackage(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
-      relations: { timeFrame: true, packageCategory: true },
+      relations: {
+        timeFrame: true,
+        packageCategory: true,
+        packageItem: true,
+      },
     });
   }
 

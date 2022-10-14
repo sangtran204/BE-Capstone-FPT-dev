@@ -29,9 +29,9 @@ export class SubscriptionEntity extends BaseEntity {
   @AutoMap(() => CustomerEntity)
   customer: CustomerEntity;
 
-  @ManyToOne(() => PackageEntity, (packages) => packages.subscriptions, {
-    nullable: false,
-  })
-  @AutoMap(() => PackageEntity)
-  packages: PackageEntity;
+  // @ManyToOne(() => PackageEntity, (packages) => packages.subscriptions, {
+  //   nullable: false,
+  // })
+  // @AutoMap(() => PackageEntity)
+  // packages: PackageEntity;
 }
