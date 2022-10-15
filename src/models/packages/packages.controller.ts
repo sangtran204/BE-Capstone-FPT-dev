@@ -214,10 +214,10 @@ export class PackageController {
   // }
 
   @Public()
-  @Get('/packageActiveByCategory/:categoryId')
+  @Get('/byCategory/:categoryId')
   @ApiResponse({
     status: 200,
-    description: 'GET ACTIVE PACKAGE',
+    description: 'GET ACTIVE PACKAGE BY CATEGORY',
     type: [PackageEntity],
   })
   async getPackageActiveByCate(

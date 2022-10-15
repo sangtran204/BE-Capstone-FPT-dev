@@ -175,10 +175,13 @@ export class PackageService extends BaseService<PackageEntity> {
   ): Promise<PackageEntity[]> {
     const listPackage = await this.packagesRepository
       .createQueryBuilder('packages')
+      .leftJoinAndSelect('packages.timeFrame', 'time_frame')
       .leftJoinAndSelect('packages.packageCategory', 'package_categories')
       .where('packages.packageCategory.id = :id', {
         id: categoryId,
       })
+      // .where('packages.timeFrame.id = time_frame.id')
+      // .andWhere('packages.timeFrame.id')
       .andWhere('packages.status = :status', { status: 'active' })
       .getMany();
     if (!listPackage || listPackage.length == 0) {
