@@ -41,9 +41,9 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'GET ALL PACKAGE',
-    type: [PackageDTO],
+    type: [PackageEntity],
   })
-  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getAllPackage(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.listAllPackage();
     if (!listPackages || listPackages.length == 0) {
@@ -57,9 +57,9 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'GET PACKAGE BY ID',
-    type: PackageDTO,
+    type: PackageEntity,
   })
-  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
+  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO))
   async getPackageByID(@Param('id') id: string): Promise<PackageEntity> {
     const packageRes = await this.packageService.findOne({
       where: { id: id },
@@ -81,9 +81,9 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'GET WAITING PACKAGE',
-    type: [PackageDTO],
+    type: [PackageEntity],
   })
-  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getPackageWaiting(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.query({
       where: { status: StatusEnum.WAITING },
@@ -107,9 +107,9 @@ export class PackageController {
   @ApiResponse({
     status: 200,
     description: 'GET ACTIVE PACKAGE',
-    type: [PackageDTO],
+    type: [PackageEntity],
   })
-  @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getPackageActive(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.query({
       where: { status: StatusEnum.ACTIVE },
