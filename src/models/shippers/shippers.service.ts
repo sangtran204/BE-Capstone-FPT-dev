@@ -17,6 +17,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
     return await this.shipperRepository.find({
       relations: {
         account: { profile: true },
+        kitchen: true,
       },
     });
   }

@@ -28,7 +28,7 @@ export class ShippersController {
     description: 'GET ALL KITCHEN',
     type: [ShipperDTO],
   })
-  @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO, { isArray: true }))
   async fidnAll(): Promise<ShipperEntity[]> {
     const listShip = await this.shippersService.findAll();
     if (!listShip || listShip.length == 0) {
@@ -47,11 +47,11 @@ export class ShippersController {
     description: 'GET SHIPPER BY ID',
     type: ShipperDTO,
   })
-  @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
+  // @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO))
   async findShipperByID(@Param('id') id: string): Promise<ShipperEntity> {
     const shipper = await this.shippersService.findOne({
       where: { id: id },
-      relations: { account: { profile: true } },
+      relations: { account: { profile: true }, kitchen: true },
     });
     if (!shipper) {
       throw new HttpException(
