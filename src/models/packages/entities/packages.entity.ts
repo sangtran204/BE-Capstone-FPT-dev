@@ -10,11 +10,11 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
 export class PackageEntity extends BaseEntity {
-  @Column('date')
+  @Column('datetime')
   @AutoMap()
   startSale: Date;
 
-  @Column('date')
+  @Column('datetime')
   @AutoMap()
   endSale: Date;
 

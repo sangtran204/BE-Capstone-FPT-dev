@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class CreatePackageDTO {
-  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  @ApiProperty({ default: new Date().toLocaleString() })
   startSale: Date;
 
-  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  @ApiProperty({ default: new Date().toLocaleString() })
   endSale: Date;
 
   @ApiProperty()
