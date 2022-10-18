@@ -1,20 +1,15 @@
-import { MapInterceptor } from '@automapper/nestjs';
 import {
   Body,
   Get,
   Param,
-  Post,
   Put,
-  UseInterceptors,
   HttpException,
   HttpStatus,
   Controller,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
-import { Roles } from 'src/decorators/roles.decorator';
 import { KitchenDTO } from './dto/kitchen.dto';
+import { UpdateKitchenDTO } from './dto/update_kitchen.dto';
 import { KitchenEntity } from './entities/kitchens.entity';
 import { KitchenService } from './kitchens.service';
 
@@ -87,5 +82,29 @@ export class KitchenController {
       );
     }
     return listKitchen;
+  }
+
+  @Put('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'ADMIN UPDATE KITCHEN BY ID',
+    type: KitchenDTO,
+  })
+  async updateKitchenByAdmin(
+    @Param('id') id: string,
+    @Body() update: UpdateKitchenDTO,
+  ): Promise<KitchenEntity> {
+    return await this.kitchenService.updateKitchen(id, update);
+  }
+
+  @Put('/inactive/:id')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'ADMIN UPDATE STATUS KITCHEN BY ID',
+    type: KitchenDTO,
+  })
+  async updateStatusKitchen(@Param('id') id: string): Promise<string> {
+    return await this.kitchenService.inActiveKitchen(id);
   }
 }
