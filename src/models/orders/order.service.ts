@@ -22,15 +22,16 @@ import { OrderDTO } from './dto/order.dto';
 import { SortEnum } from 'src/common/enums/sort.enum';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { OrderTourCreationDto } from './dto/create-order.dto';
+import { OrderCreationDTO } from './dto/create-order.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
-import { CustomersService } from '../customers/customers.service';
-import { PackageService } from '../packages/packages.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
-import { StatusEnum } from 'src/common/enums/status.enum';
 import { OrderEnum } from 'src/common/enums/order.enum';
+import { SubscriptionService } from '../subscriptions/subscriptions.service';
+import { PackageItemService } from '../package-item/package-item.service';
+import { FoodsService } from '../foods/foods.service';
+import { StationsService } from '../stations/stations.service';
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
 // import { FirebaseMessageService } from 'providers/firebase/message/firebase-message.service';
@@ -55,8 +56,10 @@ export class OrdersService extends BaseService<OrderEntity> {
     @InjectRepository(OrderEntity)
     private readonly ordersRepository: Repository<OrderEntity>,
     @InjectMapper() private readonly mapper: Mapper,
-    private readonly customerService: CustomersService,
-    private readonly packageService: PackageService,
+    private readonly subscriptionService: SubscriptionService,
+    private readonly packageItemService: PackageItemService,
+    private readonly foodsService: FoodsService,
+    private readonly stationService: StationsService,
     private readonly dataSource: DataSource,
     private readonly notificationsService: NotificationsService,
     private readonly firebaseMessageService: FirebaseMessageService, // private readonly firebaseMessageService: FirebaseMessageService, // private readonly tourService: ToursService, // private readonly tourPlanService: TourPlansService, // private readonly notificationsService: NotificationsService,  // private readonly dataSource: DataSource, // private readonly vnpayService: VnpayService, // private readonly banksService: BanksService, // private readonly paymentsService: PaymentsService, // private readonly commissionsService: CommissionsService, // private readonly firebaseMessage: FirebaseMessageService,
@@ -64,68 +67,76 @@ export class OrdersService extends BaseService<OrderEntity> {
     super(ordersRepository);
   }
 
-  async findAll(orderFilter: OrderFilter): Promise<[OrderDTO[], number]> {
-    const { currentPage, endDate, sizePage, sort, startDate } = orderFilter;
-    if (!startDate && !endDate) {
-      const [list, count] = await this.ordersRepository.findAndCount({
-        relations: {
-          customer: { account: { profile: true } },
-          packages: true,
-          //   payment: true,
-        },
-        skip: sizePage * (currentPage - 1),
-        take: sizePage,
-        order: { startDelivery: sort === SortEnum.ASCENDING ? 'ASC' : 'DESC' },
-      });
-      return [this.mapper.mapArray(list, OrderEntity, OrderDTO), count];
-    } else {
-      const [list, count] = await this.ordersRepository.findAndCount({
-        relations: {
-          customer: { account: { profile: true } },
-          packages: true,
-          //   payment: true,
-        },
-        where: {
-          startDelivery:
-            startDate && !endDate
-              ? Like(startDate)
-              : !startDate && endDate
-              ? Like(endDate)
-              : Between(startDate, endDate),
-        },
-        skip: sizePage * (currentPage - 1),
-        take: sizePage,
-        order: { startDelivery: sort === SortEnum.ASCENDING ? 'ASC' : 'DESC' },
-      });
-      return [this.mapper.mapArray(list, OrderEntity, OrderDTO), count];
-    }
-  }
+  // async findAll(orderFilter: OrderFilter): Promise<[OrderDTO[], number]> {
+  //   const { currentPage, endDate, sizePage, sort, startDate } = orderFilter;
+  //   if (!startDate && !endDate) {
+  //     const [list, count] = await this.ordersRepository.findAndCount({
+  //       relations: {
+  //         customer: { account: { profile: true } },
+  //         packages: true,
+  //         //   payment: true,
+  //       },
+  //       skip: sizePage * (currentPage - 1),
+  //       take: sizePage,
+  //       order: { startDelivery: sort === SortEnum.ASCENDING ? 'ASC' : 'DESC' },
+  //     });
+  //     return [this.mapper.mapArray(list, OrderEntity, OrderDTO), count];
+  //   } else {
+  //     const [list, count] = await this.ordersRepository.findAndCount({
+  //       relations: {
+  //         customer: { account: { profile: true } },
+  //         packages: true,
+  //         //   payment: true,
+  //       },
+  //       where: {
+  //         startDelivery:
+  //           startDate && !endDate
+  //             ? Like(startDate)
+  //             : !startDate && endDate
+  //             ? Like(endDate)
+  //             : Between(startDate, endDate),
+  //       },
+  //       skip: sizePage * (currentPage - 1),
+  //       take: sizePage,
+  //       order: { startDelivery: sort === SortEnum.ASCENDING ? 'ASC' : 'DESC' },
+  //     });
+  //     return [this.mapper.mapArray(list, OrderEntity, OrderDTO), count];
+  //   }
+  // }
 
-  async orderPackage(
-    dto: OrderTourCreationDto,
+  async orderSub(
+    dto: OrderCreationDTO,
     user: AccountEntity,
   ): Promise<OrderEntity> {
-    if (!Boolean(dto.packageID))
-      throw new HttpException(
-        'order must have package',
-        HttpStatus.BAD_REQUEST,
-      );
+    const subFind = await this.subscriptionService.findOne({
+      where: { id: dto.subscriptionID },
+    });
+    if (!Boolean(subFind))
+      throw new HttpException('Sub not Found', HttpStatus.BAD_REQUEST);
 
-    const customer = await this.customerService.findOne({
-      relations: { account: true },
-      where: { id: dto.customerID },
+    const packageItem = await this.packageItemService.findOne({
+      where: { id: dto.packageItemID },
     });
 
-    if (!Boolean(customer)) {
-      throw new HttpException(
-        `id ${dto.customerID} not found`,
-        HttpStatus.BAD_REQUEST,
-      );
+    if (!Boolean(packageItem)) {
+      throw new HttpException('PackageItem  not found', HttpStatus.BAD_REQUEST);
     }
 
-    const packageRes = await this.packageService.findOne({
-      where: { id: dto.packageID },
+    const foodFind = await this.foodsService.findOne({
+      where: { id: dto.foodID },
     });
+
+    if (!Boolean(foodFind)) {
+      throw new HttpException('food  not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const stationFind = await this.stationService.findOne({
+      where: { id: dto.stationID },
+    });
+
+    if (!Boolean(stationFind)) {
+      throw new HttpException('Station  not found', HttpStatus.BAD_REQUEST);
+    }
 
     let order: OrderEntity;
     const callback = async (entityManager: EntityManager): Promise<void> => {
@@ -141,40 +152,45 @@ export class OrdersService extends BaseService<OrderEntity> {
         order = await entityManager.save(
           entityManager.create(OrderEntity, {
             // commission: commission[0],
-            customer: { id: user.id },
-            packages: { id: dto.packageID },
-            totalPrice: dto.totalPrice,
-            startDelivery: dto.startDelivery,
+            deliveryDate: dto.deliveryDate,
+            deliveryTime: dto.deliveryTime,
+            priceFood: dto.priceFood,
+            nameFood: dto.nameFood,
+            subscription: subFind,
+            packageItem: packageItem,
+            food: foodFind,
+            station: stationFind,
+            // kitchen
           }),
         );
       } catch (error) {
         console.error(error);
         throw new HttpException(
-          'cannot order this tour',
+          'cannot order this sub',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
-      if (Boolean(order)) {
-        const title = `You was booked by ${user.profile.fullName}`;
-        const body = `Tour ${packageRes.name}`;
-        const data = { ['idOrder']: order.id };
-        const saveNotify = this.notificationsService.save({
-          account: { id: dto.customerID },
-          title,
-          body,
-          data: JSON.stringify(data),
-          type: TypeNotificationEnum.ORDER,
-        });
-        const sendNotify = this.firebaseMessageService.sendCustomNotification(
-          customer.account.deviceToken,
-          title,
-          body,
-          data,
-        );
-        await saveNotify;
-        await sendNotify;
-      }
+      // if (Boolean(order)) {
+      //   const title = `You was booked by ${user.profile.fullName}`;
+      //   const body = `Food ${foodFind.name}`;
+      //   const data = { ['idOrder']: order.id };
+      //   const saveNotify = this.notificationsService.save({
+      //     account: { id: user.id },
+      //     title,
+      //     body,
+      //     data: JSON.stringify(data),
+      //     type: TypeNotificationEnum.ORDER,
+      //   });
+      //   const sendNotify = this.firebaseMessageService.sendCustomNotification(
+      //     customer.account.deviceToken,
+      //     title,
+      //     body,
+      //     data,
+      //   );
+      //   await saveNotify;
+      //   await sendNotify;
+      // }
     };
     await this.transaction(callback, this.dataSource);
 
@@ -183,12 +199,13 @@ export class OrdersService extends BaseService<OrderEntity> {
 
   async findById(id: string): Promise<OrderEntity> {
     const order = await this.findOne({
-      where: { id },
+      where: { id: id },
       relations: {
-        customer: { account: { profile: true } },
-        packages: {
-          packageItem: { foodGroup: { foods: true } },
-        },
+        subscription: true,
+        food: true,
+        station: true,
+        packageItem: true,
+        kitchen: true,
       },
     });
     if (!order)
@@ -196,35 +213,35 @@ export class OrdersService extends BaseService<OrderEntity> {
     return order;
   }
 
-  async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {
-    const order = await this.findById(id);
-    if (order.customer.id !== user.customer.id)
-      throw new HttpException(
-        'You not owner of this order',
-        HttpStatus.BAD_REQUEST,
-      );
-    order.status = OrderEnum.PENDING;
-    const orderUpdated = await this.ordersRepository.save(order);
-    if (!orderUpdated)
-      throw new HttpException('Can not check in', HttpStatus.BAD_REQUEST);
+  // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {
+  //   const order = await this.findById(id);
+  //   if (order.customer.id !== user.customer.id)
+  //     throw new HttpException(
+  //       'You not owner of this order',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   order.status = OrderEnum.PENDING;
+  //   const orderUpdated = await this.ordersRepository.save(order);
+  //   if (!orderUpdated)
+  //     throw new HttpException('Can not check in', HttpStatus.BAD_REQUEST);
 
-    return orderUpdated;
-  }
+  //   return orderUpdated;
+  // }
 
-  async checkOut(id: string, user: AccountEntity): Promise<OrderEntity> {
-    const order = await this.findById(id);
-    if (order.customer.id !== user.customer.id)
-      throw new HttpException(
-        'You not owner of this order',
-        HttpStatus.BAD_REQUEST,
-      );
-    order.status = OrderEnum.DONE;
-    const orderUpdated = await this.ordersRepository.save(order);
-    if (!orderUpdated)
-      throw new HttpException('Can not check out', HttpStatus.BAD_REQUEST);
+  // async checkOut(id: string, user: AccountEntity): Promise<OrderEntity> {
+  //   const order = await this.findById(id);
+  //   if (order.customer.id !== user.customer.id)
+  //     throw new HttpException(
+  //       'You not owner of this order',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   order.status = OrderEnum.DONE;
+  //   const orderUpdated = await this.ordersRepository.save(order);
+  //   if (!orderUpdated)
+  //     throw new HttpException('Can not check out', HttpStatus.BAD_REQUEST);
 
-    return orderUpdated;
-  }
+  //   return orderUpdated;
+  // }
 
   // async tourGuideConfirmOrder(
   //   id: string,
@@ -403,36 +420,36 @@ export class OrdersService extends BaseService<OrderEntity> {
   //     return result;
   //   }
 
-  async customerCancelOrder(
-    id: string,
-    user: AccountEntity,
-  ): Promise<OrderEntity> {
-    const order = await this.findOne({
-      where: { id },
-      relations: { customer: true },
-    });
+  // async customerCancelOrder(
+  //   id: string,
+  //   user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   const order = await this.findOne({
+  //     where: { id },
+  //     relations: { customer: true },
+  //   });
 
-    if (order.customer.id !== user.id)
-      throw new HttpException(
-        'You are not own this order',
-        HttpStatus.BAD_REQUEST,
-      );
+  //   if (order.customer.id !== user.id)
+  //     throw new HttpException(
+  //       'You are not own this order',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    order.status = OrderEnum.CANCEL;
-    order.cancelDate = new Date();
-    const OrderNew = await this.save(order);
+  //   order.status = OrderEnum.CANCEL;
+  //   order.cancelDate = new Date();
+  //   const OrderNew = await this.save(order);
 
-    // if (order.startDate.getDay() === new Date().getDay()) {
-    //   console.log('cung ngay');
-    //   return OrderNew;
-    // }
-    // if (order.startDate.getDay() + 2 === new Date().getDay()) {
-    //   console.log('con 2 ngay');
-    //   return OrderNew;
-    // }
+  //   // if (order.startDate.getDay() === new Date().getDay()) {
+  //   //   console.log('cung ngay');
+  //   //   return OrderNew;
+  //   // }
+  //   // if (order.startDate.getDay() + 2 === new Date().getDay()) {
+  //   //   console.log('con 2 ngay');
+  //   //   return OrderNew;
+  //   // }
 
-    return OrderNew;
-  }
+  //   return OrderNew;
+  // }
 
   //   @Cron(CronExpression.EVERY_DAY_AT_11PM)
   //   async checkPaymentOrder(): Promise<void> {

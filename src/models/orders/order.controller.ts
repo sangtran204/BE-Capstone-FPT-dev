@@ -25,7 +25,7 @@ import { OrdersService } from './order.service';
 import { OrderFilter } from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { OrderTourCreationDto } from './dto/create-order.dto';
+import { OrderCreationDTO } from './dto/create-order.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
 
@@ -35,26 +35,26 @@ import { AccountEntity } from '../accounts/entities/account.entity';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Get()
-  async findAll(
-    @Query() orderFilter: OrderFilter,
-  ): Promise<IPaginate<OrderDTO>> {
-    const data = await this.ordersService.findAll(orderFilter);
-    return paginate<OrderDTO>(
-      data,
-      orderFilter.currentPage,
-      orderFilter.sizePage,
-    );
-  }
+  // @Get()
+  // async findAll(
+  //   @Query() orderFilter: OrderFilter,
+  // ): Promise<IPaginate<OrderDTO>> {
+  //   const data = await this.ordersService.findAll(orderFilter);
+  //   return paginate<OrderDTO>(
+  //     data,
+  //     orderFilter.currentPage,
+  //     orderFilter.sizePage,
+  //   );
+  // }
 
   @Post()
   @Roles(RoleEnum.CUSTOMER)
   @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
-  async orderPackage(
-    @Body() dto: OrderTourCreationDto,
+  async orderSub(
+    @Body() dto: OrderCreationDTO,
     @GetUser() user: AccountEntity,
   ): Promise<OrderEntity> {
-    return await this.ordersService.orderPackage(dto, user);
+    return await this.ordersService.orderSub(dto, user);
   }
 
   //   @Get('/:id/payment-url')
@@ -105,25 +105,25 @@ export class OrdersController {
     return await this.ordersService.findById(id);
   }
 
-  @Put('/check-in/:id')
-  @Roles(RoleEnum.CUSTOMER)
-  @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
-  async checkIn(
-    @Param('id') id: string,
-    @GetUser() user: AccountEntity,
-  ): Promise<OrderEntity> {
-    return await this.ordersService.checkIn(id, user);
-  }
+  // @Put('/check-in/:id')
+  // @Roles(RoleEnum.CUSTOMER)
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  // async checkIn(
+  //   @Param('id') id: string,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   return await this.ordersService.checkIn(id, user);
+  // }
 
-  @Put('check-out/:id')
-  @Roles(RoleEnum.CUSTOMER)
-  @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
-  async checkOut(
-    @Param('id') id: string,
-    @GetUser() user: AccountEntity,
-  ): Promise<OrderEntity> {
-    return this.ordersService.checkOut(id, user);
-  }
+  // @Put('check-out/:id')
+  // @Roles(RoleEnum.CUSTOMER)
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  // async checkOut(
+  //   @Param('id') id: string,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   return this.ordersService.checkOut(id, user);
+  // }
 
   //   @Put('/tour-guide/confirm/:id')
   //   @ApiQuery({ name: 'Status', enum: [StatusEnum.REJECT, StatusEnum.ACCEPT] })
@@ -137,12 +137,12 @@ export class OrdersController {
   //     return await this.ordersService.tourGuideConfirmOrder(id, user, status);
   //   }
 
-  @Put('/cancel/:id')
-  @Roles(RoleEnum.CUSTOMER)
-  async customerCancelOrder(
-    @Param('id') id: string,
-    @GetUser() user: AccountEntity,
-  ): Promise<OrderEntity> {
-    return await this.ordersService.customerCancelOrder(id, user);
-  }
+  // @Put('/cancel/:id')
+  // @Roles(RoleEnum.CUSTOMER)
+  // async customerCancelOrder(
+  //   @Param('id') id: string,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   return await this.ordersService.customerCancelOrder(id, user);
+  // }
 }

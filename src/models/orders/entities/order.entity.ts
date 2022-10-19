@@ -1,44 +1,56 @@
 import { AutoMap } from '@automapper/classes';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { OrderEnum } from 'src/common/enums/order.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
-import { PackageEntity } from 'src/models/packages/entities/packages.entity';
+import { FoodEntity } from 'src/models/foods/entities/foods.entity';
+import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
+import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
+import { StationEntity } from 'src/models/stations/entities/stations.entity';
+import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'orders' })
 export class OrderEntity extends BaseEntity {
-  @Column()
-  @AutoMap()
-  totalPrice: number;
-
   @Column('date')
   @AutoMap()
-  startDelivery: Date;
+  deliveryDate: Date;
 
-  // @Column('date')
-  // @AutoMap()
-  // endDelivery: Date;
-
-  @Column('date', { nullable: true })
+  @Column('time')
   @AutoMap()
-  cancelDate: Date;
+  deliveryTime: Date;
 
-  @Column({ default: StatusEnum.UNCONFIRMED })
+  @Column()
+  @AutoMap()
+  priceFood: number;
+
+  @Column()
+  @AutoMap()
+  nameFood: string;
+
+  @Column({ default: OrderEnum.PENDING })
   @AutoMap()
   status: string;
 
-  // @ManyToOne(() => CustomerEntity, (customer) => customer.orders, {
-  //   nullable: false,
-  // })
-  @AutoMap(() => CustomerEntity)
-  customer: CustomerEntity;
+  @AutoMap(() => SubscriptionEntity)
+  @ManyToOne(() => SubscriptionEntity, (subscription) => subscription.orders, {
+    nullable: false,
+  })
+  subscription: SubscriptionEntity;
 
-  // @ManyToOne(() => PackageEntity, (packages) => packages.orders, {
-  //   nullable: false,
-  // })
-  @AutoMap(() => PackageEntity)
-  packages: PackageEntity;
+  @AutoMap(() => PackageItemEntity)
+  @ManyToOne(() => PackageItemEntity, (packageItem) => packageItem.orders, {
+    nullable: false,
+  })
+  packageItem: PackageItemEntity;
 
-  // @OneToMany(() => PaymentEntity, (payment) => payment.order)
-  // payment: PaymentEntity;
+  @AutoMap(() => FoodEntity)
+  @ManyToOne(() => FoodEntity, (food) => food.orders)
+  food: FoodEntity;
+
+  @AutoMap(() => StationEntity)
+  @ManyToOne(() => StationEntity, (station) => station.orders)
+  station: StationEntity;
+
+  @AutoMap(() => KitchenEntity)
+  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.orders)
+  kitchen: KitchenEntity;
 }

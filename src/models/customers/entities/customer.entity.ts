@@ -28,6 +28,7 @@ export class CustomerEntity extends BaseEntity {
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 
+  @AutoMap(() => [SubscriptionEntity])
   @OneToMany(() => SubscriptionEntity, (subscription) => subscription.customer)
   subscriptions: SubscriptionEntity[];
 }
