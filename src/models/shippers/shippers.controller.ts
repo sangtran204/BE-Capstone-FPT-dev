@@ -6,11 +6,14 @@ import {
   HttpStatus,
   UseInterceptors,
   Param,
+  Body,
+  Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { ShipperDTO } from './dto/shipper.dto';
+import { UpdateShipperDTO } from './dto/update_shipper';
 import { ShipperEntity } from './entities/shipper.entity';
 import { ShippersService } from './shippers.service';
 
@@ -60,5 +63,28 @@ export class ShippersController {
       );
     }
     return shipper;
+  }
+
+  @Put('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'UPDATE SHIPPER BY ID',
+    type: ShipperDTO,
+  })
+  async updateShipper(
+    @Param('id') id: string,
+    @Body() update: UpdateShipperDTO,
+  ): Promise<ShipperEntity> {
+    return await this.shippersService.updateShipper(id, update);
+  }
+
+  @Put('/status/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'INACTIVE SHIPPER BY ID',
+    type: ShipperDTO,
+  })
+  async inActiveShipper(@Param('id') id: string): Promise<string> {
+    return await this.shippersService.inActiveShipper(id);
   }
 }
