@@ -18,8 +18,4 @@ export class CreatePackageItemDTO {
   @ApiProperty({ type: String })
   @IsNotEmpty()
   foodGroupID: string;
-
-  // @ApiProperty({ type: [String] })
-  // @IsUUID(null, { each: true, message: 'ID FoodGroup must be unique' })
-  // foodGroupIds: string[];
 }

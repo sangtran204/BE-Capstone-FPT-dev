@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreatePackageItemDTO } from './create-package-item.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
-export class UpdatePackageItemDTO extends PartialType(CreatePackageItemDTO) {}
+export class UpdatePackageItemDTO {
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  foodGroupID: string;
+}
