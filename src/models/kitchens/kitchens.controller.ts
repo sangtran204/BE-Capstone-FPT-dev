@@ -97,7 +97,7 @@ export class KitchenController {
     return await this.kitchenService.updateKitchen(id, update);
   }
 
-  @Put('/inactive/:id')
+  @Put('/status/:id')
   // @Public()
   @ApiResponse({
     status: 200,
@@ -105,6 +105,6 @@ export class KitchenController {
     type: KitchenDTO,
   })
   async updateStatusKitchen(@Param('id') id: string): Promise<string> {
-    return await this.kitchenService.inActiveKitchen(id);
+    return await this.kitchenService.updateStatusKitchen(id);
   }
 }

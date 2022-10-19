@@ -81,25 +81,43 @@ export class ShippersService extends BaseService<ShipperEntity> {
     });
   }
 
-  async inActiveShipper(id: string): Promise<string> {
+  async updateStatusShipper(id: string): Promise<string> {
     const shipper = await this.shipperRepository.findOne({ where: { id: id } });
     if (!shipper) {
       throw new HttpException(`Shipper ${id} not found`, HttpStatus.NOT_FOUND);
     }
-    const callback = async (entityManager: EntityManager): Promise<void> => {
-      await entityManager.update(
-        ShipperEntity,
-        { id: id },
-        { status: StatusEnum.IN_ACTIVE },
-      );
+    if (shipper.status == StatusEnum.ACTIVE) {
+      const callback = async (entityManager: EntityManager): Promise<void> => {
+        await entityManager.update(
+          ShipperEntity,
+          { id: id },
+          { status: StatusEnum.IN_ACTIVE },
+        );
 
-      await entityManager.update(
-        AccountEntity,
-        { id: id },
-        { status: StatusEnum.IN_ACTIVE },
-      );
-    };
-    await this.accountService.transaction(callback, this.dataSource);
-    return 'Shipper inactive!';
+        await entityManager.update(
+          AccountEntity,
+          { id: id },
+          { status: StatusEnum.IN_ACTIVE },
+        );
+      };
+      await this.accountService.transaction(callback, this.dataSource);
+      return 'Shipper inactive!';
+    } else {
+      const callback = async (entityManager: EntityManager): Promise<void> => {
+        await entityManager.update(
+          ShipperEntity,
+          { id: id },
+          { status: StatusEnum.ACTIVE },
+        );
+
+        await entityManager.update(
+          AccountEntity,
+          { id: id },
+          { status: StatusEnum.ACTIVE },
+        );
+      };
+      await this.accountService.transaction(callback, this.dataSource);
+      return 'Shipper active!';
+    }
   }
 }
