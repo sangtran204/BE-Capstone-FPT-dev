@@ -1,19 +1,32 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
-export class OrderTourCreationDto {
-  @ApiProperty()
-  @IsUUID()
-  customerID: string;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsOptional()
-  packageID: string;
-
-  @ApiProperty()
-  totalPrice: number;
-
+export class OrderCreationDTO {
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
-  startDelivery: Date;
+  deliveryDate: Date;
+
+  @ApiProperty()
+  deliveryTime: Date;
+
+  @ApiProperty()
+  priceFood: number;
+
+  @ApiProperty()
+  nameFood: string;
+
+  @ApiProperty()
+  @IsUUID()
+  subscriptionID: string;
+
+  @ApiProperty()
+  @IsUUID()
+  packageItemID: string;
+
+  @ApiProperty()
+  @IsUUID()
+  foodID: string;
+
+  @ApiProperty()
+  @IsUUID()
+  stationID: string;
 }

@@ -1,8 +1,7 @@
-import { Mapper } from '@automapper/core';
-import { InjectMapper } from '@automapper/nestjs';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderEnum } from 'src/common/enums/order.enum';
+import { StatusEnum } from 'src/common/enums/status.enum';
+import { SubEnum } from 'src/common/enums/sub.enum';
 import { Repository } from 'typeorm';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { BaseService } from '../base/base.service';
@@ -16,7 +15,6 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   constructor(
     @InjectRepository(SubscriptionEntity)
     private readonly subscriptionRepository: Repository<SubscriptionEntity>,
-    @InjectMapper() private readonly mapper: Mapper,
     private readonly customerService: CustomersService,
     private readonly packageService: PackageService,
   ) {
@@ -26,21 +24,25 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async getAllSubscription(): Promise<SubscriptionEntity[]> {
     return await this.subscriptionRepository.find({
       relations: {
-        customer: { account: { profile: true } },
-        packages: { packageItem: { foodGroup: { foods: true } } },
+        customer: { account: true },
+        packages: true,
       },
     });
   }
 
   async subscriptionPackage(
     dto: CreateSubscriptionDTO,
+    user: AccountEntity,
   ): Promise<SubscriptionEntity> {
     const packgeFind = await this.packageService.findOne({
       where: { id: dto.packageId },
     });
     const customerFind = await this.customerService.findOne({
-      where: { id: dto.customerId },
+      where: { id: user.customer.id },
     });
+    if (packgeFind.status !== StatusEnum.ACTIVE) {
+      throw new HttpException(`Package is not Active`, HttpStatus.BAD_REQUEST);
+    }
     if (!packgeFind) {
       throw new HttpException(
         `PackageId ${dto.packageId} not found`,
@@ -48,7 +50,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       );
     } else if (!customerFind) {
       throw new HttpException(
-        `CustomerId ${dto.customerId} not found`,
+        `CustomerId ${user.customer.id} not found`,
         HttpStatus.NOT_FOUND,
       );
     } else {
@@ -65,8 +67,9 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
       relations: {
-        customer: { account: { profile: true } },
-        packages: { packageItem: { foodGroup: { foods: true } } },
+        customer: { account: true },
+        packages: true,
+        orders: true,
       },
     });
     if (!subscription) {
@@ -75,7 +78,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     return subscription;
   }
 
-  async checkIn(id: string, user: AccountEntity): Promise<SubscriptionEntity> {
+  async customerConfirm(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.findById(id);
     if (subscription.customer.id !== user.customer.id) {
       throw new HttpException(
@@ -83,38 +86,42 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         HttpStatus.BAD_REQUEST,
       );
     }
-    subscription.status = OrderEnum.PENDING;
+    subscription.status = SubEnum.INPROGRESS;
     const updateSubscription = await this.subscriptionRepository.save(
       subscription,
     );
     if (!updateSubscription) {
-      throw new HttpException('Can not check in', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Fail to Buy', HttpStatus.BAD_REQUEST);
     }
-    return updateSubscription;
+    return 'Confirm Successful';
   }
 
-  async checkOut(id: string, user: AccountEntity): Promise<SubscriptionEntity> {
+  async doneSub(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.findById(id);
+
     if (subscription.customer.id !== user.customer.id) {
       throw new HttpException(
         'You are not the owner of this subscription',
         HttpStatus.BAD_REQUEST,
       );
     }
-    subscription.status = OrderEnum.DONE;
+    if (subscription.status !== SubEnum.INPROGRESS) {
+      throw new HttpException(
+        'Only subscription with status INPROGRESS',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    subscription.status = SubEnum.DONE;
     const updateSubscription = await this.subscriptionRepository.save(
       subscription,
     );
     if (!updateSubscription) {
-      throw new HttpException('Can not check in', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Check out fail', HttpStatus.BAD_REQUEST);
     }
-    return updateSubscription;
+    return 'Subscription done';
   }
 
-  async cancelSubscription(
-    id: string,
-    user: AccountEntity,
-  ): Promise<SubscriptionEntity> {
+  async cancelSubscription(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.findById(id);
     if (subscription.customer.id !== user.customer.id) {
       throw new HttpException(
@@ -122,9 +129,16 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         HttpStatus.BAD_REQUEST,
       );
     }
-    subscription.status = OrderEnum.CANCEL;
+    const dateCancel = new Date();
+    if (subscription.startDelivery < dateCancel) {
+      throw new HttpException('Cancel before 24h', HttpStatus.BAD_REQUEST);
+    }
+    subscription.status = SubEnum.CANCEL;
     subscription.cancelDate = new Date();
     const subscriptionCancel = await this.save(subscription);
-    return subscriptionCancel;
+    if (!subscriptionCancel) {
+      throw new HttpException('Cancel Fail', HttpStatus.BAD_REQUEST);
+    }
+    return 'Cancel Successful';
   }
 }

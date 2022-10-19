@@ -5,6 +5,7 @@ import { CustomersModule } from '../customers/customers.module';
 import { PackagesModule } from '../packages/packages.module';
 import { SubscriptionController } from './subscriptions.controller';
 import { SubscriptionService } from './subscriptions.service';
+import { SubscriptionProfile } from './profile/subscription.profile';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { SubscriptionService } from './subscriptions.service';
     PackagesModule,
   ],
   controllers: [SubscriptionController],
-  providers: [SubscriptionService],
+  providers: [SubscriptionService, SubscriptionProfile],
   exports: [SubscriptionService],
 })
 export class SubscriptionModule {}

@@ -4,21 +4,23 @@ import { OrdersController } from './order.controller';
 import { OrdersService } from './order.service';
 import { OrderProfile } from './profile/order.profile';
 import { OrderEntity } from './entities/order.entity';
-import { CustomersModule } from '../customers/customers.module';
-import { PackagesModule } from '../packages/packages.module';
 import { FirebaseProviderModule } from 'src/providers/firebase/provider.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { SubscriptionModule } from '../subscriptions/subscriptions.module';
+import { FoodsModule } from '../foods/foods.module';
+import { PackageItemModule } from '../package-item/package-item.module';
+import { StationsModule } from '../stations/stations.module';
+import { KitchenEntity } from '../kitchens/entities/kitchens.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderEntity]),
-    CustomersModule,
-    PackagesModule,
+    SubscriptionModule,
+    FoodsModule,
+    PackageItemModule,
+    StationsModule,
+    KitchenEntity,
     FirebaseProviderModule,
     NotificationsModule,
-    // VnpayProviderModule,
-    // PaymentsModule,
-    // BanksModule,
-    // CommissionsModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrderProfile],

@@ -1,5 +1,5 @@
 export enum OrderEnum {
-  UNCONFIRMED = 'unconfirmed',
+  // UNCONFIRMED = 'unconfirmed',
   // WAIT_PAYMENT = 'waitPayment',
   PENDING = 'pending',
   PROGRESS = 'progress',
@@ -8,5 +8,5 @@ export enum OrderEnum {
   DONE = 'done',
   // BAN = 'ban',
   //   REJECT = 'reject',
-  CANCEL = 'cancel',
+  // CANCEL = 'cancel',
 }

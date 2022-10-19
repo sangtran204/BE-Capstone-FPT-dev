@@ -2,6 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { BaseDTO } from '../../base/base.dto';
 import { CustomerDTO } from 'src/models/customers/dto/customer.dto';
 import { PackageDTO } from 'src/models/packages/dto/packages.dto';
+import { OrderDTO } from 'src/models/orders/dto/order.dto';
 
 export class SubscriptionDTO extends BaseDTO {
   @AutoMap()
@@ -20,5 +21,8 @@ export class SubscriptionDTO extends BaseDTO {
   customer: CustomerDTO;
 
   @AutoMap(() => PackageDTO)
-  package: PackageDTO;
+  packages: PackageDTO;
+
+  @AutoMap(() => [OrderDTO])
+  orders: OrderDTO;
 }
