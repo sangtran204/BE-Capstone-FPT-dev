@@ -6,6 +6,7 @@ import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
+import { TimeSlotEntity } from 'src/models/time-slots/entities/time-slots.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'orders' })
@@ -13,10 +14,6 @@ export class OrderEntity extends BaseEntity {
   @Column('date')
   @AutoMap()
   deliveryDate: Date;
-
-  @Column('time')
-  @AutoMap()
-  deliveryTime: Date;
 
   @Column()
   @AutoMap()
@@ -45,6 +42,10 @@ export class OrderEntity extends BaseEntity {
   @AutoMap(() => FoodEntity)
   @ManyToOne(() => FoodEntity, (food) => food.orders)
   food: FoodEntity;
+
+  @AutoMap(() => TimeSlotEntity)
+  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.orders)
+  timeSlot: TimeSlotEntity;
 
   @AutoMap(() => StationEntity)
   @ManyToOne(() => StationEntity, (station) => station.orders)

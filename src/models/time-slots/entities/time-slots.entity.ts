@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity } from 'typeorm';
+import { OrderEntity } from 'src/models/orders/entities/order.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'time_slots' })
 export class TimeSlotEntity extends BaseEntity {
@@ -15,4 +16,8 @@ export class TimeSlotEntity extends BaseEntity {
   @Column()
   @AutoMap()
   flag: number;
+
+  @OneToMany(() => OrderEntity, (order) => order.timeSlot)
+  @AutoMap(() => [OrderEntity])
+  orders: OrderEntity[];
 }

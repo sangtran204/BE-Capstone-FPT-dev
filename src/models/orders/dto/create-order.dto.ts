@@ -6,27 +6,23 @@ export class OrderCreationDTO {
   deliveryDate: Date;
 
   @ApiProperty()
-  deliveryTime: Date;
-
-  @ApiProperty()
   priceFood: number;
 
   @ApiProperty()
   nameFood: string;
 
   @ApiProperty()
-  @IsUUID()
   subscriptionID: string;
 
   @ApiProperty()
-  @IsUUID()
   packageItemID: string;
 
   @ApiProperty()
-  @IsUUID()
   foodID: string;
 
   @ApiProperty()
-  @IsUUID()
   stationID: string;
+
+  @ApiProperty()
+  timeSlotID: string;
 }

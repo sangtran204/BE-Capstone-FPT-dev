@@ -32,6 +32,8 @@ import { SubscriptionService } from '../subscriptions/subscriptions.service';
 import { PackageItemService } from '../package-item/package-item.service';
 import { FoodsService } from '../foods/foods.service';
 import { StationsService } from '../stations/stations.service';
+import { KitchenService } from '../kitchens/kitchens.service';
+import { TimeSlotsService } from '../time-slots/time-slots.service';
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
 // import { FirebaseMessageService } from 'providers/firebase/message/firebase-message.service';
@@ -60,6 +62,8 @@ export class OrdersService extends BaseService<OrderEntity> {
     private readonly packageItemService: PackageItemService,
     private readonly foodsService: FoodsService,
     private readonly stationService: StationsService,
+    private readonly kitchenService: KitchenService,
+    private readonly timeSlotService: TimeSlotsService,
     private readonly dataSource: DataSource,
     private readonly notificationsService: NotificationsService,
     private readonly firebaseMessageService: FirebaseMessageService, // private readonly firebaseMessageService: FirebaseMessageService, // private readonly tourService: ToursService, // private readonly tourPlanService: TourPlansService, // private readonly notificationsService: NotificationsService,  // private readonly dataSource: DataSource, // private readonly vnpayService: VnpayService, // private readonly banksService: BanksService, // private readonly paymentsService: PaymentsService, // private readonly commissionsService: CommissionsService, // private readonly firebaseMessage: FirebaseMessageService,
@@ -127,7 +131,15 @@ export class OrdersService extends BaseService<OrderEntity> {
     });
 
     if (!Boolean(foodFind)) {
-      throw new HttpException('food  not found', HttpStatus.BAD_REQUEST);
+      throw new HttpException('food not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const slotFind = await this.timeSlotService.findOne({
+      where: { id: dto.timeSlotID },
+    });
+
+    if (!Boolean(slotFind)) {
+      throw new HttpException('Slot not found', HttpStatus.BAD_REQUEST);
     }
 
     const stationFind = await this.stationService.findOne({
@@ -153,13 +165,13 @@ export class OrdersService extends BaseService<OrderEntity> {
           entityManager.create(OrderEntity, {
             // commission: commission[0],
             deliveryDate: dto.deliveryDate,
-            deliveryTime: dto.deliveryTime,
             priceFood: dto.priceFood,
             nameFood: dto.nameFood,
             subscription: subFind,
             packageItem: packageItem,
             food: foodFind,
             station: stationFind,
+            timeSlot: slotFind,
             // kitchen
           }),
         );
@@ -206,6 +218,7 @@ export class OrdersService extends BaseService<OrderEntity> {
         station: true,
         packageItem: true,
         kitchen: true,
+        timeSlot: true,
       },
     });
     if (!order)

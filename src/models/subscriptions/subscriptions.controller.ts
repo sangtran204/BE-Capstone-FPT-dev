@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
