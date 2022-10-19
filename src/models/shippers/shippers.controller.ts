@@ -81,10 +81,10 @@ export class ShippersController {
   @Put('/status/:id')
   @ApiResponse({
     status: 200,
-    description: 'INACTIVE SHIPPER BY ID',
+    description: 'UPDATE STATUS SHIPPER BY ID',
     type: ShipperDTO,
   })
   async inActiveShipper(@Param('id') id: string): Promise<string> {
-    return await this.shippersService.inActiveShipper(id);
+    return await this.shippersService.updateStatusShipper(id);
   }
 }

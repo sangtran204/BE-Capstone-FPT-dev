@@ -70,22 +70,35 @@ export class KitchenService extends BaseService<KitchenEntity> {
     });
   }
 
-  async inActiveKitchen(id: string): Promise<string> {
+  async updateStatusKitchen(id: string): Promise<string> {
     const kitchen = await this.kitchensRepository.findOne({
       where: { id: id },
+      relations: { account: true },
     });
     if (!kitchen) {
       throw new HttpException(`Kitchen ${id} not found`, HttpStatus.NOT_FOUND);
     }
 
-    const callback = async (entityManager: EntityManager): Promise<void> => {
-      await entityManager.update(
-        AccountEntity,
-        { id: id },
-        { status: StatusEnum.IN_ACTIVE },
-      );
-    };
-    await this.accountService.transaction(callback, this.dataSource);
-    return 'Kitchen inactive!';
+    if (kitchen.account.status == StatusEnum.ACTIVE) {
+      const callback = async (entityManager: EntityManager): Promise<void> => {
+        await entityManager.update(
+          AccountEntity,
+          { id: id },
+          { status: StatusEnum.IN_ACTIVE },
+        );
+      };
+      await this.accountService.transaction(callback, this.dataSource);
+      return 'Kitchen inactive!';
+    } else {
+      const callback = async (entityManager: EntityManager): Promise<void> => {
+        await entityManager.update(
+          AccountEntity,
+          { id: id },
+          { status: StatusEnum.ACTIVE },
+        );
+      };
+      await this.accountService.transaction(callback, this.dataSource);
+      return 'Kitchen active!';
+    }
   }
 }
