@@ -10,7 +10,8 @@ import { SubscriptionModule } from '../subscriptions/subscriptions.module';
 import { FoodsModule } from '../foods/foods.module';
 import { PackageItemModule } from '../package-item/package-item.module';
 import { StationsModule } from '../stations/stations.module';
-import { KitchenEntity } from '../kitchens/entities/kitchens.entity';
+import { KitchenModule } from '../kitchens/kitchens.module';
+import { TimeSlotsModule } from '../time-slots/time-slots.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderEntity]),
@@ -18,7 +19,9 @@ import { KitchenEntity } from '../kitchens/entities/kitchens.entity';
     FoodsModule,
     PackageItemModule,
     StationsModule,
-    KitchenEntity,
+    KitchenModule,
+    TimeSlotsModule,
+
     FirebaseProviderModule,
     NotificationsModule,
   ],
