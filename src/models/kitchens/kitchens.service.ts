@@ -44,7 +44,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
     const checkEmail = await this.profileService.findOne({
       where: { email: update.email },
     });
-    if (Boolean(checkEmail)) {
+    if (Boolean(checkEmail) && id != checkEmail.id) {
       throw new HttpException(
         `Email ${update.email} existed`,
         HttpStatus.BAD_REQUEST,
