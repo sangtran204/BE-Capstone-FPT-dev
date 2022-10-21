@@ -150,8 +150,8 @@ export class PackageController {
   }
 
   // Create package
-  // @Public()
-  @Roles(RoleEnum.MANAGER)
+  @Public()
+  // @Roles(RoleEnum.MANAGER)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
