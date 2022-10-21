@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreatePackageDTO {
-  @ApiProperty({ default: new Date().toLocaleString() })
+  @ApiProperty({ default: new Date() })
   startSale: Date;
 
-  @ApiProperty({ default: new Date().toLocaleString() })
+  @ApiProperty({ default: new Date() })
   endSale: Date;
 
   @ApiProperty()
@@ -17,6 +17,7 @@ export class CreatePackageDTO {
   description: string;
 
   @ApiProperty()
+  @IsNumber()
   price: number;
 
   @ApiProperty({ type: String, format: 'binary' })

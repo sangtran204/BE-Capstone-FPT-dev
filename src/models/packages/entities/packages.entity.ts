@@ -1,7 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { PackageCategoryEntity } from 'src/models/package-categories/entities/package-categories.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';

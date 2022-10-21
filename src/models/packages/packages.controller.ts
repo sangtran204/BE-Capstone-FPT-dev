@@ -27,7 +27,6 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { UpdatePackageDTO } from './dto/update-package.dto';
-import { string } from 'joi';
 
 @ApiBearerAuth()
 @ApiTags('packages')
