@@ -2,12 +2,10 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortEnum } from 'src/common/enums/sort.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { Like, Repository, UpdateResult } from 'typeorm';
 import { BaseService } from '../base/base.service';
 import { AccountFilterDTO } from './dto/account-filter.dto';
-import { AccountInfoDTO } from './dto/account-info..dto';
 import { AccountEntity } from './entities/account.entity';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -54,30 +52,47 @@ export class AccountsService extends BaseService<AccountEntity> {
       : 'Update deviceToken success';
   }
 
-  async getAccounts(
-    accountFilter: AccountFilterDTO,
-  ): Promise<[AccountInfoDTO[], number]> {
-    const { currentPage, sizePage, sort, role, phone, status } = accountFilter;
+  // async getAccounts(
+  //   accountFilter: AccountFilterDTO,
+  // ): Promise<[AccountInfoDTO[], number]> {
+  //   const { currentPage, sizePage, sort, role, phone, status } = accountFilter;
 
-    const [list, count] = await this.accountsRepository.findAndCount({
+  //   const [list, count] = await this.accountsRepository.findAndCount({
+  //     relations: {
+  //       profile: true,
+  //       role: true,
+  //       customer: true,
+  //       shipper: true,
+  //       kitchen: true,
+  //     },
+  //     where: {
+  //       phone: Like(`%${Boolean(phone) ? phone : ''}%`),
+  //       role: { name: Like(Boolean(role) ? role : '%%') },
+  //       status: Like(Boolean(status) ? status : '%%'),
+  //     },
+  //     order: { phone: sort == SortEnum.ASCENDING ? 'ASC' : 'DESC' },
+  //     skip: sizePage * (currentPage - 1),
+  //     take: sizePage,
+  //   });
+
+  //   return [this.mapper.mapArray(list, AccountEntity, AccountInfoDTO), count];
+  // }
+
+  async getAccounts(accountFilter: AccountFilterDTO): Promise<AccountEntity[]> {
+    // const roleFind = await this.roleService.findOne({ where: { id: role } });
+    const { role } = accountFilter;
+    const accounts = await this.accountsRepository.find({
+      where: { role: { name: Like(Boolean(role) ? role : '%%') } },
       relations: {
-        profile: true,
         role: true,
-        customer: true,
-        shipper: true,
-        kitchen: true,
+        profile: true,
       },
-      where: {
-        phone: Like(`%${Boolean(phone) ? phone : ''}%`),
-        role: { name: Like(Boolean(role) ? role : '%%') },
-        status: Like(Boolean(status) ? status : '%%'),
-      },
-      order: { phone: sort == SortEnum.ASCENDING ? 'ASC' : 'DESC' },
-      skip: sizePage * (currentPage - 1),
-      take: sizePage,
     });
-
-    return [this.mapper.mapArray(list, AccountEntity, AccountInfoDTO), count];
+    if (!accounts || accounts.length == 0) {
+      throw new HttpException(`No account found`, HttpStatus.NOT_FOUND);
+    } else {
+      return accounts;
+    }
   }
 
   async changePassword(
