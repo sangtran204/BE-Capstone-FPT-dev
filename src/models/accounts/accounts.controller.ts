@@ -16,7 +16,6 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
-import { IPaginate, paginate } from '../base/base.filter';
 import { AccountsService } from './accounts.service';
 import { AccountFilterDTO } from './dto/account-filter.dto';
 import { AccountInfoDTO } from './dto/account-info..dto';
@@ -49,17 +48,25 @@ export class AccountsController {
     return accounts;
   }
 
+  // @Get()
+  // @Roles(RoleEnum.ADMIN)
+  // async getAll(
+  //   @Query() accountFilter: AccountFilterDTO,
+  // ): Promise<IPaginate<AccountInfoDTO>> {
+  //   const data = await this.accountsService.getAccounts(accountFilter);
+  //   return paginate<AccountInfoDTO>(
+  //     data,
+  //     accountFilter.currentPage,
+  //     accountFilter.sizePage,
+  //   );
+  // }
+
   @Get()
   @Roles(RoleEnum.ADMIN)
   async getAll(
     @Query() accountFilter: AccountFilterDTO,
-  ): Promise<IPaginate<AccountInfoDTO>> {
-    const data = await this.accountsService.getAccounts(accountFilter);
-    return paginate<AccountInfoDTO>(
-      data,
-      accountFilter.currentPage,
-      accountFilter.sizePage,
-    );
+  ): Promise<AccountEntity[]> {
+    return await this.accountsService.getAccounts(accountFilter);
   }
 
   @Post('/deviceToken')
