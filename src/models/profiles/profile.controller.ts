@@ -14,9 +14,9 @@ export class ProfilesController {
   constructor(private readonly profilesService: ProfileService) {}
 
   @Get('/my')
-  @UseInterceptors(MapInterceptor(ProfileEntity, ProfileDTO))
-  getMe(@GetUser() user: AccountEntity): ProfileEntity {
-    return user.profile;
+  // @UseInterceptors(MapInterceptor(ProfileEntity, ProfileDTO))
+  getMe(@GetUser() user: AccountEntity): AccountEntity {
+    return user;
   }
 
   @Put()
