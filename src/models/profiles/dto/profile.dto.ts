@@ -1,20 +1,20 @@
 import { AutoMap } from '@automapper/classes';
-import { ApiProperty } from '@nestjs/swagger';
+// import { ApiProperty } from '@nestjs/swagger';
 import { BaseDTO } from 'src/models/base/base.dto';
 export class ProfileDTO extends BaseDTO {
   @AutoMap()
-  @ApiProperty()
+  // @ApiProperty()
   fullName: string;
 
   @AutoMap()
-  @ApiProperty()
+  // @ApiProperty()
   DOB: Date;
 
   @AutoMap()
-  @ApiProperty()
+  // @ApiProperty()
   avatar: string;
 
   @AutoMap()
-  @ApiProperty()
+  // @ApiProperty()
   email: string;
 }
