@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Put, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 import { MapInterceptor } from '@automapper/nestjs';
 import { ProfileEntity } from './entities/profile.entity';
 import { ProfileDTO } from './dto/profile.dto';
 import { GetUser } from '../../decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateProfileDTO } from './dto/update-profile.dto';
 
 @Controller('profiles')
 @ApiTags('profiles')
@@ -20,11 +29,14 @@ export class ProfilesController {
   }
 
   @Put()
-  @UseInterceptors(MapInterceptor(ProfileEntity, ProfileDTO))
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(MapInterceptor(ProfileEntity, UpdateProfileDTO))
   async updateProfile(
-    @Body() dto: ProfileDTO,
+    @Body() dto: UpdateProfileDTO,
     @GetUser() user: AccountEntity,
-  ): Promise<ProfileEntity> {
-    return await this.profilesService.updateProfile(dto, user.id);
+    @UploadedFile() avatar: Express.Multer.File,
+  ): Promise<string> {
+    return await this.profilesService.updateProfile(dto, user, avatar);
   }
 }
