@@ -5,7 +5,7 @@ export class CreateSubscriptionDTO {
   @ApiProperty()
   totalPrice: number;
 
-  @ApiProperty({ default: new Date() })
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   startDelivery: Date;
 
   @ApiProperty()

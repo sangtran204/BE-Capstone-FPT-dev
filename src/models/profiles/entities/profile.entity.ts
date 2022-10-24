@@ -12,7 +12,7 @@ export class ProfileEntity extends BaseEntity {
   @AutoMap()
   fullName: string;
 
-  @Column({ nullable: true })
+  @Column('date', { nullable: true })
   @AutoMap()
   DOB: Date;
 

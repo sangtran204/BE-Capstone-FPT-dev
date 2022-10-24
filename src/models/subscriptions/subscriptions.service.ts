@@ -34,32 +34,39 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     dto: CreateSubscriptionDTO,
     user: AccountEntity,
   ): Promise<SubscriptionEntity> {
-    const packgeFind = await this.packageService.findOne({
-      where: { id: dto.packageId },
-    });
-    const customerFind = await this.customerService.findOne({
-      where: { id: user.customer.id },
-    });
-    if (packgeFind.status !== StatusEnum.ACTIVE) {
-      throw new HttpException(`Package is not Active`, HttpStatus.BAD_REQUEST);
-    }
-    if (!packgeFind) {
-      throw new HttpException(
-        `PackageId ${dto.packageId} not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    } else if (!customerFind) {
-      throw new HttpException(
-        `CustomerId ${user.customer.id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    } else {
-      return await this.subscriptionRepository.save({
-        totalPrice: dto.totalPrice,
-        startDelivery: dto.startDelivery,
-        customer: customerFind,
-        packages: packgeFind,
+    try {
+      const packgeFind = await this.packageService.findOne({
+        where: { id: dto.packageId },
       });
+      const customerFind = await this.customerService.findOne({
+        where: { id: user.id },
+      });
+      if (packgeFind.status !== StatusEnum.ACTIVE) {
+        throw new HttpException(
+          `Package is not Active`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (!packgeFind) {
+        throw new HttpException(
+          `PackageId ${dto.packageId} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      } else if (!customerFind) {
+        throw new HttpException(
+          `CustomerId ${user.id} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        return await this.subscriptionRepository.save({
+          totalPrice: dto.totalPrice,
+          startDelivery: dto.startDelivery,
+          customer: customerFind,
+          packages: packgeFind,
+        });
+      }
+    } catch (error) {
+      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -67,7 +74,6 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
       relations: {
-        customer: { account: true },
         packages: true,
         orders: true,
       },

@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountsService } from './accounts.service';
@@ -29,8 +28,7 @@ import { AccountEntity } from './entities/account.entity';
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
-  @Get('/:id')
-  @Public()
+  @Get('/find/:id')
   @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
   async getUserById(@Param('id') id: string): Promise<AccountEntity> {
     const accounts = await this.accountsService.findOne({
@@ -46,6 +44,21 @@ export class AccountsController {
     if (!accounts)
       throw new HttpException("Don't have resource", HttpStatus.NOT_FOUND);
     return accounts;
+  }
+
+  @Get('/me')
+  @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
+  async getMe(@GetUser() user: AccountEntity): Promise<AccountEntity> {
+    return await this.accountsService.findOne({
+      where: { id: user.id },
+      relations: {
+        profile: true,
+        role: true,
+        customer: true,
+        shipper: true,
+        kitchen: true,
+      },
+    });
   }
 
   // @Get()
