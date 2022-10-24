@@ -3,18 +3,14 @@ import { AutoMap } from '@automapper/classes';
 import { BaseDTO } from 'src/models/base/base.dto';
 export class ProfileDTO extends BaseDTO {
   @AutoMap()
-  // @ApiProperty()
   fullName: string;
 
   @AutoMap()
-  // @ApiProperty()
   DOB: Date;
 
   @AutoMap()
-  // @ApiProperty()
   avatar: string;
 
   @AutoMap()
-  // @ApiProperty()
   email: string;
 }

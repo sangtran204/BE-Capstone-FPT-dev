@@ -7,7 +7,6 @@ import { NotificationEntity } from 'src/models/notifications/entities/notificati
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
-// import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
 import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 @Entity({ name: 'accounts' })

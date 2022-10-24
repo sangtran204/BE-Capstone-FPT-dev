@@ -34,7 +34,7 @@ export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
 
   @Get()
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET ALL FOOD',
@@ -53,7 +53,7 @@ export class FoodsController {
   }
 
   @Get('/active')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET ALL ACTIVE FOOD',
@@ -72,7 +72,7 @@ export class FoodsController {
   }
 
   @Get('/:id')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET FOOD BY ID',
