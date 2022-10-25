@@ -111,6 +111,16 @@ export class AccountsController {
     return await this.accountsService.banAccount(id, user);
   }
 
+  @Put('/unBan/:id')
+  @Roles(RoleEnum.ADMIN)
+  @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
+  async unBanAccount(
+    @Param('id') id: string,
+    // @GetUser() user: AccountEntity,
+  ): Promise<AccountEntity> {
+    return await this.accountsService.unBanAccount(id);
+  }
+
   @Put('delete/:id')
   @Roles(RoleEnum.ADMIN)
   @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
