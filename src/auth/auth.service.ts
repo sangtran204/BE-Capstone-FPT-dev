@@ -222,6 +222,38 @@ export class AuthService {
   //   return 'Verify OTP Successfully';
   // }
 
+  async loginAll(dto: LoginDto): Promise<LoginResponseDto> {
+    const { phone, password } = dto;
+    const user = await this.accountsService.findOne({
+      relations: { role: true },
+      where: { phone, status: StatusEnum.ACTIVE },
+    });
+
+    if (!user)
+      throw new HttpException('Account invalid', HttpStatus.BAD_REQUEST);
+    const isCorrectPassword = await bcrypt.compare(password, user.password);
+    if (!isCorrectPassword)
+      throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
+    // const payload: Payload = { phone, role };
+    const role = user.role.name;
+    const payload: Payload = { phone, role };
+    const refreshToken = this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: this.jwtConfigService.refreshTokenSecret,
+        expiresIn: this.jwtConfigService.refreshTokenExpiresIn,
+      },
+    );
+    await this.accountsService.updateRefreshToken(refreshToken, user.id);
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.jwtConfigService.accessTokenSecret,
+        expiresIn: this.jwtConfigService.accessTokenExpiresIn,
+      }),
+      refresh_token: refreshToken,
+    };
+  }
+
   async login(dto: LoginDto, role: RoleEnum): Promise<LoginResponseDto> {
     const { phone, password } = dto;
     const user = await this.accountsService.findOne({

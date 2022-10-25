@@ -50,6 +50,11 @@ export class AuthenticationController {
   // async verifySignUpTourist(@Body() dto: VerifySignUp): Promise<string> {
   //   return await this.authService.verifySignUp(dto);
   // }
+  @Post('login')
+  @Public()
+  async login(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+    return await this.authService.loginAll(dto);
+  }
 
   @Post('login/customer')
   @Public()
