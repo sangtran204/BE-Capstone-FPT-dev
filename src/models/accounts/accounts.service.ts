@@ -128,6 +128,17 @@ export class AccountsService extends BaseService<AccountEntity> {
     return await this.save(account);
   }
 
+  async unBanAccount(id: string): Promise<AccountEntity> {
+    const account = await this.accountsRepository.findOne({
+      where: { id },
+      relations: { role: true },
+    });
+    if (!Boolean(account))
+      throw new HttpException('this account not found', HttpStatus.NOT_FOUND);
+    account.status = StatusEnum.ACTIVE;
+    return await this.save(account);
+  }
+
   async deleteAccount(id: string, user: AccountEntity): Promise<AccountEntity> {
     if (id === user.id)
       throw new HttpException(
