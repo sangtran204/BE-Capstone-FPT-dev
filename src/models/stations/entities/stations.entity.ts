@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -32,4 +33,7 @@ export class StationEntity extends BaseEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.station)
   orders: OrderEntity[];
+
+  @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.station)
+  deliveryTrips: DeliveryTripEntity[];
 }

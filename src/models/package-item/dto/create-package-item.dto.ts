@@ -11,9 +11,9 @@ export class CreatePackageItemDTO {
   @IsNotEmpty()
   packageID: string;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  timeFrameID: string;
+  // @ApiProperty({ type: String })
+  // @IsNotEmpty()
+  // timeFrameID: string;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()

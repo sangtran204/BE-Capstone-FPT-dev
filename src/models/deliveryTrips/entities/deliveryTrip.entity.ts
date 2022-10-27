@@ -1,29 +1,29 @@
 import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
-import { TimeSlotEntity } from 'src/models/time-slots/entities/time-slots.entity';
-// import { ShipperEntity } from 'src/models/shippers/entities/shippers.entity';
+import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import { OrderEntity } from 'src/models/orders/entities/order.entity';
+
 @Entity({ name: 'delivery_trips' })
 export class DeliveryTripEntity extends BaseEntity {
   @Column()
   @AutoMap()
   status: string;
 
-  // @AutoMap(() => StationEntity)
-  // @ManyToOne(() => StationEntity, (station) => station.deliveryTrips)
-  // station: StationEntity;
+  @AutoMap(() => StationEntity)
+  @ManyToOne(() => StationEntity, (station) => station.deliveryTrips)
+  station: StationEntity;
 
-  // @AutoMap(() => KitchenEntity)
-  // @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.deliveryTrips)
-  // kitchen: KitchenEntity;
+  @AutoMap(() => KitchenEntity)
+  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.deliveryTrips)
+  kitchen: KitchenEntity;
 
-  // @AutoMap(() => TimeSlotEntity)
-  // @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.deliveryTrips)
-  // timeSlot: TimeSlotEntity;
+  @AutoMap(() => ShipperEntity)
+  @ManyToOne(() => ShipperEntity, (shipper) => shipper.deliveryTrips)
+  shipper: ShipperEntity;
 
-  // @AutoMap(() => ShipperEntity)
-  // @ManyToOne(() => ShipperEntity, (shipper) => shipper.trips)
-  // shipper: ShipperEntity;
+  @OneToMany(() => OrderEntity, (order) => order.deliveryTrips)
+  order: OrderEntity[];
 }

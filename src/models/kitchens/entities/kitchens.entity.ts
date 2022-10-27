@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 import {
@@ -38,4 +39,7 @@ export class KitchenEntity extends BaseEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.kitchen)
   orders: OrderEntity[];
+
+  @OneToMany(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.kitchen)
+  deliveryTrips: DeliveryTripEntity[];
 }

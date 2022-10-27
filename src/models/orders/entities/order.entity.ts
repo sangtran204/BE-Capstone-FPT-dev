@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { FoodEntity } from 'src/models/foods/entities/foods.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
@@ -54,4 +55,8 @@ export class OrderEntity extends BaseEntity {
   @AutoMap(() => KitchenEntity)
   @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.orders)
   kitchen: KitchenEntity;
+
+  @AutoMap(() => DeliveryTripEntity)
+  @ManyToOne(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.order)
+  deliveryTrips: DeliveryTripEntity;
 }

@@ -26,8 +26,8 @@ import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
 
 @ApiBearerAuth()
-@ApiTags('deliveryTrips')
-@Controller('deliveryTrips')
+@ApiTags('delivery_trips')
+@Controller('delivery_trips')
 export class DeliveryTripController {
   constructor(private readonly deliveryTripService: DeliveryTripService) {}
 
