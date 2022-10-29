@@ -226,6 +226,22 @@ export class OrdersService extends BaseService<OrderEntity> {
     return order;
   }
 
+  async getOrderByKitchen(deliveryDate: Date): Promise<OrderEntity[]> {
+    const list = await this.ordersRepository.find({
+      relations: {
+        timeSlot: true,
+        subscription: { customer: true },
+        food: true,
+      },
+      where: {
+        deliveryDate: deliveryDate,
+      },
+    });
+    console.log(deliveryDate);
+
+    return list;
+  }
+
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {
   //   const order = await this.findById(id);
   //   if (order.customer.id !== user.customer.id)

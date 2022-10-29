@@ -9,6 +9,8 @@ import { FoodCategoriesService } from '../food-categories/food-categories.servic
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
+import { count } from 'console';
+import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -148,4 +150,24 @@ export class FoodsService extends BaseService<FoodEntity> {
       }
     }
   }
+
+  // async getFoodByKitchen(
+  //   kitchenId: string,
+  //   deliveryDate: string,
+  // ): Promise<FoodByKitchenDTO> {
+  //   const list = await this.foodsRepository
+  //     .createQueryBuilder('foods')
+  //     .select('foods.name, time_slots.flag, count(foods.id)')
+  //     // .from('foods')
+  //     .leftJoinAndSelect('foods.orders', 'orders')
+  //     .leftJoinAndSelect('orders.time_slots', 'time_slots')
+  //     .where('orders.kitchenId = :kitchenId', { kitchenId: kitchenId })
+  //     .andWhere('orders.deliveryDate = :deliveryDate', {
+  //       deliveryDate: deliveryDate,
+  //     })
+  //     .groupBy('foods.name, time_slots.flag')
+  //     .getMany();
+
+  //   return list;
+  // }
 }

@@ -12,7 +12,7 @@ import {
   Req,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 import { OrderEntity } from './entities/order.entity';
 import { MapInterceptor } from '@automapper/nestjs';
@@ -55,6 +55,19 @@ export class OrdersController {
     @GetUser() user: AccountEntity,
   ): Promise<OrderEntity> {
     return await this.ordersService.orderSub(dto, user);
+  }
+
+  @Get('/:deliveryDate')
+  @Public()
+  @ApiResponse({
+    description: 'Kitchen get order',
+    status: 200,
+    type: OrderEntity,
+  })
+  async getOrderByKitchen(
+    @Param('deliveryDate') deliveryDate: Date,
+  ): Promise<OrderEntity[]> {
+    return await this.ordersService.getOrderByKitchen(deliveryDate);
   }
 
   //   @Get('/:id/payment-url')

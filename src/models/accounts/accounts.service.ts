@@ -139,7 +139,10 @@ export class AccountsService extends BaseService<AccountEntity> {
     return await this.save(account);
   }
 
-  async deleteAccount(id: string, user: AccountEntity): Promise<AccountEntity> {
+  async inActiveAccount(
+    id: string,
+    user: AccountEntity,
+  ): Promise<AccountEntity> {
     if (id === user.id)
       throw new HttpException(
         'You can not delete this you',
@@ -159,7 +162,7 @@ export class AccountsService extends BaseService<AccountEntity> {
         HttpStatus.BAD_REQUEST,
       );
 
-    account.status = StatusEnum.DELETE;
+    account.status = StatusEnum.IN_ACTIVE;
     return await this.save(account);
   }
 }
