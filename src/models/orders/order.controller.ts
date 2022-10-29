@@ -22,7 +22,7 @@ import { Request } from 'express';
 // import { VnpayDto } from '../../providers/vnpay/vnpay.dto';
 import { Public } from '../../decorators/public.decorator';
 import { OrdersService } from './order.service';
-import { OrderFilter } from './dto/order-filter.dto';
+import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { OrderCreationDTO } from './dto/create-order.dto';
@@ -57,17 +57,18 @@ export class OrdersController {
     return await this.ordersService.orderSub(dto, user);
   }
 
-  @Get('/:deliveryDate')
+  @Get('/order-date')
   @Public()
   @ApiResponse({
-    description: 'Kitchen get order',
+    description: 'Get order by date',
     status: 200,
     type: OrderEntity,
   })
   async getOrderByKitchen(
-    @Param('deliveryDate') deliveryDate: Date,
+    @Query() data: OrderSearchByDate,
+    // @Param('deliveryDate') deliveryDate: Date,
   ): Promise<OrderEntity[]> {
-    return await this.ordersService.getOrderByKitchen(deliveryDate);
+    return await this.ordersService.getOrderByKitchen(data);
   }
 
   //   @Get('/:id/payment-url')

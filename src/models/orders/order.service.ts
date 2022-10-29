@@ -17,7 +17,7 @@ import {
   Repository,
 } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { OrderFilter } from './dto/order-filter.dto';
+import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
 import { OrderDTO } from './dto/order.dto';
 import { SortEnum } from 'src/common/enums/sort.enum';
 import { InjectMapper } from '@automapper/nestjs';
@@ -34,6 +34,7 @@ import { FoodsService } from '../foods/foods.service';
 import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
+
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
 // import { FirebaseMessageService } from 'providers/firebase/message/firebase-message.service';
@@ -50,7 +51,7 @@ import { TimeSlotsService } from '../time-slots/time-slots.service';
 // import { OrderFilter, OrderFilterMe } from './dto/order-filter.dto';
 // import { TypeNotificationEnum } from '../../common/enums/type-notification.enum';
 // import { CommissionsService } from '../commissions/commissions.service';
-
+import * as moment from 'moment';
 @Injectable()
 export class OrdersService extends BaseService<OrderEntity> {
   private readonly logger = new Logger(OrdersService.name);
@@ -226,7 +227,14 @@ export class OrdersService extends BaseService<OrderEntity> {
     return order;
   }
 
-  async getOrderByKitchen(deliveryDate: Date): Promise<OrderEntity[]> {
+  async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
+    // const dateRes = moment(deliveryDate).format('YYYY-MM-DD');
+    // console.log(moment(deliveryDate).format('YYYY-MM-DD'));
+    // const dateRes = deliveryDate.toISOString().slice(0, 10);
+    // console.log(dateRes);
+    // console.log(deliveryDate === dateRes);
+    console.log(data.deliveryDate);
+
     const list = await this.ordersRepository.find({
       relations: {
         timeSlot: true,
@@ -234,10 +242,9 @@ export class OrdersService extends BaseService<OrderEntity> {
         food: true,
       },
       where: {
-        deliveryDate: deliveryDate,
+        deliveryDate: data.deliveryDate,
       },
     });
-    console.log(deliveryDate);
 
     return list;
   }
