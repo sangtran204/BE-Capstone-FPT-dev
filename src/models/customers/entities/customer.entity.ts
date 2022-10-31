@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { FeedBackEntity } from 'src/models/feedback/entities/feedback.entity';
 // import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
 import {
@@ -31,4 +32,8 @@ export class CustomerEntity extends BaseEntity {
   @AutoMap(() => [SubscriptionEntity])
   @OneToMany(() => SubscriptionEntity, (subscription) => subscription.customer)
   subscriptions: SubscriptionEntity[];
+
+  @AutoMap(() => [FeedBackEntity])
+  @OneToMany(() => FeedBackEntity, (feedback) => feedback.customer)
+  feedback: FeedBackEntity[];
 }

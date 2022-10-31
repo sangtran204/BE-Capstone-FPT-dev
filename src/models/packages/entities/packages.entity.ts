@@ -1,6 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
+import { FeedBackEntity } from 'src/models/feedback/entities/feedback.entity';
 import { PackageCategoryEntity } from 'src/models/package-categories/entities/package-categories.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
@@ -73,4 +74,8 @@ export class PackageEntity extends BaseEntity {
     (packageCategory) => packageCategory.packages,
   )
   packageCategory: PackageCategoryEntity;
+
+  @AutoMap(() => [FeedBackEntity])
+  @OneToMany(() => FeedBackEntity, (feedback) => feedback.packages)
+  feedback: FeedBackEntity[];
 }

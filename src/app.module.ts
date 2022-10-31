@@ -31,6 +31,7 @@ import { OrdersModule } from './models/orders/order.module';
 import { FirebaseProviderModule } from './providers/firebase/provider.module';
 import { PackageCategoriesModule } from './models/package-categories/package-categories.module';
 import { SubscriptionModule } from './models/subscriptions/subscriptions.module';
+import { FeedBackModule } from './models/feedback/feedback.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -60,6 +61,7 @@ import { SubscriptionModule } from './models/subscriptions/subscriptions.module'
     OrdersModule,
     FirebaseProviderModule,
     DeliveryTripModule,
+    FeedBackModule,
     //-> update
     // FirebaseProviderModule,
     ScheduleModule.forRoot(),
