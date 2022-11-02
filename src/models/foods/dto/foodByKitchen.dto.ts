@@ -7,11 +7,6 @@ export class FoodByKitchenDTO {
   @AutoMap()
   description: string;
 
-  //   @AutoMap()
-  //   price: number;
-
-  //   @AutoMap()
-  //   image: string;
   @AutoMap()
   flag: number;
 

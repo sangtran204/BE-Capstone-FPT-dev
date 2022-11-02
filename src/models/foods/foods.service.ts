@@ -151,9 +151,35 @@ export class FoodsService extends BaseService<FoodEntity> {
     }
   }
 
+  async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+    const list = await this.foodsRepository
+      .createQueryBuilder()
+      .select(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .from('foods', 'foods')
+      .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
+      .leftJoinAndSelect(
+        'time_slots',
+        'time_slots',
+        'orders.timeSlotId = time_slots.id',
+      )
+      .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
+      .groupBy(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .getMany();
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
+  }
+
   // async getFoodByKitchen(
   //   kitchenId: string,
-  //   deliveryDate: string,
+  //   // deliveryDate: string,
   // ): Promise<FoodByKitchenDTO> {
   //   const list = await this.foodsRepository
   //     .createQueryBuilder('foods')
@@ -162,9 +188,9 @@ export class FoodsService extends BaseService<FoodEntity> {
   //     .leftJoinAndSelect('foods.orders', 'orders')
   //     .leftJoinAndSelect('orders.time_slots', 'time_slots')
   //     .where('orders.kitchenId = :kitchenId', { kitchenId: kitchenId })
-  //     .andWhere('orders.deliveryDate = :deliveryDate', {
-  //       deliveryDate: deliveryDate,
-  //     })
+  //     // .andWhere('orders.deliveryDate = :deliveryDate', {
+  //     //   deliveryDate: deliveryDate,
+  //     // })
   //     .groupBy('foods.name, time_slots.flag')
   //     .getMany();
 

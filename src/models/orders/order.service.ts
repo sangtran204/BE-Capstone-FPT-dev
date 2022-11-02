@@ -51,7 +51,6 @@ import { TimeSlotsService } from '../time-slots/time-slots.service';
 // import { OrderFilter, OrderFilterMe } from './dto/order-filter.dto';
 // import { TypeNotificationEnum } from '../../common/enums/type-notification.enum';
 // import { CommissionsService } from '../commissions/commissions.service';
-import * as moment from 'moment';
 @Injectable()
 export class OrdersService extends BaseService<OrderEntity> {
   private readonly logger = new Logger(OrdersService.name);
@@ -228,24 +227,16 @@ export class OrdersService extends BaseService<OrderEntity> {
   }
 
   async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
-    // const dateRes = moment(deliveryDate).format('YYYY-MM-DD');
-    // console.log(moment(deliveryDate).format('YYYY-MM-DD'));
-    // const dateRes = deliveryDate.toISOString().slice(0, 10);
-    // console.log(dateRes);
-    // console.log(deliveryDate === dateRes);
-    console.log(data.deliveryDate);
-
     const list = await this.ordersRepository.find({
       relations: {
         timeSlot: true,
-        subscription: { customer: true },
+        subscription: { customer: { account: { profile: true } } },
         food: true,
       },
       where: {
         deliveryDate: data.deliveryDate,
       },
     });
-
     return list;
   }
 
