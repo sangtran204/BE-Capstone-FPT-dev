@@ -4,6 +4,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReqStatusEnum } from 'src/common/enums/request.enum';
 import { Like, Repository } from 'typeorm';
+import { AccountEntity } from '../accounts/entities/account.entity';
 import { BaseService } from '../base/base.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { CreateRequestDTO } from './dto/create_request.dto';
@@ -65,13 +66,16 @@ export class RequestService extends BaseService<RequestEntity> {
   }
 
   //Tạo request
-  async createRequest(req: CreateRequestDTO): Promise<RequestEntity> {
+  async createRequest(
+    req: CreateRequestDTO,
+    user: AccountEntity,
+  ): Promise<RequestEntity> {
     const kitchenFind = await this.kitchenService.findOne({
-      where: { id: req.kitchenId },
+      where: { id: user.id },
     });
     if (!kitchenFind) {
       throw new HttpException(
-        `Kitchen ${req.kitchenId} not found`,
+        `Kitchen ${user.id} not found`,
         HttpStatus.NOT_FOUND,
       );
     } else if (req.numberReq <= 0 || req.numberReq > 5) {
