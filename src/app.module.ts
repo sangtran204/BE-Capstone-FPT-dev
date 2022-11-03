@@ -32,6 +32,7 @@ import { FirebaseProviderModule } from './providers/firebase/provider.module';
 import { PackageCategoriesModule } from './models/package-categories/package-categories.module';
 import { SubscriptionModule } from './models/subscriptions/subscriptions.module';
 import { FeedBackModule } from './models/feedback/feedback.module';
+import { RequestModule } from './models/request/request.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
 @Module({
@@ -57,6 +58,7 @@ import { FeedBackModule } from './models/feedback/feedback.module';
     TimeSlotsModule,
     PackageCategoriesModule,
     SubscriptionModule,
+    RequestModule,
     // ====================================
     OrdersModule,
     FirebaseProviderModule,
