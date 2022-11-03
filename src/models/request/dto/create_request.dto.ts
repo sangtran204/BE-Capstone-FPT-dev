@@ -8,8 +8,4 @@ export class CreateRequestDTO {
   @ApiProperty()
   @IsNotEmpty()
   numberReq: number;
-
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  kitchenId: string;
 }

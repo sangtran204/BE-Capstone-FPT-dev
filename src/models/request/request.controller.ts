@@ -18,6 +18,10 @@ import { Public } from 'src/decorators/public.decorator';
 import { RequestFilterDTO } from './dto/request-filter.dto';
 import { RejectReqDTO } from './dto/rejectReq.dto';
 import { string } from 'joi';
+import { GetUser } from 'src/decorators/user.decorator';
+import { AccountEntity } from '../accounts/entities/account.entity';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @ApiBearerAuth()
 @ApiTags('request')
@@ -26,7 +30,6 @@ export class RequestController {
   constructor(private readonly requestService: RequestService) {}
 
   @Get()
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'Get all request',
@@ -42,7 +45,6 @@ export class RequestController {
   }
 
   @Get('/status')
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'Get request by status',
@@ -60,18 +62,21 @@ export class RequestController {
   }
 
   @Post()
-  @Public()
+  @Roles(RoleEnum.KITCHEN)
   @ApiResponse({
     status: 200,
     description: 'Create request by kitchen',
     type: RequestEntity,
   })
-  async createRequest(@Body() req: CreateRequestDTO): Promise<RequestEntity> {
-    return this.requestService.createRequest(req);
+  async createRequest(
+    @Body() req: CreateRequestDTO,
+    @GetUser() user: AccountEntity,
+  ): Promise<RequestEntity> {
+    return this.requestService.createRequest(req, user);
   }
 
   @Put('/:id')
-  @Public()
+  @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'Update status request',
@@ -82,7 +87,7 @@ export class RequestController {
   }
 
   @Put('/reject/:id')
-  @Public()
+  @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'Reject request',
@@ -96,7 +101,7 @@ export class RequestController {
   }
 
   @Delete('/:id')
-  @Public()
+  @Roles(RoleEnum.KITCHEN)
   @ApiResponse({
     status: 200,
     description: 'Kitchen delete request',
