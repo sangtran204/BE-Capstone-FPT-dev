@@ -121,13 +121,13 @@ export class AccountsController {
     return await this.accountsService.unBanAccount(id);
   }
 
-  @Put('delete/:id')
+  @Put('inActive/:id')
   @Roles(RoleEnum.ADMIN)
   @UseInterceptors(MapInterceptor(AccountEntity, AccountInfoDTO))
   async deleteAccount(
     @Param('id') id: string,
     @GetUser() user: AccountEntity,
   ): Promise<AccountEntity> {
-    return await this.accountsService.deleteAccount(id, user);
+    return await this.accountsService.inActiveAccount(id, user);
   }
 }

@@ -23,6 +23,7 @@ import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodDTO } from './dto/food.dto';
+import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
@@ -150,4 +151,18 @@ export class FoodsController {
   async updateStatusFood(@Param('id') id: string): Promise<string> {
     return await this.foodsService.updateStatusFood(id);
   }
+
+  //Get food by kitchen
+  // @Get('/food-prepare')
+  // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Get food by kitchen',
+  //   type: FoodByKitchenDTO,
+  // })
+  // async getFoodByKitchen(
+  //   @Param('kitchenId') kitchenId: string,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   return this.foodsService.getFoodByKitchen(kitchenId);
+  // }
 }

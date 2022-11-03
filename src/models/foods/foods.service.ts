@@ -9,6 +9,8 @@ import { FoodCategoriesService } from '../food-categories/food-categories.servic
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
+import { count } from 'console';
+import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -148,4 +150,50 @@ export class FoodsService extends BaseService<FoodEntity> {
       }
     }
   }
+
+  // async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+  //   const list = await this.foodsRepository
+  //     .createQueryBuilder()
+  //     .select(
+  //       'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+  //     )
+  //     .from('foods', 'foods')
+  //     .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
+  //     .leftJoinAndSelect(
+  //       'time_slots',
+  //       'time_slots',
+  //       'orders.timeSlotId = time_slots.id',
+  //     )
+  //     .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
+  //     .groupBy(
+  //       'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+  //     )
+  //     .getMany();
+
+  //   if (!list || list.length == 0) {
+  //     throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     return list;
+  //   }
+  // }
+
+  // async getFoodByKitchen(
+  //   kitchenId: string,
+  //   // deliveryDate: string,
+  // ): Promise<FoodByKitchenDTO> {
+  //   const list = await this.foodsRepository
+  //     .createQueryBuilder('foods')
+  //     .select('foods.name, time_slots.flag, count(foods.id)')
+  //     // .from('foods')
+  //     .leftJoinAndSelect('foods.orders', 'orders')
+  //     .leftJoinAndSelect('orders.time_slots', 'time_slots')
+  //     .where('orders.kitchenId = :kitchenId', { kitchenId: kitchenId })
+  //     // .andWhere('orders.deliveryDate = :deliveryDate', {
+  //     //   deliveryDate: deliveryDate,
+  //     // })
+  //     .groupBy('foods.name, time_slots.flag')
+  //     .getMany();
+
+  //   return list;
+  // }
 }

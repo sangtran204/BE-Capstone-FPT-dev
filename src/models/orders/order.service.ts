@@ -17,7 +17,7 @@ import {
   Repository,
 } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { OrderFilter } from './dto/order-filter.dto';
+import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
 import { OrderDTO } from './dto/order.dto';
 import { SortEnum } from 'src/common/enums/sort.enum';
 import { InjectMapper } from '@automapper/nestjs';
@@ -34,6 +34,8 @@ import { FoodsService } from '../foods/foods.service';
 import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
+import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
+
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
 // import { FirebaseMessageService } from 'providers/firebase/message/firebase-message.service';
@@ -50,7 +52,6 @@ import { TimeSlotsService } from '../time-slots/time-slots.service';
 // import { OrderFilter, OrderFilterMe } from './dto/order-filter.dto';
 // import { TypeNotificationEnum } from '../../common/enums/type-notification.enum';
 // import { CommissionsService } from '../commissions/commissions.service';
-
 @Injectable()
 export class OrdersService extends BaseService<OrderEntity> {
   private readonly logger = new Logger(OrdersService.name);
@@ -224,6 +225,46 @@ export class OrdersService extends BaseService<OrderEntity> {
     if (!order)
       throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
     return order;
+  }
+
+  async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
+    const list = await this.ordersRepository.find({
+      relations: {
+        timeSlot: true,
+        subscription: { customer: { account: { profile: true } } },
+        food: true,
+      },
+      where: {
+        deliveryDate: data.deliveryDate,
+      },
+    });
+    return list;
+  }
+
+  async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+    const list = await this.ordersRepository
+      .createQueryBuilder()
+      .select(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .from('foods', 'foods')
+      .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
+      .leftJoinAndSelect(
+        'time_slots',
+        'time_slots',
+        'orders.timeSlotId = time_slots.id',
+      )
+      .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
+      .groupBy(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .execute();
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
   }
 
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {

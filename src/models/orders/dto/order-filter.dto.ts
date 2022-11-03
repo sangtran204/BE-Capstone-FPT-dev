@@ -29,3 +29,8 @@ export class OrderFilterMe extends BaseFilter {
   })
   status: OrderEnum;
 }
+
+export class OrderSearchByDate {
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  deliveryDate: Date;
+}
