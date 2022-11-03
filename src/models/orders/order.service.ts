@@ -34,6 +34,7 @@ import { FoodsService } from '../foods/foods.service';
 import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
+import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -238,6 +239,32 @@ export class OrdersService extends BaseService<OrderEntity> {
       },
     });
     return list;
+  }
+
+  async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+    const list = await this.ordersRepository
+      .createQueryBuilder()
+      .select(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .from('foods', 'foods')
+      .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
+      .leftJoinAndSelect(
+        'time_slots',
+        'time_slots',
+        'orders.timeSlotId = time_slots.id',
+      )
+      .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
+      .groupBy(
+        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
+      )
+      .execute();
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
   }
 
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {

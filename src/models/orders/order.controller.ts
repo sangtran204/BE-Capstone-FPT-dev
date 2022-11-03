@@ -28,6 +28,7 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { OrderCreationDTO } from './dto/create-order.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
 
 @ApiBearerAuth()
 @Controller('orders')
@@ -71,6 +72,18 @@ export class OrdersController {
     return await this.ordersService.getOrderByKitchen(data);
   }
 
+  @Get('/food-prepare')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'Get food by kitchen',
+    type: FoodByKitchenDTO,
+  })
+  async getFoodByKitchen(
+    @Param('kitchenId') kitchenId: string,
+  ): Promise<FoodByKitchenDTO[]> {
+    return await this.ordersService.getFoodByKitchen(kitchenId);
+  }
   //   @Get('/:id/payment-url')
   //   async paymentUrl(
   //     @Req() req: Request,

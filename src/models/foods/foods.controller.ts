@@ -153,16 +153,16 @@ export class FoodsController {
   }
 
   //Get food by kitchen
-  @Get('/food-prepare')
-  @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'Get food by kitchen',
-    type: FoodByKitchenDTO,
-  })
-  async getFoodByKitchen(
-    @Param('kitchenId') kitchenId: string,
-  ): Promise<FoodByKitchenDTO[]> {
-    return this.foodsService.getFoodByKitchen(kitchenId);
-  }
+  // @Get('/food-prepare')
+  // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Get food by kitchen',
+  //   type: FoodByKitchenDTO,
+  // })
+  // async getFoodByKitchen(
+  //   @Param('kitchenId') kitchenId: string,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   return this.foodsService.getFoodByKitchen(kitchenId);
+  // }
 }
