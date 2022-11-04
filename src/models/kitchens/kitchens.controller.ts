@@ -73,7 +73,7 @@ export class KitchenController {
   async findShipOfKitchen(@Param('id') id: string): Promise<KitchenEntity> {
     const listKitchen = await this.kitchenService.findOne({
       where: { id: id },
-      relations: { shippers: true },
+      relations: { shippers: { account: { profile: true } } },
     });
     if (!listKitchen) {
       throw new HttpException(
