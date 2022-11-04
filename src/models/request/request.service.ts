@@ -27,6 +27,26 @@ export class RequestService extends BaseService<RequestEntity> {
     return await this.requestRepository.find({ relations: { kitchen: true } });
   }
 
+  //Kitchen get request
+
+  async getRequestByKitchen(user: AccountEntity): Promise<RequestEntity[]> {
+    const kitchen = await this.kitchenService.findOne({
+      where: { id: user.id },
+    });
+    if (!kitchen) {
+      throw new HttpException(
+        `Kitchen ${user.id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    } else {
+      const list = await this.requestRepository
+        .createQueryBuilder('request')
+        .where('request.kitchenId = :kitchenId', { kitchenId: user.id })
+        .getMany();
+      return list;
+    }
+  }
+
   //List request theo status
   async getRequestByStatus(
     statusFilter: RequestFilterDTO,
@@ -127,16 +147,20 @@ export class RequestService extends BaseService<RequestEntity> {
         HttpStatus.NOT_FOUND,
       );
     } else {
-      try {
-        await this.requestRepository
-          .createQueryBuilder()
-          .delete()
-          .from(RequestEntity)
-          .where('id = :id', { id: requestId })
-          .execute();
-        return 'Request deleted';
-      } catch (error) {
-        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      if (req.status == ReqStatusEnum.WAITING) {
+        try {
+          await this.requestRepository
+            .createQueryBuilder()
+            .delete()
+            .from(RequestEntity)
+            .where('id = :id', { id: requestId })
+            .execute();
+          return 'Request deleted';
+        } catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+      } else {
+        return 'Can not delete request';
       }
     }
   }
