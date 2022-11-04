@@ -241,25 +241,23 @@ export class OrdersService extends BaseService<OrderEntity> {
     return list;
   }
 
-  async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+  async getFoodByKitchen(
+    user: AccountEntity,
+    data: OrderSearchByDate,
+  ): Promise<FoodByKitchenDTO[]> {
     const list = await this.ordersRepository
-      .createQueryBuilder()
-      .select(
-        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-      )
-      .from('foods', 'foods')
-      .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
-      .leftJoinAndSelect(
-        'time_slots',
-        'time_slots',
-        'orders.timeSlotId = time_slots.id',
-      )
-      .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
-      .groupBy(
-        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-      )
+      .createQueryBuilder('orders')
+      .select('nameFood, time_slots.flag as flag, count(foodId) as quantity')
+      // .from('foods', 'foods')
+      // .leftJoinAndSelect('orders.foods', 'foods')
+      .leftJoin('orders.timeSlot', 'time_slots')
+      .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
+      .andWhere('orders.deliveryDate = :deliveryDate', {
+        deliveryDate: data.deliveryDate,
+      })
+      .groupBy('nameFood, timeSlotId')
       .execute();
-
+    // const list = await this.ordersRepository.findAndCountBy
     if (!list || list.length == 0) {
       throw new HttpException('No food found', HttpStatus.NOT_FOUND);
     } else {
