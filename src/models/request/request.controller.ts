@@ -44,6 +44,24 @@ export class RequestController {
     }
   }
 
+  @Get('/byKitchen')
+  @Roles(RoleEnum.KITCHEN)
+  @ApiResponse({
+    status: 200,
+    description: 'Kitchen get request',
+    type: RequestEntity,
+  })
+  async getReqByKitchen(
+    @GetUser() user: AccountEntity,
+  ): Promise<RequestEntity[]> {
+    const list = await this.requestService.getRequestByKitchen(user);
+    if (!list || list.length == 0) {
+      throw new HttpException('No request found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
+  }
+
   @Get('/status')
   @ApiResponse({
     status: 200,
