@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   Controller,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -16,6 +17,7 @@ import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodGroupDTO } from './dto/create-food-group.dto';
 import { FoodGroupDTO } from './dto/food-group.dto';
+import { FoodGroupFilterDTO } from './dto/foodGroup-filter.dto';
 import { UpdateFoodGroupDTO } from './dto/update-food-group.dto';
 import { FoodGroupEntity } from './entities/food-group.entity';
 import { FoodGroupService } from './food-group.service';
@@ -47,6 +49,26 @@ export class FoodGroupController {
   }
 
   // @Public()
+  @Get('/byStatus')
+  @ApiResponse({
+    status: 200,
+    description: 'LIST FOOD GROUP BY STATUS',
+    type: [FoodGroupDTO],
+  })
+  async getFoodGroupByStatus(
+    @Query() foodGroupFilter: FoodGroupFilterDTO,
+  ): Promise<FoodGroupEntity[]> {
+    const listFoodGroup = await this.foodGroupService.getFoodGroupByStatus(
+      foodGroupFilter,
+    );
+    if (!listFoodGroup || listFoodGroup.length == 0) {
+      throw new HttpException('No data food group', HttpStatus.NOT_FOUND);
+    } else {
+      return listFoodGroup;
+    }
+  }
+
+  // @Public()
   @Get('find/:id')
   @ApiResponse({
     status: 200,
@@ -67,24 +89,24 @@ export class FoodGroupController {
 
   //List all foodgroup active
   // @Public()
-  @Get('/active')
-  @ApiResponse({
-    status: 200,
-    description: 'LIST ALL FOOD GROUP ACTIVE',
-    type: [FoodGroupDTO],
-  })
-  // @UseInterceptors(
-  //   MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
-  // )
-  async listFoodGroupActive(): Promise<FoodGroupEntity[]> {
-    const listFoodGroupActive =
-      await this.foodGroupService.getFoodGroupActive();
-    if (!listFoodGroupActive || listFoodGroupActive.length == 0) {
-      throw new HttpException('No food group active', HttpStatus.NOT_FOUND);
-    } else {
-      return listFoodGroupActive;
-    }
-  }
+  // @Get('/active')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'LIST ALL FOOD GROUP ACTIVE',
+  //   type: [FoodGroupDTO],
+  // })
+  // // @UseInterceptors(
+  // //   MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
+  // // )
+  // async listFoodGroupActive(): Promise<FoodGroupEntity[]> {
+  //   const listFoodGroupActive =
+  //     await this.foodGroupService.getFoodGroupActive();
+  //   if (!listFoodGroupActive || listFoodGroupActive.length == 0) {
+  //     throw new HttpException('No food group active', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     return listFoodGroupActive;
+  //   }
+  // }
 
   //Create foodGroup
   @Roles(RoleEnum.MANAGER)

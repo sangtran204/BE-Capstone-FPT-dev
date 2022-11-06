@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -9,8 +9,7 @@ import { FoodCategoriesService } from '../food-categories/food-categories.servic
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
-import { count } from 'console';
-import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
+import { FoodFilterDTO } from './dto/food-filter.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -31,14 +30,26 @@ export class FoodsService extends BaseService<FoodEntity> {
     });
   }
 
-  async getAllActiveFood(): Promise<FoodEntity[]> {
+  async getFoodByStatus(foodFilter: FoodFilterDTO): Promise<FoodEntity[]> {
+    const { statusFood } = foodFilter;
     return await this.foodsRepository.find({
-      where: { status: StatusEnum.ACTIVE },
+      where: {
+        status: Like(Boolean(statusFood) ? statusFood : '%%'),
+      },
       relations: {
         foodCategory: true,
       },
     });
   }
+
+  // async getAllActiveFood(): Promise<FoodEntity[]> {
+  //   return await this.foodsRepository.find({
+  //     where: { status: StatusEnum.ACTIVE },
+  //     relations: {
+  //       foodCategory: true,
+  //     },
+  //   });
+  // }
 
   async getAllWaitingFood(): Promise<FoodEntity[]> {
     return await this.foodsRepository.find({

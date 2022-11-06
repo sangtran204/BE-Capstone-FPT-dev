@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -10,6 +10,7 @@ import { UpdatePackageDTO } from './dto/update-package.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { PackageCategoriesService } from '../package-categories/package-categories.service';
 import { Mapper } from '@automapper/core';
+import { PackageFilterDTO } from './dto/package-filter.dto';
 
 @Injectable()
 export class PackageService extends BaseService<PackageEntity> {
@@ -25,6 +26,20 @@ export class PackageService extends BaseService<PackageEntity> {
 
   async listAllPackage(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
+      relations: {
+        timeFrame: true,
+        packageCategory: true,
+        packageItem: true,
+      },
+    });
+  }
+
+  async getPackageByStatus(
+    packageFilter: PackageFilterDTO,
+  ): Promise<PackageEntity[]> {
+    const { statusPackage } = packageFilter;
+    return await this.packagesRepository.find({
+      where: { status: Like(Boolean(statusPackage) ? statusPackage : '%%') },
       relations: {
         timeFrame: true,
         packageCategory: true,

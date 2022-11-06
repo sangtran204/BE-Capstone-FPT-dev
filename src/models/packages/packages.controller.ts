@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -27,6 +28,7 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { UpdatePackageDTO } from './dto/update-package.dto';
+import { PackageFilterDTO } from './dto/package-filter.dto';
 
 @ApiBearerAuth()
 @ApiTags('packages')
@@ -45,6 +47,25 @@ export class PackageController {
   // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
   async getAllPackage(): Promise<PackageEntity[]> {
     const listPackages = await this.packageService.listAllPackage();
+    if (!listPackages || listPackages.length == 0) {
+      throw new HttpException('No data package', HttpStatus.NOT_FOUND);
+    }
+    return listPackages;
+  }
+
+  @Get('/byStatus')
+  @ApiResponse({
+    status: 200,
+    description: 'GET PACKAGE BY STATUS',
+    type: [PackageEntity],
+  })
+  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
+  async getPackageByStatus(
+    @Query() packageFilter: PackageFilterDTO,
+  ): Promise<PackageEntity[]> {
+    const listPackages = await this.packageService.getPackageByStatus(
+      packageFilter,
+    );
     if (!listPackages || listPackages.length == 0) {
       throw new HttpException('No data package', HttpStatus.NOT_FOUND);
     }
@@ -76,30 +97,30 @@ export class PackageController {
 
   //Get package
   // @Public()
-  @Get('/waiting')
-  @ApiResponse({
-    status: 200,
-    description: 'GET WAITING PACKAGE',
-    type: [PackageEntity],
-  })
-  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
-  async getPackageWaiting(): Promise<PackageEntity[]> {
-    const listPackages = await this.packageService.query({
-      where: { status: StatusEnum.WAITING },
-      relations: {
-        timeFrame: true,
-        packageCategory: true,
-        packageItem: true,
-      },
-    });
-    if (!listPackages || listPackages.length == 0) {
-      throw new HttpException(
-        "Dont't have resource Waiting",
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return listPackages;
-  }
+  // @Get('/waiting')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET WAITING PACKAGE',
+  //   type: [PackageEntity],
+  // })
+  // // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
+  // async getPackageWaiting(): Promise<PackageEntity[]> {
+  //   const listPackages = await this.packageService.query({
+  //     where: { status: StatusEnum.WAITING },
+  //     relations: {
+  //       timeFrame: true,
+  //       packageCategory: true,
+  //       packageItem: true,
+  //     },
+  //   });
+  //   if (!listPackages || listPackages.length == 0) {
+  //     throw new HttpException(
+  //       "Dont't have resource Waiting",
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   }
+  //   return listPackages;
+  // }
 
   // @Public()
   @Get('/active')
