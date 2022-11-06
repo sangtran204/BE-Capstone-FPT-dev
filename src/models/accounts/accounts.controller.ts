@@ -18,9 +18,10 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { AccountsService } from './accounts.service';
 import { AccountFilterDTO } from './dto/account-filter.dto';
 import { AccountInfoDTO } from './dto/account-info..dto';
-import { ChangePasswordDTO } from './dto/changePassword.dto';
+import { ForgotPasswordDTO } from './dto/forgotPassword.dto';
 import { DeviceTokenDTO } from './dto/deviceToken.dto';
 import { AccountEntity } from './entities/account.entity';
+import { ChangePasswordDTO } from './dto/changePassword.dto';
 
 @Controller('accounts')
 @ApiBearerAuth()
@@ -93,12 +94,20 @@ export class AccountsController {
     );
   }
 
-  @Put('/password')
+  @Put('/forgotPassword')
+  async forgotPassword(
+    @GetUser() user: AccountEntity,
+    @Body() dto: ForgotPasswordDTO,
+  ): Promise<string> {
+    return await this.accountsService.forgotPassword(user, dto.password);
+  }
+
+  @Put('/changePassword')
   async changePassword(
     @GetUser() user: AccountEntity,
     @Body() dto: ChangePasswordDTO,
   ): Promise<string> {
-    return await this.accountsService.changePassword(user, dto.password);
+    return await this.accountsService.changePassword(user, dto);
   }
 
   @Put('/ban/:id')

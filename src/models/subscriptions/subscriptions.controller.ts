@@ -8,12 +8,16 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Render,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
+import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
 import { SubscriptionDTO } from './dto/subscription.dto';
@@ -109,5 +113,23 @@ export class SubscriptionController {
     @GetUser() user: AccountEntity,
   ): Promise<string> {
     return await this.subscriptionService.cancelSubscription(id, user);
+  }
+
+  @Get('/payment')
+  @Public()
+  @Render('index')
+  async payment(@Query() vnpayDto: VnpayDto): Promise<{
+    message: string;
+    code: string;
+    isSuccess: boolean;
+  }> {
+    try {
+      const result = await this.subscriptionService.payment(vnpayDto);
+      return result.code === '00'
+        ? { ...result, isSuccess: true }
+        : { ...result, isSuccess: false };
+    } catch (error) {
+      return error;
+    }
   }
 }

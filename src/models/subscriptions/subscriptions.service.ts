@@ -2,11 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { SubEnum } from 'src/common/enums/sub.enum';
+import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
+import { VnpayService } from 'src/providers/vnpay/vnpay.service';
 import { Repository } from 'typeorm';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { BaseService } from '../base/base.service';
 import { CustomersService } from '../customers/customers.service';
 import { PackageService } from '../packages/packages.service';
+import { PaymentsService } from '../payment/payments.service';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
 import { SubscriptionEntity } from './entities/subscription.entity';
 
@@ -17,6 +20,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     private readonly subscriptionRepository: Repository<SubscriptionEntity>,
     private readonly customerService: CustomersService,
     private readonly packageService: PackageService,
+    private readonly paymentsService: PaymentsService,
+    private readonly vnpayService: VnpayService,
   ) {
     super(subscriptionRepository);
   }
@@ -146,5 +151,66 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       throw new HttpException('Cancel Fail', HttpStatus.BAD_REQUEST);
     }
     return 'Cancel Successful';
+  }
+
+  async payment(
+    vnpayDto: VnpayDto,
+  ): Promise<{ message: string; code: string }> {
+    const orderId = vnpayDto.vnp_OrderInfo.split(' ')[3];
+    const orderPromise = this.findOne({ where: { id: orderId } });
+    const paymentPromise = this.paymentsService.findOne({
+      where: { transactionNo: vnpayDto.vnp_TransactionNo },
+    });
+    // const bankPromise = this.banksService.findOne({
+    //   where: { bankCode: vnpayDto.vnp_BankCode },
+    // });
+
+    const paymentInDB = await paymentPromise;
+    // Kiểm tra trong DB xem transaction này đã tồn tại chưa trong bảng payment tại cột transactionNo
+    // nếu có payment chứng tỏ user đang request lần 2
+    if (Boolean(paymentInDB))
+      throw new HttpException(
+        'This transaction invalid',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const result = this.vnpayService.returnUrl(vnpayDto);
+    if (!result || result.message !== 'success')
+      throw new HttpException('You payment failed', HttpStatus.BAD_REQUEST);
+
+    const order = await orderPromise;
+    if (!Boolean(order))
+      throw new HttpException(
+        `this order [${orderId}] not existed`,
+        HttpStatus.BAD_REQUEST,
+      );
+
+    // thêm thông tin transaction này vào DB tại bảng payment
+    // const bank = await bankPromise;
+    const {
+      vnp_PayDate,
+      vnp_TransactionStatus,
+      vnp_TransactionNo,
+      vnp_BankTranNo,
+      vnp_OrderInfo,
+      vnp_CardType,
+      vnp_Amount,
+    } = vnpayDto;
+    await this.paymentsService.save({
+      // bank,
+      orderInfo: vnp_OrderInfo,
+      amount: parseInt(vnp_Amount),
+      transactionNo: vnp_TransactionNo,
+      transactionStatus: vnp_TransactionStatus,
+      // bankTranNo: vnp_BankTranNo,
+      cardType: vnp_CardType,
+      payDate: vnp_PayDate,
+      // order: order,
+    });
+
+    order.status = StatusEnum.PENDING;
+    await this.save(order);
+
+    return result;
   }
 }

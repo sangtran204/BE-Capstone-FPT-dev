@@ -4,7 +4,8 @@ import { BaseEntity } from 'src/models/base/base.entity';
 import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { PackageEntity } from 'src/models/packages/entities/packages.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { PaymentEntity } from 'src/models/payment/entities/payment.entity';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 @Entity({ name: 'subscriptions' })
 export class SubscriptionEntity extends BaseEntity {
@@ -39,4 +40,7 @@ export class SubscriptionEntity extends BaseEntity {
   @OneToMany(() => OrderEntity, (order) => order.subscription)
   @AutoMap(() => [OrderEntity])
   orders: OrderEntity[];
+
+  @OneToOne(() => PaymentEntity, (payment) => payment.subscription)
+  payment: PaymentEntity;
 }
