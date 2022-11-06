@@ -9,6 +9,7 @@ import { AccountFilterDTO } from './dto/account-filter.dto';
 import { AccountEntity } from './entities/account.entity';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { ChangePasswordDTO } from './dto/changePassword.dto';
 
 @Injectable()
 export class AccountsService extends BaseService<AccountEntity> {
@@ -95,12 +96,31 @@ export class AccountsService extends BaseService<AccountEntity> {
     }
   }
 
-  async changePassword(
+  async forgotPassword(
     user: AccountEntity,
     newPassword: string,
   ): Promise<string> {
     const password = await bcrypt.hash(newPassword, 10);
     user.password = password;
+    const account = await this.save(user);
+    if (!Boolean(account))
+      throw new HttpException('Change password failed', HttpStatus.BAD_REQUEST);
+    return 'Change password success';
+  }
+
+  async changePassword(
+    user: AccountEntity,
+    data: ChangePasswordDTO,
+  ): Promise<string> {
+    const matchPass = await bcrypt.compare(data.oldPassword, user.password);
+    if (!matchPass) {
+      throw new HttpException(
+        'Your old password is Wrong',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const newPass = await bcrypt.hash(data.newPassword, 10);
+    user.password = newPass;
     const account = await this.save(user);
     if (!Boolean(account))
       throw new HttpException('Change password failed', HttpStatus.BAD_REQUEST);
