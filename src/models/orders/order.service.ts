@@ -1,33 +1,16 @@
 // import { AccountEntity } from 'models/accounts/entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { OrderEntity } from './entities/order.entity';
-import {
-  Between,
-  DataSource,
-  EntityManager,
-  Like,
-  Not,
-  Repository,
-} from 'typeorm';
+import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
-import { OrderDTO } from './dto/order.dto';
-import { SortEnum } from 'src/common/enums/sort.enum';
+import { OrderFilterDTO, OrderSearchByDate } from './dto/order-filter.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { OrderCreationDTO } from './dto/create-order.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
-import { OrderEnum } from 'src/common/enums/order.enum';
 import { SubscriptionService } from '../subscriptions/subscriptions.service';
 import { PackageItemService } from '../package-item/package-item.service';
 import { FoodsService } from '../foods/foods.service';
@@ -227,19 +210,19 @@ export class OrdersService extends BaseService<OrderEntity> {
     return order;
   }
 
-  async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
-    const list = await this.ordersRepository.find({
-      relations: {
-        timeSlot: true,
-        subscription: { customer: { account: { profile: true } } },
-        food: true,
-      },
-      where: {
-        deliveryDate: data.deliveryDate,
-      },
-    });
-    return list;
-  }
+  // async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
+  //   const list = await this.ordersRepository.find({
+  //     relations: {
+  //       timeSlot: true,
+  //       subscription: { customer: { account: { profile: true } } },
+  //       food: true,
+  //     },
+  //     where: {
+  //       deliveryDate: data.deliveryDate,
+  //     },
+  //   });
+  //   return list;
+  // }
 
   async getFoodByKitchen(
     user: AccountEntity,
@@ -263,6 +246,42 @@ export class OrdersService extends BaseService<OrderEntity> {
     } else {
       return list;
     }
+  }
+
+  async getOrderByStatus(orderFilter: OrderFilterDTO): Promise<OrderEntity[]> {
+    const { status } = orderFilter;
+    return await this.ordersRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
+      relations: {
+        subscription: { customer: { account: { profile: true } } },
+        food: true,
+        station: true,
+        packageItem: true,
+        kitchen: true,
+        timeSlot: true,
+      },
+    });
+  }
+
+  async getOrderByStatusDate(
+    deliveryDate: OrderSearchByDate,
+    orderFilter: OrderFilterDTO,
+  ): Promise<OrderEntity[]> {
+    const { status } = orderFilter;
+    return await this.ordersRepository.find({
+      where: {
+        status: Like(Boolean(status) ? status : '%%'),
+        deliveryDate: deliveryDate.deliveryDate,
+      },
+      relations: {
+        subscription: { customer: { account: { profile: true } } },
+        food: true,
+        station: true,
+        packageItem: true,
+        kitchen: true,
+        timeSlot: true,
+      },
+    });
   }
 
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {

@@ -30,6 +30,16 @@ export class OrderFilterMe extends BaseFilter {
   status: OrderEnum;
 }
 
+export class OrderFilterDTO {
+  @ApiProperty({
+    enum: OrderEnum,
+    description: 'Sort Ascending or Descending by ',
+    required: false,
+    default: OrderEnum.PENDING,
+  })
+  status: OrderEnum;
+}
+
 export class OrderSearchByDate {
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   deliveryDate: Date;
