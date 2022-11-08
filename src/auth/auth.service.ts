@@ -18,6 +18,7 @@ import { ShippersService } from 'src/models/shippers/shippers.service';
 import { SharedService } from 'src/shared/shared.service';
 import { DataSource, EntityManager } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
+import { RegisterAccountDTO } from './dto/register-account.dto';
 import { RegisterCustomerDTO } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
 import { RegisterShipperDTO } from './dto/register-shipper.dto';
@@ -324,5 +325,89 @@ export class AuthService {
   async logout(user: AccountEntity): Promise<string> {
     const result = await this.accountsService.updateRefreshToken(null, user.id);
     return result.affected == 1 ? 'logout success' : 'logout failure';
+  }
+
+  async signUpAdmin(register: RegisterAccountDTO): Promise<AccountEntity> {
+    const account = await this.accountsService.findOne({
+      where: { phone: register.phone },
+    });
+    if (account) {
+      throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
+    }
+    const email = await this.profileService.findOne({
+      where: { email: register.email },
+    });
+    if (email) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    register.password = await bcrypt.hash(register.password, 10);
+    const callback = async (entityManager: EntityManager): Promise<void> => {
+      const role = await entityManager.findOne(RoleEntity, {
+        where: { name: RoleEnum.ADMIN },
+      });
+      const accountEntity = await entityManager.save(
+        AccountEntity,
+        entityManager.create(AccountEntity, {
+          ...register,
+          role,
+          codeVerify: 1111,
+          dateExpiredVerifyCode: new Date(),
+        }),
+      );
+      await entityManager.save(
+        ProfileEntity,
+        entityManager.create(ProfileEntity, {
+          account: accountEntity,
+          ...register,
+        }),
+      );
+    };
+    await this.accountsService.transaction(callback, this.dataSource);
+    return this.accountsService.findOne({
+      relations: { role: true, profile: true },
+      where: { phone: register.phone },
+    });
+  }
+
+  async signUpManager(register: RegisterAccountDTO): Promise<AccountEntity> {
+    const account = await this.accountsService.findOne({
+      where: { phone: register.phone },
+    });
+    if (account) {
+      throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
+    }
+    const email = await this.profileService.findOne({
+      where: { email: register.email },
+    });
+    if (email) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    register.password = await bcrypt.hash(register.password, 10);
+    const callback = async (entityManager: EntityManager): Promise<void> => {
+      const role = await entityManager.findOne(RoleEntity, {
+        where: { name: RoleEnum.MANAGER },
+      });
+      const accountEntity = await entityManager.save(
+        AccountEntity,
+        entityManager.create(AccountEntity, {
+          ...register,
+          role,
+          codeVerify: 1111,
+          dateExpiredVerifyCode: new Date(),
+        }),
+      );
+      await entityManager.save(
+        ProfileEntity,
+        entityManager.create(ProfileEntity, {
+          account: accountEntity,
+          ...register,
+        }),
+      );
+    };
+    await this.accountsService.transaction(callback, this.dataSource);
+    return this.accountsService.findOne({
+      relations: { role: true, profile: true },
+      where: { phone: register.phone },
+    });
   }
 }
