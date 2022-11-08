@@ -8,6 +8,7 @@ import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDTO } from './dto/refresh-token.dto';
+import { RegisterAccountDTO } from './dto/register-account.dto';
 import { RegisterCustomerDTO } from './dto/register-customer.dto';
 // import { RegisterCustomerDto } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
@@ -51,6 +52,20 @@ export class AuthenticationController {
     @Body() dto: RegisterKitchenDTO,
   ): Promise<AccountEntity> {
     return await this.authService.registerKitchen(dto);
+  }
+
+  @Roles(RoleEnum.ADMIN)
+  @Post('register/admin')
+  async registerAdmin(@Body() dto: RegisterAccountDTO): Promise<AccountEntity> {
+    return await this.authService.signUpAdmin(dto);
+  }
+
+  @Roles(RoleEnum.ADMIN)
+  @Post('register/manager')
+  async registerManager(
+    @Body() dto: RegisterAccountDTO,
+  ): Promise<AccountEntity> {
+    return await this.authService.signUpManager(dto);
   }
 
   @Post('login')
