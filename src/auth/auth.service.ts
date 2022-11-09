@@ -149,7 +149,7 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           phone: register.phone,
           password: register.password,
-          status: StatusEnum.ACTIVE,
+          status: StatusEnum.NEW,
           role,
         }),
       );

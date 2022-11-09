@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OrderEnum } from 'src/common/enums/order.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { SubEnum } from 'src/common/enums/sub.enum';
 import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
@@ -208,7 +209,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       // order: order,
     });
 
-    order.status = StatusEnum.PENDING;
+    order.status = OrderEnum.PENDING;
     await this.save(order);
 
     return result;
