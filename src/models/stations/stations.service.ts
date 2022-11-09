@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StationEntity } from './entities/stations.entity';
@@ -6,6 +6,7 @@ import { BaseService } from '../base/base.service';
 import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
+import { StationStatusFilter } from './dto/stations-filter.dto';
 
 @Injectable()
 export class StationsService extends BaseService<StationEntity> {
@@ -19,6 +20,16 @@ export class StationsService extends BaseService<StationEntity> {
   async getStations(): Promise<StationEntity[]> {
     return await this.stationsRepository.find();
   }
+
+  async getStationsByStatus(
+    statusFilter: StationStatusFilter,
+  ): Promise<StationEntity[]> {
+    const { status } = statusFilter;
+    return await this.stationsRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
+    });
+  }
+
   async getAllActiveStations(): Promise<StationEntity[]> {
     return await this.stationsRepository.find({
       where: { status: StatusEnum.ACTIVE },

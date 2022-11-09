@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
@@ -19,6 +20,7 @@ import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { StationStatusFilter } from './dto/stations-filter.dto';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -38,6 +40,29 @@ export class StationsController {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {
       throw new HttpException('No data station', HttpStatus.NOT_FOUND);
+    }
+    return listStation;
+  }
+
+  @Public()
+  @Get('/byStatus')
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL STATION ACTIVE',
+    type: [StationDTO],
+  })
+  @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
+  async getStationByStatus(
+    @Query() statusFilter: StationStatusFilter,
+  ): Promise<StationEntity[]> {
+    const listStation = await this.stationsService.getStationsByStatus(
+      statusFilter,
+    );
+    if (!listStation || listStation.length == 0) {
+      throw new HttpException(
+        "Dont't have resource station",
+        HttpStatus.NOT_FOUND,
+      );
     }
     return listStation;
   }
