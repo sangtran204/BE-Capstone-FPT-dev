@@ -44,11 +44,11 @@ export class StationsController {
     return listStation;
   }
 
-  @Public()
+  // @Public()
   @Get('/byStatus')
   @ApiResponse({
     status: 200,
-    description: 'GET ALL STATION ACTIVE',
+    description: 'GET ALL STATION BY STATUS',
     type: [StationDTO],
   })
   @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
