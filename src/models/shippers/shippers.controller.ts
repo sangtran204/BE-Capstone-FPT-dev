@@ -1,17 +1,15 @@
-import { MapInterceptor } from '@automapper/nestjs';
 import {
   Controller,
   Get,
   HttpException,
   HttpStatus,
-  UseInterceptors,
   Param,
   Body,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
-import { Roles } from 'src/decorators/roles.decorator';
+import { ShipperStatusFilter } from './dto/shipper-status-filter.dto';
 import { ShipperDTO } from './dto/shipper.dto';
 import { UpdateShipperDTO } from './dto/update_shipper';
 import { ShipperEntity } from './entities/shipper.entity';
@@ -32,8 +30,10 @@ export class ShippersController {
     type: [ShipperDTO],
   })
   // @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO, { isArray: true }))
-  async fidnAll(): Promise<ShipperEntity[]> {
-    const listShip = await this.shippersService.findAll();
+  async fidnAll(
+    @Query() statusFilter: ShipperStatusFilter,
+  ): Promise<ShipperEntity[]> {
+    const listShip = await this.shippersService.findAll(statusFilter);
     if (!listShip || listShip.length == 0) {
       throw new HttpException(
         "Dont't have resource Kitchen",

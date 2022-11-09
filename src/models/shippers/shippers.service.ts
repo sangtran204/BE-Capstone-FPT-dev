@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -9,6 +9,7 @@ import { AccountsService } from '../accounts/accounts.service';
 import { ProfileEntity } from '../profiles/entities/profile.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { ShipperStatusFilter } from './dto/shipper-status-filter.dto';
 
 @Injectable()
 export class ShippersService extends BaseService<ShipperEntity> {
@@ -22,8 +23,10 @@ export class ShippersService extends BaseService<ShipperEntity> {
     super(shipperRepository);
   }
 
-  async findAll(): Promise<ShipperEntity[]> {
+  async findAll(statusFilter: ShipperStatusFilter): Promise<ShipperEntity[]> {
+    const { status } = statusFilter;
     return await this.shipperRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         account: { profile: true },
         kitchen: true,
