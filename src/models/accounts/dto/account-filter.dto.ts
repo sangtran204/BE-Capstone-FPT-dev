@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { AccountStatusEnum } from 'src/common/enums/accountStatus.enum';
 import { RoleEnum } from 'src/common/enums/role.enum';
 
 export class AccountFilterDTO {
@@ -20,4 +21,14 @@ export class AccountFilterDTO {
     default: RoleEnum.ADMIN,
   })
   role: RoleEnum;
+}
+
+export class AccountStatusFilter {
+  @ApiProperty({
+    enum: AccountStatusEnum,
+    required: false,
+    description: 'Account status',
+    default: AccountStatusEnum.ACTIVE,
+  })
+  status: AccountStatusEnum;
 }
