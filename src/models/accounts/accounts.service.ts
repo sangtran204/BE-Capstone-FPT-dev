@@ -5,7 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { Like, Repository, UpdateResult } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { AccountFilterDTO } from './dto/account-filter.dto';
+import {
+  AccountFilterDTO,
+  AccountStatusFilter,
+} from './dto/account-filter.dto';
 import { AccountEntity } from './entities/account.entity';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -79,11 +82,18 @@ export class AccountsService extends BaseService<AccountEntity> {
   //   return [this.mapper.mapArray(list, AccountEntity, AccountInfoDTO), count];
   // }
 
-  async getAccounts(accountFilter: AccountFilterDTO): Promise<AccountEntity[]> {
+  async getAccounts(
+    accountFilter: AccountFilterDTO,
+    statusFilter: AccountStatusFilter,
+  ): Promise<AccountEntity[]> {
     // const roleFind = await this.roleService.findOne({ where: { id: role } });
     const { role } = accountFilter;
+    const { status } = statusFilter;
     const accounts = await this.accountsRepository.find({
-      where: { role: { name: Like(Boolean(role) ? role : '%%') } },
+      where: {
+        role: { name: Like(Boolean(role) ? role : '%%') },
+        status: Like(Boolean(status) ? status : '%%'),
+      },
       relations: {
         role: true,
         profile: true,
