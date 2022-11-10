@@ -27,7 +27,8 @@ export class ShipperEntity extends BaseEntity {
   @AutoMap()
   vehicleType: string;
 
-  @Column({ default: ShipperStatusEnum.WAITING })
+  // @Column({ default: ShipperStatusEnum.WAITING })
+  @Column()
   @AutoMap()
   status: string;
 
