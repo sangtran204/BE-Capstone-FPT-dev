@@ -12,6 +12,7 @@ import { AccountsService } from '../accounts/accounts.service';
 import { ListShipperID } from './dto/add_shipper.dto';
 import { ShipperEntity } from '../shippers/entities/shipper.entity';
 import { ShippersService } from '../shippers/shippers.service';
+import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 
 @Injectable()
 export class KitchenService extends BaseService<KitchenEntity> {
@@ -124,7 +125,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
     } else {
       if (kitchen.account.status !== StatusEnum.ACTIVE) {
         throw new HttpException(
-          `Only Kitchen with status ACTIVE (ERROR AT: ${kitchen.id})`,
+          `Only Account Kitchen with status ACTIVE (ERROR AT: ${kitchen.id})`,
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -132,6 +133,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
         for (const { idShipper } of data.shippers) {
           const itemShipper = await this.shipperService.findOne({
             where: { id: idShipper },
+            relations: { account: true },
           });
           if (!itemShipper) {
             throw new HttpException(
@@ -139,7 +141,13 @@ export class KitchenService extends BaseService<KitchenEntity> {
               HttpStatus.NOT_FOUND,
             );
           }
-          if (itemShipper.status !== StatusEnum.NEW) {
+          if (itemShipper.account.status !== StatusEnum.ACTIVE) {
+            throw new HttpException(
+              `Only Account Shipper with status ACTIVE (ERROR AT: ${kitchen.id})`,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+          if (itemShipper.status !== ShipperStatusEnum.NEW) {
             throw new HttpException(
               `Only shipper with status NEW can add (ERROR AT: ${itemShipper.id})`,
               HttpStatus.BAD_REQUEST,

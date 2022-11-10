@@ -36,7 +36,7 @@ export class ShippersController {
     const listShip = await this.shippersService.findAll(statusFilter);
     if (!listShip || listShip.length == 0) {
       throw new HttpException(
-        "Dont't have resource Kitchen",
+        "Dont't have resource Shipper",
         HttpStatus.NOT_FOUND,
       );
     }

@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { JwtConfigService } from 'src/config/jwt/config.service';
 import { AccountsService } from 'src/models/accounts/accounts.service';
@@ -150,7 +151,7 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           phone: register.phone,
           password: register.password,
-          status: StatusEnum.NEW,
+          status: StatusEnum.ACTIVE,
           role,
         }),
       );
@@ -161,7 +162,7 @@ export class AuthService {
           id: accountEntity.id,
           noPlate: register.noPlate,
           vehicleType: register.vehicleType,
-          status: StatusEnum.WAITING,
+          status: ShipperStatusEnum.NEW,
         }),
       );
 

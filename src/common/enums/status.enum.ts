@@ -4,7 +4,7 @@ export const enum StatusEnum {
   BAN = 'ban',
   DELETE = 'delete',
   WAITING = 'waiting',
-  NEW = 'new',
+  // NEW = 'new',
 
   // NOT_SEEN = 'notSeen',
   // SEEN = 'seen',
