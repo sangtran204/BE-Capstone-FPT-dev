@@ -1,33 +1,16 @@
 // import { AccountEntity } from 'models/accounts/entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { OrderEntity } from './entities/order.entity';
-import {
-  Between,
-  DataSource,
-  EntityManager,
-  Like,
-  Not,
-  Repository,
-} from 'typeorm';
+import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
-import { OrderDTO } from './dto/order.dto';
-import { SortEnum } from 'src/common/enums/sort.enum';
+import { OrderFilterDTO, OrderSearchByDate } from './dto/order-filter.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { OrderCreationDTO } from './dto/create-order.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
-import { OrderEnum } from 'src/common/enums/order.enum';
 import { SubscriptionService } from '../subscriptions/subscriptions.service';
 import { PackageItemService } from '../package-item/package-item.service';
 import { FoodsService } from '../foods/foods.service';
@@ -227,44 +210,78 @@ export class OrdersService extends BaseService<OrderEntity> {
     return order;
   }
 
-  async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
-    const list = await this.ordersRepository.find({
-      relations: {
-        timeSlot: true,
-        subscription: { customer: { account: { profile: true } } },
-        food: true,
-      },
-      where: {
-        deliveryDate: data.deliveryDate,
-      },
-    });
-    return list;
-  }
+  // async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
+  //   const list = await this.ordersRepository.find({
+  //     relations: {
+  //       timeSlot: true,
+  //       subscription: { customer: { account: { profile: true } } },
+  //       food: true,
+  //     },
+  //     where: {
+  //       deliveryDate: data.deliveryDate,
+  //     },
+  //   });
+  //   return list;
+  // }
 
-  async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
+  async getFoodByKitchen(
+    user: AccountEntity,
+    data: OrderSearchByDate,
+  ): Promise<FoodByKitchenDTO[]> {
     const list = await this.ordersRepository
-      .createQueryBuilder()
-      .select(
-        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-      )
-      .from('foods', 'foods')
-      .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
-      .leftJoinAndSelect(
-        'time_slots',
-        'time_slots',
-        'orders.timeSlotId = time_slots.id',
-      )
-      .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
-      .groupBy(
-        'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-      )
+      .createQueryBuilder('orders')
+      .select('nameFood, time_slots.flag as flag, count(foodId) as quantity')
+      // .from('foods', 'foods')
+      // .leftJoinAndSelect('orders.foods', 'foods')
+      .leftJoin('orders.timeSlot', 'time_slots')
+      .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
+      .andWhere('orders.deliveryDate = :deliveryDate', {
+        deliveryDate: data.deliveryDate,
+      })
+      .groupBy('nameFood, timeSlotId')
       .execute();
-
+    // const list = await this.ordersRepository.findAndCountBy
     if (!list || list.length == 0) {
       throw new HttpException('No food found', HttpStatus.NOT_FOUND);
     } else {
       return list;
     }
+  }
+
+  async getOrderByStatus(orderFilter: OrderFilterDTO): Promise<OrderEntity[]> {
+    const { status } = orderFilter;
+    return await this.ordersRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
+      relations: {
+        subscription: { customer: { account: { profile: true } } },
+        food: true,
+        station: true,
+        packageItem: true,
+        kitchen: true,
+        timeSlot: true,
+      },
+    });
+  }
+
+  async getOrderByStatusDate(
+    deliveryDate: OrderSearchByDate,
+    orderFilter: OrderFilterDTO,
+  ): Promise<OrderEntity[]> {
+    const { status } = orderFilter;
+    return await this.ordersRepository.find({
+      where: {
+        status: Like(Boolean(status) ? status : '%%'),
+        deliveryDate: deliveryDate.deliveryDate,
+      },
+      relations: {
+        subscription: { customer: { account: { profile: true } } },
+        food: true,
+        station: true,
+        packageItem: true,
+        kitchen: true,
+        timeSlot: true,
+      },
+    });
   }
 
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {

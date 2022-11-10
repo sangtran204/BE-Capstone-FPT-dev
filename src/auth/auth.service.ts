@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { JwtConfigService } from 'src/config/jwt/config.service';
 import { AccountsService } from 'src/models/accounts/accounts.service';
@@ -18,9 +19,11 @@ import { ShippersService } from 'src/models/shippers/shippers.service';
 import { SharedService } from 'src/shared/shared.service';
 import { DataSource, EntityManager } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
-import { RegisterCustomerDto } from './dto/register-customer.dto';
+import { RegisterAccountDTO } from './dto/register-account.dto';
+import { RegisterCustomerDTO } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
 import { RegisterShipperDTO } from './dto/register-shipper.dto';
+import { VerifySignUp } from './dto/verify-signup.dto';
 // import { VerifySignUp } from './dto/verify-signup.dto';
 import { Payload } from './payload';
 import { LoginResponseDto } from './response/login-response.dto';
@@ -39,7 +42,7 @@ export class AuthService {
     private readonly sharedService: SharedService, // private readonly mailService: MailService,
   ) {}
 
-  async signUpCustomer(register: RegisterCustomerDto): Promise<AccountEntity> {
+  async signUpCustomer(register: RegisterCustomerDTO): Promise<AccountEntity> {
     const account = await this.accountsService.findOne({
       where: { phone: register.phone },
     });
@@ -48,6 +51,16 @@ export class AuthService {
     }
     register.password = await bcrypt.hash(register.password, 10);
     const callback = async (entityManager: EntityManager): Promise<void> => {
+      // const otp = this.sharedService.generateOtp();
+
+      // await this.mailService.sendUserConfirmation(
+      //   register.firstName.toLocaleUpperCase() +
+      //     ' ' +
+      //     register.lastName.toLocaleUpperCase(),
+      //   register.email,
+      //   otp,
+      // );
+
       const role = await entityManager.findOne(RoleEntity, {
         where: { name: RoleEnum.CUSTOMER },
       });
@@ -55,9 +68,12 @@ export class AuthService {
       const accountEntity = await entityManager.save(
         AccountEntity,
         entityManager.create(AccountEntity, {
-          phone: register.phone,
-          password: register.password,
+          // phone: register.phone,
+          // password: register.password,
+          ...register,
           role,
+          codeVerify: 1111,
+          dateExpiredVerifyCode: new Date(),
         }),
       );
 
@@ -84,6 +100,23 @@ export class AuthService {
       relations: { role: true, customer: true },
       where: { phone: register.phone },
     });
+  }
+
+  async verifySignUp(dto: VerifySignUp): Promise<string> {
+    const { phone, otp } = dto;
+    const user = await this.accountsService.findOne({
+      where: { phone: phone },
+    });
+    if (!user) {
+      throw new HttpException('Account not found', HttpStatus.NOT_FOUND);
+    }
+    this.sharedService.verifyOTPSignUp(
+      +otp,
+      user.codeVerify,
+      user.dateExpiredVerifyCode,
+    );
+    await this.accountsService.updateConfirmVerifyStatusAccount(user.id);
+    return 'Verify OTP Successfully';
   }
 
   async registerShipper(register: RegisterShipperDTO): Promise<AccountEntity> {
@@ -129,7 +162,7 @@ export class AuthService {
           id: accountEntity.id,
           noPlate: register.noPlate,
           vehicleType: register.vehicleType,
-          status: StatusEnum.WAITING,
+          status: ShipperStatusEnum.NEW,
         }),
       );
 
@@ -204,23 +237,6 @@ export class AuthService {
       where: { phone: register.phone },
     });
   }
-
-  // async verifySignUp(dto: VerifySignUp): Promise<string> {
-  //   const { phone, otp } = dto;
-  //   const user = await this.accountsService.findOne({
-  //     where: { phone: phone },
-  //   });
-  //   if (!user) {
-  //     throw new HttpException('Account not found', HttpStatus.NOT_FOUND);
-  //   }
-  //   this.sharedService.verifyOTPSignUp(
-  //     +otp,
-  //     user.codeVerify,
-  //     user.dateExpiredVerifyCode,
-  //   );
-  //   await this.accountsService.updateConfirmVerifyStatusAccount(user.id);
-  //   return 'Verify OTP Successfully';
-  // }
 
   async loginAll(dto: LoginDto): Promise<LoginResponseDto> {
     const { phone, password } = dto;
@@ -310,5 +326,89 @@ export class AuthService {
   async logout(user: AccountEntity): Promise<string> {
     const result = await this.accountsService.updateRefreshToken(null, user.id);
     return result.affected == 1 ? 'logout success' : 'logout failure';
+  }
+
+  async signUpAdmin(register: RegisterAccountDTO): Promise<AccountEntity> {
+    const account = await this.accountsService.findOne({
+      where: { phone: register.phone },
+    });
+    if (account) {
+      throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
+    }
+    const email = await this.profileService.findOne({
+      where: { email: register.email },
+    });
+    if (email) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    register.password = await bcrypt.hash(register.password, 10);
+    const callback = async (entityManager: EntityManager): Promise<void> => {
+      const role = await entityManager.findOne(RoleEntity, {
+        where: { name: RoleEnum.ADMIN },
+      });
+      const accountEntity = await entityManager.save(
+        AccountEntity,
+        entityManager.create(AccountEntity, {
+          ...register,
+          role,
+          codeVerify: 1111,
+          dateExpiredVerifyCode: new Date(),
+        }),
+      );
+      await entityManager.save(
+        ProfileEntity,
+        entityManager.create(ProfileEntity, {
+          account: accountEntity,
+          ...register,
+        }),
+      );
+    };
+    await this.accountsService.transaction(callback, this.dataSource);
+    return this.accountsService.findOne({
+      relations: { role: true, profile: true },
+      where: { phone: register.phone },
+    });
+  }
+
+  async signUpManager(register: RegisterAccountDTO): Promise<AccountEntity> {
+    const account = await this.accountsService.findOne({
+      where: { phone: register.phone },
+    });
+    if (account) {
+      throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
+    }
+    const email = await this.profileService.findOne({
+      where: { email: register.email },
+    });
+    if (email) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    register.password = await bcrypt.hash(register.password, 10);
+    const callback = async (entityManager: EntityManager): Promise<void> => {
+      const role = await entityManager.findOne(RoleEntity, {
+        where: { name: RoleEnum.MANAGER },
+      });
+      const accountEntity = await entityManager.save(
+        AccountEntity,
+        entityManager.create(AccountEntity, {
+          ...register,
+          role,
+          codeVerify: 1111,
+          dateExpiredVerifyCode: new Date(),
+        }),
+      );
+      await entityManager.save(
+        ProfileEntity,
+        entityManager.create(ProfileEntity, {
+          account: accountEntity,
+          ...register,
+        }),
+      );
+    };
+    await this.accountsService.transaction(callback, this.dataSource);
+    return this.accountsService.findOne({
+      relations: { role: true, profile: true },
+      where: { phone: register.phone },
+    });
   }
 }

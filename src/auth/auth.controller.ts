@@ -8,9 +8,12 @@ import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDTO } from './dto/refresh-token.dto';
+import { RegisterAccountDTO } from './dto/register-account.dto';
+import { RegisterCustomerDTO } from './dto/register-customer.dto';
 // import { RegisterCustomerDto } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
 import { RegisterShipperDTO } from './dto/register-shipper.dto';
+import { VerifySignUp } from './dto/verify-signup.dto';
 // import { VerifySignUp } from './dto/verify-signup.dto';
 import { LoginResponseDto } from './response/login-response.dto';
 import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
@@ -21,13 +24,19 @@ import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
 export class AuthenticationController {
   constructor(private readonly authService: AuthService) {}
 
-  // @Post('sign-up/customer')
-  // @Public()
-  // async signUpCustomer(
-  //   @Body() dto: RegisterCustomerDto,
-  // ): Promise<AccountEntity> {
-  //   return await this.authService.signUpCustomer(dto);
-  // }
+  @Post('sign-up/customer')
+  @Public()
+  async signUpCustomer(
+    @Body() dto: RegisterCustomerDTO,
+  ): Promise<AccountEntity> {
+    return await this.authService.signUpCustomer(dto);
+  }
+
+  @Post('/verify/sign-up/customer')
+  @Public()
+  async verifySignUpTourist(@Body() dto: VerifySignUp): Promise<string> {
+    return await this.authService.verifySignUp(dto);
+  }
 
   @Roles(RoleEnum.ADMIN)
   @Post('register/shipper')
@@ -45,11 +54,20 @@ export class AuthenticationController {
     return await this.authService.registerKitchen(dto);
   }
 
-  // @Post('/verify/sign-up/customer')
-  // @Public()
-  // async verifySignUpTourist(@Body() dto: VerifySignUp): Promise<string> {
-  //   return await this.authService.verifySignUp(dto);
-  // }
+  @Roles(RoleEnum.ADMIN)
+  @Post('register/admin')
+  async registerAdmin(@Body() dto: RegisterAccountDTO): Promise<AccountEntity> {
+    return await this.authService.signUpAdmin(dto);
+  }
+
+  @Roles(RoleEnum.ADMIN)
+  @Post('register/manager')
+  async registerManager(
+    @Body() dto: RegisterAccountDTO,
+  ): Promise<AccountEntity> {
+    return await this.authService.signUpManager(dto);
+  }
+
   @Post('login')
   @Public()
   async login(@Body() dto: LoginDto): Promise<LoginResponseDto> {
@@ -62,29 +80,29 @@ export class AuthenticationController {
     return await this.authService.login(dto, RoleEnum.CUSTOMER);
   }
 
-  @Post('login/kitchen')
-  @Public()
-  async loginKitchen(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-    return await this.authService.login(dto, RoleEnum.KITCHEN);
-  }
+  // @Post('login/kitchen')
+  // @Public()
+  // async loginKitchen(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+  //   return await this.authService.login(dto, RoleEnum.KITCHEN);
+  // }
 
-  @Post('login/shipper')
-  @Public()
-  async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-    return await this.authService.login(dto, RoleEnum.SHIPPER);
-  }
+  // @Post('login/shipper')
+  // @Public()
+  // async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+  //   return await this.authService.login(dto, RoleEnum.SHIPPER);
+  // }
 
-  @Post('login/manager')
-  @Public()
-  async loginManager(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-    return await this.authService.login(dto, RoleEnum.MANAGER);
-  }
+  // @Post('login/manager')
+  // @Public()
+  // async loginManager(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+  //   return await this.authService.login(dto, RoleEnum.MANAGER);
+  // }
 
-  @Post('login/admin')
-  @Public()
-  async loginAdmin(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-    return await this.authService.login(dto, RoleEnum.ADMIN);
-  }
+  // @Post('login/admin')
+  // @Public()
+  // async loginAdmin(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+  //   return await this.authService.login(dto, RoleEnum.ADMIN);
+  // }
 
   @Post('refreshToken')
   @Public()

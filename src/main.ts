@@ -37,8 +37,10 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('/api/v1/', app, document);
   //end setup open api
 
-  await app.listen(appConfig.port, () =>
-    console.info(`Server running port ${appConfig.port}`),
-  );
+  const PORT = process.env.PORT || 2004;
+  // await app.listen(appConfig.port, () =>
+  //   console.info(`Server running port ${appConfig.port}`),
+  // );
+  await app.listen(PORT, () => console.info(`Server running port ${PORT}`));
 }
 bootstrap();

@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -7,6 +7,7 @@ import { CreateFoodGroupDTO } from './dto/create-food-group.dto';
 import { FoodsService } from '../foods/foods.service';
 import { UpdateFoodGroupDTO } from './dto/update-food-group.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
+import { FoodGroupFilterDTO } from './dto/foodGroup-filter.dto';
 
 @Injectable()
 export class FoodGroupService extends BaseService<FoodGroupEntity> {
@@ -22,12 +23,22 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     return await this.query({ relations: { foods: true } });
   }
 
-  async getFoodGroupActive(): Promise<FoodGroupEntity[]> {
-    return await this.query({
-      where: { status: StatusEnum.ACTIVE },
+  async getFoodGroupByStatus(
+    foodGroupFilter: FoodGroupFilterDTO,
+  ): Promise<FoodGroupEntity[]> {
+    const { statusFG } = foodGroupFilter;
+    return await this.foodGroupRepository.find({
+      where: { status: Like(Boolean(statusFG) ? statusFG : '%%') },
       relations: { foods: true },
     });
   }
+
+  // async getFoodGroupActive(): Promise<FoodGroupEntity[]> {
+  //   return await this.query({
+  //     where: { status: StatusEnum.ACTIVE },
+  //     relations: { foods: true },
+  //   });
+  // }
 
   async createFoodGroup(data: CreateFoodGroupDTO): Promise<FoodGroupEntity> {
     const { foodIds, name, description, totalFood } = data;

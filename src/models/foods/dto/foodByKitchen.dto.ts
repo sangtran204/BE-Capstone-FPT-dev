@@ -4,8 +4,8 @@ export class FoodByKitchenDTO {
   @AutoMap()
   name: string;
 
-  @AutoMap()
-  description: string;
+  // @AutoMap()
+  // description: string;
 
   @AutoMap()
   flag: number;

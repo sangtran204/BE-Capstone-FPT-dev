@@ -1,6 +1,7 @@
 import {
   Body,
   Get,
+  Post,
   Param,
   Put,
   HttpException,
@@ -8,6 +9,8 @@ import {
   Controller,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public.decorator';
+import { ListShipperID } from './dto/add_shipper.dto';
 import { KitchenDTO } from './dto/kitchen.dto';
 import { UpdateKitchenDTO } from './dto/update_kitchen.dto';
 import { KitchenEntity } from './entities/kitchens.entity';
@@ -67,13 +70,13 @@ export class KitchenController {
   // @Public()
   @ApiResponse({
     status: 200,
-    description: 'GET KITCHEN BY ID',
+    description: 'GET SHIPPER OF KITCHEN BY ID',
     type: KitchenDTO,
   })
   async findShipOfKitchen(@Param('id') id: string): Promise<KitchenEntity> {
     const listKitchen = await this.kitchenService.findOne({
       where: { id: id },
-      relations: { shippers: true },
+      relations: { shippers: { account: { profile: true } } },
     });
     if (!listKitchen) {
       throw new HttpException(
@@ -82,6 +85,23 @@ export class KitchenController {
       );
     }
     return listKitchen;
+  }
+
+  @Post('/addShipper/:id')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'ADD SHIPPER FOR KITCHEN BY ID KITCHEN',
+    type: KitchenDTO,
+  })
+  async addShipperForKitchen(
+    @Param('id') idKitchen: string,
+    @Body() listShipperID: ListShipperID,
+  ): Promise<string> {
+    return await this.kitchenService.addShipperForKitchen(
+      idKitchen,
+      listShipperID,
+    );
   }
 
   @Put('/:id')

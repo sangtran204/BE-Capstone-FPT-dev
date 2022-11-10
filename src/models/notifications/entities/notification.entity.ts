@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../base/base.entity';
 import { AccountEntity } from '../../accounts/entities/account.entity';
 import { AutoMap } from '@automapper/classes';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 
 @Entity('notifications')
 export class NotificationEntity extends BaseEntity {
@@ -18,7 +18,7 @@ export class NotificationEntity extends BaseEntity {
   @AutoMap()
   data: string;
 
-  @Column({ default: StatusEnum.NOT_SEEN })
+  @Column({ default: TypeNotificationEnum.NOT_SEEN })
   @AutoMap()
   status: string;
 

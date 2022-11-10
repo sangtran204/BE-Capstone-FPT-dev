@@ -8,7 +8,7 @@ import { QueryNotificationDto } from './dto/query-notification.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { NotificationDto } from './dto/notification.dto';
-import { StatusEnum } from '../../common/enums/status.enum';
+import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 
 @Injectable()
 export class NotificationsService extends BaseService<NotificationEntity> {
@@ -43,7 +43,7 @@ export class NotificationsService extends BaseService<NotificationEntity> {
     const notification = await this.findOne({ where: { id: idNotification } });
     if (!Boolean(notification))
       throw new HttpException('notification not found', HttpStatus.NOT_FOUND);
-    notification.status = StatusEnum.SEEN;
+    notification.status = TypeNotificationEnum.SEEN;
     await this.notificationsRepository.save(notification);
     return 'seen success';
   }

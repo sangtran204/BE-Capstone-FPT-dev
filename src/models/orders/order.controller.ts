@@ -6,23 +6,20 @@ import {
   Get,
   Param,
   Post,
-  Put,
   Query,
-  Render,
-  Req,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 import { OrderEntity } from './entities/order.entity';
 import { MapInterceptor } from '@automapper/nestjs';
 import { OrderDTO } from './dto/order.dto';
-import { IPaginate, paginate } from '../base/base.filter';
-import { Request } from 'express';
 // import { VnpayDto } from '../../providers/vnpay/vnpay.dto';
 import { Public } from '../../decorators/public.decorator';
 import { OrdersService } from './order.service';
-import { OrderFilter, OrderSearchByDate } from './dto/order-filter.dto';
+import { OrderFilterDTO, OrderSearchByDate } from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { OrderCreationDTO } from './dto/create-order.dto';
@@ -58,31 +55,70 @@ export class OrdersController {
     return await this.ordersService.orderSub(dto, user);
   }
 
-  @Get('/order-date')
-  @Public()
+  @Get('/byStatus')
   @ApiResponse({
-    description: 'Get order by date',
+    description: 'GET ORDER BY STATUS',
+    status: 200,
+    type: OrderEntity,
+  })
+  async getOrderByStatus(
+    @Query() orderFilter: OrderFilterDTO,
+  ): Promise<OrderEntity[]> {
+    const list = await this.ordersService.getOrderByStatus(orderFilter);
+    if (!list || list.length == 0) {
+      throw new HttpException('No order found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
+  }
+
+  @Get('/order-date')
+  @ApiResponse({
+    description: 'GET ORDER BY STATUS AND DATE',
     status: 200,
     type: OrderEntity,
   })
   async getOrderByKitchen(
     @Query() data: OrderSearchByDate,
+    @Query() orderFilter: OrderFilterDTO,
     // @Param('deliveryDate') deliveryDate: Date,
   ): Promise<OrderEntity[]> {
-    return await this.ordersService.getOrderByKitchen(data);
+    const list = await this.ordersService.getOrderByStatusDate(
+      data,
+      orderFilter,
+    );
+    if (!list || list.length == 0) {
+      throw new HttpException('No order found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
   }
 
+  // @Get('/food-prepare')
+  // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Get food by kitchen',
+  //   type: FoodByKitchenDTO,
+  // })
+  // async getFoodByKitchen(
+  //   @Param('kitchenId') kitchenId: string,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   return await this.ordersService.getFoodByKitchen(kitchenId);
+  // }
+
   @Get('/food-prepare')
-  @Public()
+  @Roles(RoleEnum.KITCHEN)
   @ApiResponse({
     status: 200,
     description: 'Get food by kitchen',
     type: FoodByKitchenDTO,
   })
   async getFoodByKitchen(
-    @Param('kitchenId') kitchenId: string,
+    @GetUser() user: AccountEntity,
+    @Query() data: OrderSearchByDate,
   ): Promise<FoodByKitchenDTO[]> {
-    return await this.ordersService.getFoodByKitchen(kitchenId);
+    return await this.ordersService.getFoodByKitchen(user, data);
   }
   //   @Get('/:id/payment-url')
   //   async paymentUrl(

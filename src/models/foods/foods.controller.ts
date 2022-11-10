@@ -10,6 +10,7 @@ import {
   Put,
   UploadedFile,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -22,6 +23,7 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
+import { FoodFilterDTO } from './dto/food-filter.dto';
 import { FoodDTO } from './dto/food.dto';
 import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
@@ -53,24 +55,44 @@ export class FoodsController {
     return listFood;
   }
 
-  @Get('/active')
-  // @Public()
+  @Get('/byStatus')
   @ApiResponse({
     status: 200,
-    description: 'GET ALL ACTIVE FOOD',
+    description: 'GET ALL FOOD BY STATUS',
     type: [FoodDTO],
   })
   // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
-  async findAllActiveFood(): Promise<FoodEntity[]> {
-    const listFood = await this.foodsService.getAllActiveFood();
+  async getFoodByStatus(
+    @Query() foodFilter: FoodFilterDTO,
+  ): Promise<FoodEntity[]> {
+    const listFood = await this.foodsService.getFoodByStatus(foodFilter);
     if (!listFood || listFood.length == 0) {
       throw new HttpException(
-        "Dont't have resource active food",
+        "Dont't have resource food",
         HttpStatus.NOT_FOUND,
       );
     }
     return listFood;
   }
+
+  // @Get('/active')
+  // // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET ALL ACTIVE FOOD',
+  //   type: [FoodDTO],
+  // })
+  // // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  // async findAllActiveFood(): Promise<FoodEntity[]> {
+  //   const listFood = await this.foodsService.getAllActiveFood();
+  //   if (!listFood || listFood.length == 0) {
+  //     throw new HttpException(
+  //       "Dont't have resource active food",
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   }
+  //   return listFood;
+  // }
 
   @Get('/:id')
   // @Public()
