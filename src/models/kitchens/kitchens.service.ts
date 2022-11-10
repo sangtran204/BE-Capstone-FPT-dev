@@ -153,16 +153,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
               HttpStatus.BAD_REQUEST,
             );
           }
-          const callback = async (
-            entityManager: EntityManager,
-          ): Promise<void> => {
-            await entityManager.update(
-              ShipperEntity,
-              { id: itemShipper.id },
-              { status: StatusEnum.WAITING },
-            );
-          };
-          await this.accountService.transaction(callback, this.dataSource);
+
           if (item.id === itemShipper.id) {
             nameShipper.push(item.vehicleType);
           } else {
@@ -196,9 +187,20 @@ export class KitchenService extends BaseService<KitchenEntity> {
         .of(idKitchen)
         .add(
           data.shippers.map((item) => {
+            const callback = async (
+              entityManager: EntityManager,
+            ): Promise<void> => {
+              await entityManager.update(
+                ShipperEntity,
+                { id: item.idShipper },
+                { status: StatusEnum.WAITING },
+              );
+            };
+            this.accountService.transaction(callback, this.dataSource);
             return item.idShipper;
           }),
         );
+
       return `Add shipper for kitchen successfully ${idKitchen}`;
     }
 
