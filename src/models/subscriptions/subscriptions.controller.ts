@@ -20,6 +20,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
+import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionDTO } from './dto/subscription.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubscriptionService } from './subscriptions.service';
@@ -36,11 +37,32 @@ export class SubscriptionController {
     description: 'GET ALL SUB',
     type: [SubscriptionDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
-  )
+  // @UseInterceptors(
+  //   MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
+  // )
   async getAllSubscription(): Promise<SubscriptionEntity[]> {
     const listSub = await this.subscriptionService.getAllSubscription();
+    if (!listSub || listSub.length == 0) {
+      throw new HttpException("Don't have resource Sub", HttpStatus.NOT_FOUND);
+    }
+    return listSub;
+  }
+
+  @Get('/byStatus')
+  @ApiResponse({
+    status: 200,
+    description: 'GET SUBSCRIPTION BY STATUS',
+    type: [SubscriptionDTO],
+  })
+  // @UseInterceptors(
+  //   MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
+  // )
+  async getSubscriptionByStatus(
+    @Query() subFilter: SubscriptionFilter,
+  ): Promise<SubscriptionEntity[]> {
+    const listSub = await this.subscriptionService.getSubscriptionByStatus(
+      subFilter,
+    );
     if (!listSub || listSub.length == 0) {
       throw new HttpException("Don't have resource Sub", HttpStatus.NOT_FOUND);
     }

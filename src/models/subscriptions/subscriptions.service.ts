@@ -3,15 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { SubEnum } from 'src/common/enums/sub.enum';
+import { Like, Repository } from 'typeorm';
 import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
 import { VnpayService } from 'src/providers/vnpay/vnpay.service';
-import { Repository } from 'typeorm';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { BaseService } from '../base/base.service';
 import { CustomersService } from '../customers/customers.service';
 import { PackageService } from '../packages/packages.service';
 import { PaymentsService } from '../payment/payments.service';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
+import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 
 @Injectable()
@@ -31,6 +32,19 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     return await this.subscriptionRepository.find({
       relations: {
         customer: { account: true },
+        packages: true,
+      },
+    });
+  }
+
+  async getSubscriptionByStatus(
+    subFilter: SubscriptionFilter,
+  ): Promise<SubscriptionEntity[]> {
+    const { status } = subFilter;
+    return await this.subscriptionRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
+      relations: {
+        customer: { account: { profile: true } },
         packages: true,
       },
     });
