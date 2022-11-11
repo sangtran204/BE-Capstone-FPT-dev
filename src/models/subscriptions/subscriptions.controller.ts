@@ -20,6 +20,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
+import { SubHistoryDTO } from './dto/getSub-history.dto';
 import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionDTO } from './dto/subscription.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
@@ -48,10 +49,10 @@ export class SubscriptionController {
     return listSub;
   }
 
-  @Get('/byStatus')
+  @Get('/customer/getSubscription')
   @ApiResponse({
     status: 200,
-    description: 'GET SUBSCRIPTION BY STATUS',
+    description: 'CUSTOMER GET SUBSCRIPTION BY STATUS',
     type: [SubscriptionDTO],
   })
   // @UseInterceptors(
@@ -59,9 +60,11 @@ export class SubscriptionController {
   // )
   async getSubscriptionByStatus(
     @Query() subFilter: SubscriptionFilter,
-  ): Promise<SubscriptionEntity[]> {
+    @GetUser() user: AccountEntity,
+  ): Promise<SubHistoryDTO[]> {
     const listSub = await this.subscriptionService.getSubscriptionByStatus(
       subFilter,
+      user,
     );
     if (!listSub || listSub.length == 0) {
       throw new HttpException("Don't have resource Sub", HttpStatus.NOT_FOUND);
