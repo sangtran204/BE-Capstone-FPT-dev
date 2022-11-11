@@ -14,6 +14,7 @@ import { PaymentsService } from '../payment/payments.service';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
 import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
+import { SubHistoryDTO } from './dto/getSub-history.dto';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
@@ -39,15 +40,21 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
 
   async getSubscriptionByStatus(
     subFilter: SubscriptionFilter,
-  ): Promise<SubscriptionEntity[]> {
+    user: AccountEntity,
+  ): Promise<SubHistoryDTO[]> {
     const { status } = subFilter;
-    return await this.subscriptionRepository.find({
-      where: { status: Like(Boolean(status) ? status : '%%') },
-      relations: {
-        customer: { account: { profile: true } },
-        packages: true,
-      },
-    });
+    const statuss = Like(Boolean(status) ? status : '%%');
+    return await this.subscriptionRepository
+      .createQueryBuilder('subscriptions')
+      .select(
+        'subscriptions.id as id, totalPrice, startDelivery, cancelDate, subscriptions.status as status, packages.name as packageName, packages.image as packageImg',
+      )
+      .leftJoin('subscriptions.packages', 'packages')
+      .where('subscriptions.customerId = :customerId', { customerId: user.id })
+      .andWhere('subscriptions.status = :status', {
+        status: statuss.value,
+      })
+      .execute();
   }
 
   async subscriptionPackage(

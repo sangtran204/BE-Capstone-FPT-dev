@@ -51,14 +51,14 @@ export class ShippersService extends BaseService<ShipperEntity> {
     const checkNoPlate = await this.shipperRepository.findOne({
       where: { noPlate: update.noPlate },
     });
-    if (Boolean(checkNoPlate)) {
+    if (Boolean(checkNoPlate) && id != checkNoPlate.id) {
       throw new HttpException('noPlate already exists', HttpStatus.BAD_REQUEST);
     }
 
     const checkEmail = await this.profileService.findOne({
       where: { email: update.email },
     });
-    if (Boolean(checkEmail)) {
+    if (Boolean(checkEmail) && id != checkEmail.id) {
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
 
