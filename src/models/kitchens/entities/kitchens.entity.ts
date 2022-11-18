@@ -5,6 +5,7 @@ import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTr
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { RequestEntity } from 'src/models/request/entities/request.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import {
   Column,
   Entity,
@@ -46,4 +47,7 @@ export class KitchenEntity extends BaseEntity {
 
   @OneToMany(() => RequestEntity, (request) => request.kitchen)
   request: RequestEntity[];
+
+  @OneToMany(() => StationEntity, (station) => station.kitchen)
+  stations: StationEntity[];
 }
