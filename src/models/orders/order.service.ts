@@ -224,6 +224,7 @@ export class OrdersService extends BaseService<OrderEntity> {
         kitchen: { id: user.id },
         deliveryDate: find.deliveryDate,
         station: { id: find.stationId },
+        timeSlot: { id: find.time_slotId },
         status: OrderEnum.PROGRESS,
       },
       relations: {
