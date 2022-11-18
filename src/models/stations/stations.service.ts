@@ -7,6 +7,7 @@ import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { StationStatusFilter } from './dto/stations-filter.dto';
+import { AccountEntity } from '../accounts/entities/account.entity';
 
 @Injectable()
 export class StationsService extends BaseService<StationEntity> {
@@ -88,6 +89,18 @@ export class StationsService extends BaseService<StationEntity> {
       return 'Update station successfull';
     } else {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async getStationByKitchen(user: AccountEntity): Promise<StationEntity[]> {
+    const list = await this.stationsRepository.find({
+      where: { status: StatusEnum.ACTIVE, kitchen: { id: user.id } },
+    });
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No station found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
     }
   }
 }

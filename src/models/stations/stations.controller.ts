@@ -12,7 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
 import { StationEntity } from './entities/stations.entity';
 import { StationDTO } from './dto/stations.dto';
 import { StationsService } from './stations.service';
@@ -21,6 +20,8 @@ import { UpdateStationDTO } from './dto/update-station.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { StationStatusFilter } from './dto/stations-filter.dto';
+import { GetUser } from 'src/decorators/user.decorator';
+import { AccountEntity } from '../accounts/entities/account.entity';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -42,6 +43,19 @@ export class StationsController {
       throw new HttpException('No data station', HttpStatus.NOT_FOUND);
     }
     return listStation;
+  }
+
+  @Get('/byKitchen')
+  @Roles(RoleEnum.KITCHEN)
+  @ApiResponse({
+    status: 200,
+    description: 'KITCHEN GET STATION',
+    type: StationDTO,
+  })
+  async getStationByKitchen(
+    @GetUser() user: AccountEntity,
+  ): Promise<StationEntity[]> {
+    return await this.stationsService.getStationByKitchen(user);
   }
 
   // @Public()

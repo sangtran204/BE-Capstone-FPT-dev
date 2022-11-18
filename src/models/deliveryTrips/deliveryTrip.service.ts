@@ -11,6 +11,7 @@ import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 import { OrderEntity } from '../orders/entities/order.entity';
+import { OrderEnum } from 'src/common/enums/order.enum';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -81,7 +82,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         await entityManager.update(
           OrderEntity,
           { id: item.valueOf() },
-          { deliveryTrips: newTrip },
+          { deliveryTrips: newTrip, status: OrderEnum.READY },
         );
       };
       await this.orderServerce.transaction(callback, this.dataSource);
