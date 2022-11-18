@@ -49,6 +49,9 @@ export class OrderGetByKitchen {
   @ApiProperty()
   stationId: string;
 
+  @ApiProperty()
+  time_slotId: string;
+
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   deliveryDate: Date;
 }

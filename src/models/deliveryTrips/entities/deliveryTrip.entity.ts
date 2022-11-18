@@ -5,6 +5,7 @@ import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
+import { TimeSlotEntity } from 'src/models/time-slots/entities/time-slots.entity';
 
 @Entity({ name: 'delivery_trips' })
 export class DeliveryTripEntity extends BaseEntity {
@@ -38,4 +39,7 @@ export class DeliveryTripEntity extends BaseEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.deliveryTrips)
   order: OrderEntity[];
+
+  @ManyToOne(() => TimeSlotEntity, (time_slot) => time_slot.deliveryTrip)
+  time_slot: TimeSlotEntity;
 }
