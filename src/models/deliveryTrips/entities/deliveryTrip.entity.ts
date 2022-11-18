@@ -8,6 +8,18 @@ import { OrderEntity } from 'src/models/orders/entities/order.entity';
 
 @Entity({ name: 'delivery_trips' })
 export class DeliveryTripEntity extends BaseEntity {
+  @Column('time', { nullable: true })
+  @AutoMap()
+  deliveryTime: Date;
+
+  @Column('time', { nullable: true })
+  @AutoMap()
+  arrivedTime: Date;
+
+  @Column('date')
+  @AutoMap()
+  deliveryDate: Date;
+
   @Column()
   @AutoMap()
   status: string;

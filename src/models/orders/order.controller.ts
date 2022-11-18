@@ -19,7 +19,11 @@ import { OrderDTO } from './dto/order.dto';
 // import { VnpayDto } from '../../providers/vnpay/vnpay.dto';
 import { Public } from '../../decorators/public.decorator';
 import { OrdersService } from './order.service';
-import { OrderFilterDTO, OrderSearchByDate } from './dto/order-filter.dto';
+import {
+  OrderFilterDTO,
+  OrderGetByKitchen,
+  OrderSearchByDate,
+} from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { OrderCreationDTO } from './dto/create-order.dto';
@@ -92,6 +96,19 @@ export class OrdersController {
     } else {
       return list;
     }
+  }
+
+  @Get('/byKitchen')
+  @ApiResponse({
+    description: 'KITCHEN GET ORDER BY STATUS, DATE, STATION',
+    status: 200,
+    type: OrderEntity,
+  })
+  async getOrderToTrip(
+    @GetUser() user: AccountEntity,
+    @Query() find: OrderGetByKitchen,
+  ): Promise<OrderEntity[]> {
+    return await this.ordersService.getOrderByKitchen(user, find);
   }
 
   // @Get('/food-prepare')
