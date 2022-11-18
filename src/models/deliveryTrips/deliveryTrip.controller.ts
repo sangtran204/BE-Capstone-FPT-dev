@@ -20,8 +20,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { GetUser } from 'src/decorators/user.decorator';
+import { AccountEntity } from '../accounts/entities/account.entity';
 import { DeliveryTripService } from './deliveryTrip.service';
+import { CreateDeliveryTripDTO } from './dto/createDeliveryTrip.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
 
@@ -32,18 +37,13 @@ export class DeliveryTripController {
   constructor(private readonly deliveryTripService: DeliveryTripService) {}
 
   //Get all delivery trip
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
     description: 'GET ALL DELIVERY TRIP',
     type: [DeliveryTripDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(DeliveryTripDTO, DeliveryTripEntity, {
-      isArray: true,
-    }),
-  )
   async getAll(): Promise<DeliveryTripEntity[] | string> {
     const listTrip = await this.deliveryTripService.getAllDeliveryTrip();
     if (!listTrip || listTrip.length == 0) {
@@ -51,5 +51,38 @@ export class DeliveryTripController {
     } else {
       return listTrip;
     }
+  }
+
+  @Get('/byShipper')
+  @ApiResponse({
+    status: 200,
+    description: 'GET DELIVERY TRIP BY SHIPPER',
+    type: [DeliveryTripDTO],
+  })
+  async getDeliveryTripByShipper(
+    @GetUser() user: AccountEntity,
+  ): Promise<DeliveryTripEntity[]> {
+    const listTrip = await this.deliveryTripService.getDeliveryTripByShipper(
+      user,
+    );
+    if (!listTrip || listTrip.length == 0) {
+      throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
+    } else {
+      return listTrip;
+    }
+  }
+
+  @Post()
+  @Roles(RoleEnum.KITCHEN)
+  @ApiResponse({
+    status: 200,
+    description: 'CREATE DELIVERY TRIP',
+    type: [DeliveryTripEntity],
+  })
+  async createDeliveryTrip(
+    @GetUser() user: AccountEntity,
+    @Body() dto: CreateDeliveryTripDTO,
+  ): Promise<DeliveryTripEntity> {
+    return await this.deliveryTripService.createDeliveryTrip(user, dto);
   }
 }

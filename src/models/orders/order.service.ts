@@ -4,7 +4,11 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { OrderEntity } from './entities/order.entity';
 import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
-import { OrderFilterDTO, OrderSearchByDate } from './dto/order-filter.dto';
+import {
+  OrderFilterDTO,
+  OrderGetByKitchen,
+  OrderSearchByDate,
+} from './dto/order-filter.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { OrderCreationDTO } from './dto/create-order.dto';
@@ -18,6 +22,7 @@ import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
 import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
+import { OrderEnum } from 'src/common/enums/order.enum';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -208,6 +213,30 @@ export class OrdersService extends BaseService<OrderEntity> {
     if (!order)
       throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
     return order;
+  }
+
+  async getOrderByKitchen(
+    user: AccountEntity,
+    find: OrderGetByKitchen,
+  ): Promise<OrderEntity[]> {
+    const listOrder = await this.ordersRepository.find({
+      where: {
+        kitchen: { id: user.id },
+        deliveryDate: find.deliveryDate,
+        station: { id: find.stationId },
+        status: OrderEnum.PROGRESS,
+      },
+      relations: {
+        station: true,
+        subscription: { customer: true },
+        timeSlot: true,
+      },
+    });
+    if (!listOrder || listOrder.length == 0) {
+      throw new HttpException('No order found', HttpStatus.NOT_FOUND);
+    } else {
+      return listOrder;
+    }
   }
 
   // async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {

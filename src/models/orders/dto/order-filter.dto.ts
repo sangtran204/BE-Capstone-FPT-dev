@@ -44,3 +44,11 @@ export class OrderSearchByDate {
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   deliveryDate: Date;
 }
+
+export class OrderGetByKitchen {
+  @ApiProperty()
+  stationId: string;
+
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  deliveryDate: Date;
+}
