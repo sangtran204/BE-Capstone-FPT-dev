@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -28,6 +29,7 @@ import { AccountEntity } from '../accounts/entities/account.entity';
 import { DeliveryTripService } from './deliveryTrip.service';
 import { CreateDeliveryTripDTO } from './dto/createDeliveryTrip.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
+import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
 
 @ApiBearerAuth()
@@ -70,6 +72,29 @@ export class DeliveryTripController {
     } else {
       return listTrip;
     }
+  }
+
+  @Get('/byId/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'GET DELIVERY TRIP BY ID',
+    type: [DeliveryTripDTO],
+  })
+  async getDeliveryTripById(
+    @Param('id') id: string,
+  ): Promise<DeliveryTripEntity> {
+    return this.deliveryTripService.getTripById(id);
+  }
+
+  @Post('/update_status/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'UPDATE DELIVERY TRIP STATUS',
+  })
+  async updateTripStatus(
+    @Body() orderIds: UpdateStatusTrip,
+  ): Promise<DeliveryTripEntity> {
+    return await this.deliveryTripService.updateStatusTrip(orderIds);
   }
 
   @Post()

@@ -6,6 +6,7 @@ export enum OrderEnum {
   DELIVERY = 'delivery',
   READY = 'ready',
   DONE = 'done',
+  ARRIVED = 'arrived',
   // BAN = 'ban',
   //   REJECT = 'reject',
   // CANCEL = 'cancel',
