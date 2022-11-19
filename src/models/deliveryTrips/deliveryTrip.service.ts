@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -13,6 +13,7 @@ import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
+import { TripFilter } from './dto/deliveryTrip-filter.dto';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -34,11 +35,16 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
   }
 
-  async getDeliveryTripByShipper(
+  async getDeliveryTripByStatus(
     user: AccountEntity,
+    filter: TripFilter,
   ): Promise<DeliveryTripEntity[]> {
+    const { status } = filter;
     return await this.deliveryTripRepository.find({
-      where: { shipper: { id: user.id } },
+      where: {
+        shipper: { id: user.id },
+        status: Like(Boolean(status) ? status : '%%'),
+      },
       relations: {
         kitchen: { account: { profile: true } },
         order: true,
@@ -102,7 +108,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
   async getTripById(tripId: string): Promise<DeliveryTripEntity> {
     const trip = await this.deliveryTripRepository.findOne({
       where: { id: tripId },
-      relations: { order: true },
+      relations: { order: true, station: true },
     });
 
     if (!trip) {
