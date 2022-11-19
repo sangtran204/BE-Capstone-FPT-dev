@@ -12,6 +12,7 @@ import { KitchenService } from '../kitchens/kitchens.service';
 import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderEnum } from 'src/common/enums/order.enum';
+import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -98,5 +99,76 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
   }
 
-  // async updateStatusTrip()
+  async getTripById(tripId: string): Promise<DeliveryTripEntity> {
+    const trip = await this.deliveryTripRepository.findOne({
+      where: { id: tripId },
+      relations: { order: true },
+    });
+
+    if (!trip) {
+      throw new HttpException('No trip found', HttpStatus.NOT_FOUND);
+    } else {
+      return trip;
+    }
+  }
+
+  async updateStatusTrip(
+    orderIds: UpdateStatusTrip,
+  ): Promise<DeliveryTripEntity> {
+    const trip = await this.deliveryTripRepository.findOne({
+      where: { id: orderIds.deliveryTripId },
+    });
+    const picktime = new Date();
+    const time =
+      picktime.getHours().toString() +
+      ':' +
+      picktime.getMinutes().toString() +
+      ':' +
+      picktime.getSeconds().toString();
+
+    if (trip.status == DeliveryTripEnum.WAITING) {
+      const updateTrip = await this.deliveryTripRepository.update(
+        { id: orderIds.deliveryTripId },
+        { status: DeliveryTripEnum.DELIVERY, deliveryTime: time },
+      );
+      if (updateTrip) {
+        for (const item of orderIds.ordersIds) {
+          const callback = async (
+            entityManager: EntityManager,
+          ): Promise<void> => {
+            await entityManager.update(
+              OrderEntity,
+              { id: item.valueOf() },
+              { status: OrderEnum.DELIVERY },
+            );
+          };
+          await this.orderServerce.transaction(callback, this.dataSource);
+        }
+      }
+    } else if (trip.status == DeliveryTripEnum.DELIVERY) {
+      const updateTrip = await this.deliveryTripRepository.update(
+        { id: orderIds.deliveryTripId },
+        { status: DeliveryTripEnum.ARRIVED, arrivedTime: time },
+      );
+      if (updateTrip) {
+        for (const item of orderIds.ordersIds) {
+          const callback = async (
+            entityManager: EntityManager,
+          ): Promise<void> => {
+            await entityManager.update(
+              OrderEntity,
+              { id: item.valueOf() },
+              { status: OrderEnum.ARRIVED },
+            );
+          };
+          await this.orderServerce.transaction(callback, this.dataSource);
+        }
+      }
+    }
+    const freshTrip = await this.deliveryTripRepository.findOne({
+      where: { id: orderIds.deliveryTripId },
+      relations: { order: true },
+    });
+    return freshTrip;
+  }
 }
