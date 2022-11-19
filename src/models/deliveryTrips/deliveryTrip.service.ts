@@ -108,7 +108,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
   async getTripById(tripId: string): Promise<DeliveryTripEntity> {
     const trip = await this.deliveryTripRepository.findOne({
       where: { id: tripId },
-      relations: { order: true, station: true },
+      relations: { order: { timeSlot: true }, station: true },
     });
 
     if (!trip) {
