@@ -202,8 +202,8 @@ export class OrdersService extends BaseService<OrderEntity> {
     const order = await this.findOne({
       where: { id: id },
       relations: {
-        subscription: true,
-        food: true,
+        subscription: { customer: { account: { profile: true } } },
+        // food: true,
         station: true,
         packageItem: true,
         kitchen: true,

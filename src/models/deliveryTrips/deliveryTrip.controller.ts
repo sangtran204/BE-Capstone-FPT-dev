@@ -28,6 +28,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { DeliveryTripService } from './deliveryTrip.service';
 import { CreateDeliveryTripDTO } from './dto/createDeliveryTrip.dto';
+import { TripFilter } from './dto/deliveryTrip-filter.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
 import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
@@ -63,9 +64,11 @@ export class DeliveryTripController {
   })
   async getDeliveryTripByShipper(
     @GetUser() user: AccountEntity,
+    @Query() filter: TripFilter,
   ): Promise<DeliveryTripEntity[]> {
-    const listTrip = await this.deliveryTripService.getDeliveryTripByShipper(
+    const listTrip = await this.deliveryTripService.getDeliveryTripByStatus(
       user,
+      filter,
     );
     if (!listTrip || listTrip.length == 0) {
       throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);

@@ -180,7 +180,7 @@ export class OrdersController {
   //   }
 
   @Get('/:id')
-  @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
   async getOrderById(@Param('id') id: string): Promise<OrderEntity> {
     return await this.ordersService.findById(id);
   }
