@@ -56,6 +56,27 @@ export class DeliveryTripController {
     }
   }
 
+  @Get('/byShipper/byStatus')
+  @ApiResponse({
+    status: 200,
+    description: 'GET DELIVERY TRIP BY SHIPPER + STATUS',
+    type: [DeliveryTripDTO],
+  })
+  async getDeliveryTripByStatus(
+    @GetUser() user: AccountEntity,
+    @Query() filter: TripFilter,
+  ): Promise<DeliveryTripEntity[]> {
+    const listTrip = await this.deliveryTripService.getDeliveryTripByStatus(
+      user,
+      filter,
+    );
+    if (!listTrip || listTrip.length == 0) {
+      throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
+    } else {
+      return listTrip;
+    }
+  }
+
   @Get('/byShipper')
   @ApiResponse({
     status: 200,
@@ -64,11 +85,9 @@ export class DeliveryTripController {
   })
   async getDeliveryTripByShipper(
     @GetUser() user: AccountEntity,
-    @Query() filter: TripFilter,
   ): Promise<DeliveryTripEntity[]> {
-    const listTrip = await this.deliveryTripService.getDeliveryTripByStatus(
+    const listTrip = await this.deliveryTripService.getDeliveryTripByShipper(
       user,
-      filter,
     );
     if (!listTrip || listTrip.length == 0) {
       throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);

@@ -54,6 +54,22 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
   }
 
+  async getDeliveryTripByShipper(
+    user: AccountEntity,
+  ): Promise<DeliveryTripEntity[]> {
+    return await this.deliveryTripRepository.find({
+      where: {
+        shipper: { id: user.id },
+      },
+      relations: {
+        kitchen: { account: { profile: true } },
+        order: true,
+        station: true,
+        time_slot: true,
+      },
+    });
+  }
+
   async createDeliveryTrip(
     kitchen: AccountEntity,
     dto: CreateDeliveryTripDTO,
