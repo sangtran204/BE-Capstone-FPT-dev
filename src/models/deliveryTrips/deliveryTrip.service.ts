@@ -13,7 +13,7 @@ import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
-import { TripFilter } from './dto/deliveryTrip-filter.dto';
+import { TripFilter, TripFilterByKitchen } from './dto/deliveryTrip-filter.dto';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -32,6 +32,26 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
   async getAllDeliveryTrip(): Promise<DeliveryTripEntity[]> {
     return await this.deliveryTripRepository.find({
       relations: { shipper: true, kitchen: true, order: true, station: true },
+    });
+  }
+
+  async getDeliveryTripByKitchen(
+    kitchen: AccountEntity,
+    filter: TripFilterByKitchen,
+  ): Promise<DeliveryTripEntity[]> {
+    const { status } = filter;
+    return await this.deliveryTripRepository.find({
+      where: {
+        kitchen: { id: kitchen.id },
+        status: Like(Boolean(status) ? status : '%%'),
+        deliveryDate: filter.deliveryDate,
+      },
+      relations: {
+        kitchen: { account: { profile: true } },
+        order: true,
+        station: true,
+        time_slot: true,
+      },
     });
   }
 
