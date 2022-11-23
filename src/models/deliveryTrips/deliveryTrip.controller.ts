@@ -28,7 +28,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { DeliveryTripService } from './deliveryTrip.service';
 import { CreateDeliveryTripDTO } from './dto/createDeliveryTrip.dto';
-import { TripFilter } from './dto/deliveryTrip-filter.dto';
+import { TripFilter, TripFilterByKitchen } from './dto/deliveryTrip-filter.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
 import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
@@ -88,6 +88,27 @@ export class DeliveryTripController {
   ): Promise<DeliveryTripEntity[]> {
     const listTrip = await this.deliveryTripService.getDeliveryTripByShipper(
       user,
+    );
+    if (!listTrip || listTrip.length == 0) {
+      throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
+    } else {
+      return listTrip;
+    }
+  }
+
+  @Get('/byKitchen')
+  @ApiResponse({
+    status: 200,
+    description: 'GET DELIVERY TRIP BY SHIPPER',
+    type: [DeliveryTripDTO],
+  })
+  async getDeliveryTripByKitchen(
+    @GetUser() kitchen: AccountEntity,
+    @Query() filter: TripFilterByKitchen,
+  ): Promise<DeliveryTripEntity[]> {
+    const listTrip = await this.deliveryTripService.getDeliveryTripByKitchen(
+      kitchen,
+      filter,
     );
     if (!listTrip || listTrip.length == 0) {
       throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
