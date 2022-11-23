@@ -1,12 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Param } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { CheckPhoneDTO, LoginDto } from './dto/login.dto';
 import { RefreshTokenDTO } from './dto/refresh-token.dto';
 import { RegisterAccountDTO } from './dto/register-account.dto';
 import { RegisterCustomerDTO } from './dto/register-customer.dto';
@@ -23,6 +23,14 @@ import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
 @ApiTags('auths')
 export class AuthenticationController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('/checkPhone')
+  @Public()
+  async checkExistPhone(
+    @Body() phone: CheckPhoneDTO,
+  ): Promise<LoginResponseDto> {
+    return await this.authService.checkPhoneExist(phone);
+  }
 
   @Post('sign-up/customer')
   @Public()

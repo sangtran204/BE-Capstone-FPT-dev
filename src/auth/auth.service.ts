@@ -18,7 +18,7 @@ import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 import { ShippersService } from 'src/models/shippers/shippers.service';
 import { SharedService } from 'src/shared/shared.service';
 import { DataSource, EntityManager } from 'typeorm';
-import { LoginDto } from './dto/login.dto';
+import { CheckPhoneDTO, LoginDto } from './dto/login.dto';
 import { RegisterAccountDTO } from './dto/register-account.dto';
 import { RegisterCustomerDTO } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
@@ -236,6 +236,44 @@ export class AuthService {
       relations: { role: true, kitchen: true },
       where: { phone: register.phone },
     });
+  }
+
+  async checkPhoneExist(dto: CheckPhoneDTO): Promise<LoginResponseDto> {
+    const { phone } = dto;
+    const user = await this.accountsService.findOne({
+      relations: { role: true },
+      where: { phone },
+    });
+
+    if (!user)
+      throw new HttpException('Phone not exist', HttpStatus.BAD_REQUEST);
+    if (user.status != StatusEnum.ACTIVE) {
+      throw new HttpException(
+        'This phone do not active',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    // const isCorrectPassword = await bcrypt.compare(pa user.password);
+    // if (!isCorrectPassword)
+    // throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
+    // const payload: Payload = { phone, role };
+    const role = user.role.name;
+    const payload: Payload = { phone, role };
+    const refreshToken = this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: this.jwtConfigService.refreshTokenSecret,
+        expiresIn: this.jwtConfigService.refreshTokenExpiresIn,
+      },
+    );
+    await this.accountsService.updateRefreshToken(refreshToken, user.id);
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.jwtConfigService.accessTokenSecret,
+        expiresIn: this.jwtConfigService.accessTokenExpiresIn,
+      }),
+      refresh_token: refreshToken,
+    };
   }
 
   async loginAll(dto: LoginDto): Promise<LoginResponseDto> {

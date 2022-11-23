@@ -6,3 +6,8 @@ export class LoginDto {
   @ApiProperty()
   password: string;
 }
+
+export class CheckPhoneDTO {
+  @ApiProperty()
+  phone: string;
+}
