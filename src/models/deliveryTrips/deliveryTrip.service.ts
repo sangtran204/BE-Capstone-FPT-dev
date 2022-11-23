@@ -14,6 +14,7 @@ import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { TripFilter } from './dto/deliveryTrip-filter.dto';
+import { TimeSlotsService } from '../time-slots/time-slots.service';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -22,8 +23,9 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     @InjectRepository(DeliveryTripEntity)
     private readonly deliveryTripRepository: Repository<DeliveryTripEntity>,
     private readonly shipperService: ShippersService,
-    private readonly orderServerce: OrdersService,
+    private readonly orderService: OrdersService,
     private readonly kitchenService: KitchenService,
+    private readonly timeSlotService: TimeSlotsService,
     private readonly stationService: StationsService,
   ) {
     super(deliveryTripRepository);
@@ -86,12 +88,19 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     if (!station) {
       throw new HttpException(`Station not found`, HttpStatus.NOT_FOUND);
     }
+    const timeSlotFind = await this.timeSlotService.findOne({
+      where: { id: dto.timeSlotId },
+    });
+    if (!timeSlotFind) {
+      throw new HttpException(`Time slot not found`, HttpStatus.NOT_FOUND);
+    }
     const newTrip = await this.deliveryTripRepository.save({
       status: DeliveryTripEnum.WAITING,
       deliveryDate: dto.deliveryDate,
       kitchen: kitchen,
       shipper: shipper,
       station: station,
+      time_slot: timeSlotFind,
     });
 
     if (!newTrip) {
@@ -109,7 +118,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
           { deliveryTrips: newTrip, status: OrderEnum.READY },
         );
       };
-      await this.orderServerce.transaction(callback, this.dataSource);
+      await this.orderService.transaction(callback, this.dataSource);
     }
     return await this.deliveryTripRepository.findOne({
       where: { id: newTrip.id },
@@ -117,6 +126,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         shipper: true,
         station: true,
         order: true,
+        time_slot: true,
       },
     });
   }
@@ -164,7 +174,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
               { status: OrderEnum.DELIVERY },
             );
           };
-          await this.orderServerce.transaction(callback, this.dataSource);
+          await this.orderService.transaction(callback, this.dataSource);
         }
       }
     } else if (trip.status == DeliveryTripEnum.DELIVERY) {
@@ -183,7 +193,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
               { status: OrderEnum.ARRIVED },
             );
           };
-          await this.orderServerce.transaction(callback, this.dataSource);
+          await this.orderService.transaction(callback, this.dataSource);
         }
       }
     }
