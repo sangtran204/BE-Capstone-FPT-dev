@@ -8,6 +8,7 @@ import { DeliveryTripService } from './deliveryTrip.service';
 import { KitchenModule } from '../kitchens/kitchens.module';
 import { ShippersModule } from '../shippers/shippers.module';
 import { OrdersModule } from '../orders/order.module';
+import { TimeSlotsModule } from '../time-slots/time-slots.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OrdersModule } from '../orders/order.module';
     OrdersModule,
     KitchenModule,
     ShippersModule,
+    TimeSlotsModule,
   ],
   controllers: [DeliveryTripController],
   providers: [DeliveryTripService, DeliveryTripProfile],
