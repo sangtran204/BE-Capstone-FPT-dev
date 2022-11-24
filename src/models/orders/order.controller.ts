@@ -30,6 +30,7 @@ import { OrderCreationDTO } from './dto/create-order.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
+import { OrderDetailRes } from './dto/order-detail-res';
 
 @ApiBearerAuth()
 @Controller('orders')
@@ -183,6 +184,13 @@ export class OrdersController {
   // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
   async getOrderById(@Param('id') id: string): Promise<OrderEntity> {
     return await this.ordersService.findById(id);
+  }
+
+  @Get('/detail/:id')
+  @Public()
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  async getOrderDetail(@Param('id') id: string): Promise<OrderDetailRes> {
+    return await this.ordersService.getOrderDetail(id);
   }
 
   // @Put('/check-in/:id')

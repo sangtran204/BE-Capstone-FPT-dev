@@ -23,6 +23,7 @@ import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
 import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
 import { OrderEnum } from 'src/common/enums/order.enum';
+import { OrderDetailRes } from './dto/order-detail-res';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -196,6 +197,27 @@ export class OrdersService extends BaseService<OrderEntity> {
     await this.transaction(callback, this.dataSource);
 
     return await this.findById(order.id);
+  }
+
+  async getOrderDetail(id: string): Promise<OrderDetailRes> {
+    const order = await this.ordersRepository
+      .createQueryBuilder('orders')
+      .select(
+        'orders.id, orders.nameFood, orders.createdAt as orderDate,  time_slots.startTime, time_slots.endTime, stations.name as station, accounts.phone, profiles.fullName, orders.deliveryDate',
+      )
+      .leftJoin('orders.subscription', 'subscriptions')
+      .leftJoin('subscriptions.customer', 'customers')
+      .leftJoin('customers.account', 'accounts')
+      .leftJoin('accounts.profile', 'profiles')
+      .leftJoin('orders.timeSlot', 'time_slots')
+      .leftJoin('orders.station', 'stations')
+      .where('orders.id = :id', { id: id })
+      .execute();
+
+    if (!order) {
+      throw new HttpException('Can not get order detail', HttpStatus.NOT_FOUND);
+    }
+    return order;
   }
 
   async findById(id: string): Promise<OrderEntity> {
