@@ -49,7 +49,7 @@ export class StationsController {
     return listStation;
   }
 
-  @Get('/byKitchenId/:id')
+  @Get('/byKitchenId')
   // @Public()
   @ApiResponse({
     status: 200,
