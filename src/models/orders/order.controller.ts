@@ -105,10 +105,10 @@ export class OrdersController {
     type: OrderEntity,
   })
   async getOrderToTrip(
-    @GetUser() user: AccountEntity,
+    // @GetUser() user: AccountEntity,
     @Query() find: OrderGetByKitchen,
   ): Promise<OrderEntity[]> {
-    return await this.ordersService.getOrderByKitchen(user, find);
+    return await this.ordersService.getOrderByKitchen(find);
   }
 
   // @Get('/food-prepare')

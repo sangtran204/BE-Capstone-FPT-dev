@@ -141,16 +141,16 @@ export class DeliveryTripController {
   }
 
   @Post()
-  @Roles(RoleEnum.KITCHEN)
+  @Roles(RoleEnum.MANAGER)
   @ApiResponse({
     status: 200,
     description: 'CREATE DELIVERY TRIP',
     type: [DeliveryTripEntity],
   })
   async createDeliveryTrip(
-    @GetUser() user: AccountEntity,
+    // @GetUser() user: AccountEntity,
     @Body() dto: CreateDeliveryTripDTO,
   ): Promise<DeliveryTripEntity> {
-    return await this.deliveryTripService.createDeliveryTrip(user, dto);
+    return await this.deliveryTripService.createDeliveryTrip(dto);
   }
 }

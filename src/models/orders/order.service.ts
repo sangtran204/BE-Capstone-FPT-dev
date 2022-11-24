@@ -216,12 +216,12 @@ export class OrdersService extends BaseService<OrderEntity> {
   }
 
   async getOrderByKitchen(
-    user: AccountEntity,
+    // user: AccountEntity,
     find: OrderGetByKitchen,
   ): Promise<OrderEntity[]> {
     const listOrder = await this.ordersRepository.find({
       where: {
-        kitchen: { id: user.id },
+        kitchen: { id: find.kitchenId },
         deliveryDate: find.deliveryDate,
         station: { id: find.stationId },
         timeSlot: { id: find.time_slotId },
@@ -229,7 +229,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       },
       relations: {
         station: true,
-        subscription: { customer: true },
+        subscription: { customer: { account: { profile: true } } },
         timeSlot: true,
       },
     });
