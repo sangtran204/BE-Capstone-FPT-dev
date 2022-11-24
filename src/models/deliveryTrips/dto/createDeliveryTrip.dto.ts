@@ -9,6 +9,9 @@ export class CreateDeliveryTripDTO {
   stationId: string;
 
   @ApiProperty()
+  kitchenId: string;
+
+  @ApiProperty()
   timeSlotId: string;
 
   @ApiProperty()

@@ -50,6 +50,9 @@ export class OrderGetByKitchen {
   stationId: string;
 
   @ApiProperty()
+  kitchenId: string;
+
+  @ApiProperty()
   time_slotId: string;
 
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })

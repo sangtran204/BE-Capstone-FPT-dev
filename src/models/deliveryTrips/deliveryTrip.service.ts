@@ -93,7 +93,6 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
   }
 
   async createDeliveryTrip(
-    kitchen: AccountEntity,
     dto: CreateDeliveryTripDTO,
   ): Promise<DeliveryTripEntity> {
     const shipper = await this.shipperService.findOne({
@@ -113,6 +112,12 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
     if (!timeSlotFind) {
       throw new HttpException(`Time slot not found`, HttpStatus.NOT_FOUND);
+    }
+    const kitchen = await this.kitchenService.findOne({
+      where: { id: dto.kitchenId },
+    });
+    if (!kitchen) {
+      throw new HttpException(`Kitchen not found`, HttpStatus.NOT_FOUND);
     }
     const newTrip = await this.deliveryTripRepository.save({
       status: DeliveryTripEnum.WAITING,
@@ -145,6 +150,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       relations: {
         shipper: true,
         station: true,
+        kitchen: true,
         order: true,
         time_slot: true,
       },
