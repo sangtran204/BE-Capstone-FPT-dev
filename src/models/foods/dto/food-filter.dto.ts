@@ -11,3 +11,16 @@ export class FoodFilterDTO {
   })
   statusFood: InActiveEnum;
 }
+
+export class FoodFilter {
+  @ApiProperty()
+  categoryId: string;
+
+  @ApiProperty({
+    enum: InActiveEnum,
+    required: false,
+    description: 'Food status',
+    default: StatusEnum.ACTIVE,
+  })
+  status: InActiveEnum;
+}

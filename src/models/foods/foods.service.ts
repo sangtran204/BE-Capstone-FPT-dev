@@ -9,7 +9,7 @@ import { FoodCategoriesService } from '../food-categories/food-categories.servic
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
-import { FoodFilterDTO } from './dto/food-filter.dto';
+import { FoodFilter, FoodFilterDTO } from './dto/food-filter.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -40,6 +40,30 @@ export class FoodsService extends BaseService<FoodEntity> {
         foodCategory: true,
       },
     });
+  }
+
+  async getFoodByCateFilter(filter: FoodFilter): Promise<FoodEntity[]> {
+    const { status } = filter;
+    const cate = await this.foodCategoryService.findOne({
+      where: { id: filter.categoryId },
+    });
+    if (!cate) {
+      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    }
+    const foods = await this.foodsRepository.find({
+      where: {
+        status: Like(Boolean(status) ? status : '%%'),
+      },
+      relations: {
+        foodCategory: true,
+      },
+    });
+
+    if (!foods || foods.length == 0) {
+      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+    } else {
+      return foods;
+    }
   }
 
   // async getAllActiveFood(): Promise<FoodEntity[]> {

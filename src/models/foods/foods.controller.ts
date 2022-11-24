@@ -20,12 +20,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
-import { FoodFilterDTO } from './dto/food-filter.dto';
+import { FoodFilter, FoodFilterDTO } from './dto/food-filter.dto';
 import { FoodDTO } from './dto/food.dto';
-import { FoodByKitchenDTO } from './dto/foodByKitchen.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { FoodEntity } from './entities/foods.entity';
 import { FoodsService } from './foods.service';
@@ -53,6 +51,20 @@ export class FoodsController {
       );
     }
     return listFood;
+  }
+
+  @Get('/byCatefory_filter')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET FOOD BY CATEGORY AND FILTER STATUS',
+    type: [FoodDTO],
+  })
+  // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  async findByCategoryFilter(
+    @Query() filter: FoodFilter,
+  ): Promise<FoodEntity[]> {
+    return await this.foodsService.getFoodByCateFilter(filter);
   }
 
   @Get('/byStatus')
