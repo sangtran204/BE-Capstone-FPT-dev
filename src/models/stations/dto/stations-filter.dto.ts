@@ -10,3 +10,8 @@ export class StationStatusFilter {
   })
   status: InActiveEnum;
 }
+
+export class StationByKitchenId {
+  @ApiProperty()
+  kitchenId: string;
+}

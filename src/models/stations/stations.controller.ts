@@ -19,9 +19,13 @@ import { CreateStationDTO } from './dto/create-station.dto';
 import { UpdateStationDTO } from './dto/update-station.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { StationStatusFilter } from './dto/stations-filter.dto';
+import {
+  StationByKitchenId,
+  StationStatusFilter,
+} from './dto/stations-filter.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiBearerAuth()
 @ApiTags('stations')
@@ -43,6 +47,19 @@ export class StationsController {
       throw new HttpException('No data station', HttpStatus.NOT_FOUND);
     }
     return listStation;
+  }
+
+  @Get('/byKitchenId/:id')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'KITCHEN GET STATION',
+    type: StationDTO,
+  })
+  async getStationByKitchenId(
+    @Query() filter: StationByKitchenId,
+  ): Promise<StationEntity[]> {
+    return await this.stationsService.getStationByKitchenId(filter);
   }
 
   @Get('/byKitchen')
