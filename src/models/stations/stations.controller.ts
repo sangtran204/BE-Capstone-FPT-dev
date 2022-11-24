@@ -50,7 +50,7 @@ export class StationsController {
   }
 
   @Get('/byKitchenId/:id')
-  @Public()
+  // @Public()
   @ApiResponse({
     status: 200,
     description: 'KITCHEN GET STATION',
