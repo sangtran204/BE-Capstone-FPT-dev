@@ -212,7 +212,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       .leftJoin('orders.timeSlot', 'time_slots')
       .leftJoin('orders.station', 'stations')
       .where('orders.id = :id', { id: id })
-      .execute();
+      .getRawOne();
 
     if (!order) {
       throw new HttpException('Can not get order detail', HttpStatus.NOT_FOUND);
