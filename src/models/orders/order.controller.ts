@@ -187,7 +187,7 @@ export class OrdersController {
   }
 
   @Get('/detail/:id')
-  @Public()
+  // @Public()
   // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
   async getOrderDetail(@Param('id') id: string): Promise<OrderDetailRes> {
     return await this.ordersService.getOrderDetail(id);
