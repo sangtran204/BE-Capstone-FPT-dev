@@ -52,6 +52,7 @@ export class FoodsService extends BaseService<FoodEntity> {
     }
     const foods = await this.foodsRepository.find({
       where: {
+        foodCategory: { id: filter.categoryId },
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
