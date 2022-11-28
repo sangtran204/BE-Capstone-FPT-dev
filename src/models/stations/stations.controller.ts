@@ -138,9 +138,9 @@ export class StationsController {
     return station;
   }
 
-  // @Public()
+  @Public()
   @Post()
-  @Roles(RoleEnum.ADMIN)
+  // @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'CREATE STATION',
