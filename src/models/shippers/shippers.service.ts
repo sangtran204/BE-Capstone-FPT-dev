@@ -9,7 +9,10 @@ import { AccountsService } from '../accounts/accounts.service';
 import { ProfileEntity } from '../profiles/entities/profile.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { AccountEntity } from '../accounts/entities/account.entity';
-import { ShipperStatusFilter } from './dto/shipper-status-filter.dto';
+import {
+  ShipperFilterDTO,
+  ShipperStatusFilter,
+} from './dto/shipper-status-filter.dto';
 
 @Injectable()
 export class ShippersService extends BaseService<ShipperEntity> {
@@ -29,9 +32,22 @@ export class ShippersService extends BaseService<ShipperEntity> {
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         account: { profile: true },
-        kitchen: true,
       },
     });
+  }
+
+  async getShipperByStatus(filter: ShipperFilterDTO): Promise<ShipperEntity[]> {
+    const { statusAcc } = filter;
+    const list = await this.shipperRepository.find({
+      where: {
+        account: { status: Like(Boolean(statusAcc) ? statusAcc : '%%') },
+      },
+      relations: { account: { profile: true } },
+    });
+    if (!list || list.length == 0) {
+      throw new HttpException('No shipper found', HttpStatus.NOT_FOUND);
+    }
+    return list;
   }
 
   async updateShipper(

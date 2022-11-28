@@ -11,12 +11,14 @@ import {
   StationStatusFilter,
 } from './dto/stations-filter.dto';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { KitchenService } from '../kitchens/kitchens.service';
 
 @Injectable()
 export class StationsService extends BaseService<StationEntity> {
   constructor(
     @InjectRepository(StationEntity)
     private readonly stationsRepository: Repository<StationEntity>,
+    private readonly kitchenService: KitchenService,
   ) {
     super(stationsRepository);
   }
@@ -47,19 +49,26 @@ export class StationsService extends BaseService<StationEntity> {
     });
   }
 
-  async getAllActiveStations(): Promise<StationEntity[]> {
-    return await this.stationsRepository.find({
-      where: { status: StatusEnum.ACTIVE },
-    });
-  }
+  // async getAllActiveStations(): Promise<StationEntity[]> {
+  //   return await this.stationsRepository.find({
+  //     where: { status: StatusEnum.ACTIVE },
+  //   });
+  // }
 
   async createStation(dto: CreateStationDTO): Promise<StationEntity> {
+    const kitchenFind = await this.kitchenService.findOne({
+      where: { id: dto.kitchenId },
+    });
+    if (!kitchenFind) {
+      throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+    }
     return await this.save({
       name: dto.name,
       address: dto.address,
       phone: dto.phone,
       openTime: dto.openTime,
       closeTime: dto.closeTime,
+      kitchen: kitchenFind,
     });
   }
 
@@ -93,6 +102,12 @@ export class StationsService extends BaseService<StationEntity> {
     const station = await this.stationsRepository.findOne({
       where: { id: id },
     });
+    const kitchenFind = await this.kitchenService.findOne({
+      where: { id: dto.kitchenId },
+    });
+    if (!kitchenFind) {
+      throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+    }
     if (station) {
       await this.save({
         id: id,
@@ -101,6 +116,7 @@ export class StationsService extends BaseService<StationEntity> {
         phone: dto.phone,
         openTime: dto.openTime,
         closeTime: dto.closeTime,
+        kitchen: kitchenFind,
       });
       return 'Update station successfull';
     } else {
