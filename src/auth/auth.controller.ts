@@ -88,16 +88,16 @@ export class AuthenticationController {
     return await this.authService.login(dto, RoleEnum.CUSTOMER);
   }
 
+  @Post('login/shipper')
+  @Public()
+  async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
+    return await this.authService.login(dto, RoleEnum.SHIPPER);
+  }
+
   // @Post('login/kitchen')
   // @Public()
   // async loginKitchen(@Body() dto: LoginDto): Promise<LoginResponseDto> {
   //   return await this.authService.login(dto, RoleEnum.KITCHEN);
-  // }
-
-  // @Post('login/shipper')
-  // @Public()
-  // async loginShipper(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-  //   return await this.authService.login(dto, RoleEnum.SHIPPER);
   // }
 
   // @Post('login/manager')

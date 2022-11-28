@@ -56,20 +56,30 @@ export class StationsService extends BaseService<StationEntity> {
   // }
 
   async createStation(dto: CreateStationDTO): Promise<StationEntity> {
-    const kitchenFind = await this.kitchenService.findOne({
-      where: { id: dto.kitchenId },
-    });
-    if (!kitchenFind) {
-      throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+    if (dto.kitchenId == '') {
+      return await this.save({
+        name: dto.name,
+        address: dto.address,
+        phone: dto.phone,
+        openTime: dto.openTime,
+        closeTime: dto.closeTime,
+      });
+    } else {
+      const kitchenFind = await this.kitchenService.findOne({
+        where: { id: dto.kitchenId },
+      });
+      if (!kitchenFind) {
+        throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+      }
+      return await this.save({
+        name: dto.name,
+        address: dto.address,
+        phone: dto.phone,
+        openTime: dto.openTime,
+        closeTime: dto.closeTime,
+        kitchen: kitchenFind,
+      });
     }
-    return await this.save({
-      name: dto.name,
-      address: dto.address,
-      phone: dto.phone,
-      openTime: dto.openTime,
-      closeTime: dto.closeTime,
-      kitchen: kitchenFind,
-    });
   }
 
   async updateStatusStation(id: string): Promise<string> {
@@ -120,7 +130,7 @@ export class StationsService extends BaseService<StationEntity> {
       });
       return 'Update station successfull';
     } else {
-      throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Station not found`, HttpStatus.NOT_FOUND);
     }
   }
 
