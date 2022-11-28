@@ -13,6 +13,8 @@ import {
   ShipperFilterDTO,
   ShipperStatusFilter,
 } from './dto/shipper-status-filter.dto';
+import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
+import { use } from 'passport';
 
 @Injectable()
 export class ShippersService extends BaseService<ShipperEntity> {
@@ -116,12 +118,12 @@ export class ShippersService extends BaseService<ShipperEntity> {
         await entityManager.update(
           AccountEntity,
           { id: id },
-          { status: StatusEnum.IN_ACTIVE },
+          { status: StatusEnum.BAN },
         );
       };
       await this.accountService.transaction(callback, this.dataSource);
       return 'Shipper inactive!';
-    } else {
+    } else if (shipper.status == StatusEnum.IN_ACTIVE) {
       const callback = async (entityManager: EntityManager): Promise<void> => {
         await entityManager.update(
           ShipperEntity,
@@ -137,6 +139,37 @@ export class ShippersService extends BaseService<ShipperEntity> {
       };
       await this.accountService.transaction(callback, this.dataSource);
       return 'Shipper active!';
+    }
+  }
+
+  async offByShipper(user: AccountEntity): Promise<string> {
+    const sfind = await this.shipperRepository.findOne({
+      where: { id: user.id },
+    });
+
+    if (!sfind) {
+      throw new HttpException('Shipper not found', HttpStatus.NOT_FOUND);
+    }
+    if (sfind.status == ShipperStatusEnum.ACTIVE) {
+      const update = await this.shipperRepository.update(
+        { id: user.id },
+        { status: ShipperStatusEnum.IN_ACTIVE },
+      );
+      if (update) {
+        return 'Shipper inactive';
+      } else {
+        return 'error to inactive';
+      }
+    } else if (sfind.status == ShipperStatusEnum.IN_ACTIVE) {
+      const update = await this.shipperRepository.update(
+        { id: user.id },
+        { status: ShipperStatusEnum.ACTIVE },
+      );
+      if (update) {
+        return 'Shipper active';
+      } else {
+        return 'error to active';
+      }
     }
   }
 }

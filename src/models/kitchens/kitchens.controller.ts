@@ -104,22 +104,22 @@ export class KitchenController {
     return listKitchen;
   }
 
-  @Post('/addShipper/:id')
-  // @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'ADD SHIPPER FOR KITCHEN BY ID KITCHEN',
-    type: KitchenDTO,
-  })
-  async addShipperForKitchen(
-    @Param('id') idKitchen: string,
-    @Body() listShipperID: ListShipperID,
-  ): Promise<string> {
-    return await this.kitchenService.addShipperForKitchen(
-      idKitchen,
-      listShipperID,
-    );
-  }
+  // @Post('/addShipper/:id')
+  // // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'ADD SHIPPER FOR KITCHEN BY ID KITCHEN',
+  //   type: KitchenDTO,
+  // })
+  // async addShipperForKitchen(
+  //   @Param('id') idKitchen: string,
+  //   @Body() listShipperID: ListShipperID,
+  // ): Promise<string> {
+  //   return await this.kitchenService.addShipperForKitchen(
+  //     idKitchen,
+  //     listShipperID,
+  //   );
+  // }
 
   @Put('/:id')
   @ApiResponse({

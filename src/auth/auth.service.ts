@@ -162,7 +162,7 @@ export class AuthService {
           id: accountEntity.id,
           noPlate: register.noPlate,
           vehicleType: register.vehicleType,
-          status: ShipperStatusEnum.NEW,
+          status: ShipperStatusEnum.ACTIVE,
         }),
       );
 

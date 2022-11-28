@@ -151,8 +151,8 @@ export class AccountsService extends BaseService<AccountEntity> {
     if (!Boolean(account))
       throw new HttpException('this account not found', HttpStatus.NOT_FOUND);
 
-    if (account.role.name === RoleEnum.ADMIN)
-      throw new HttpException('Can not ban admin user', HttpStatus.BAD_REQUEST);
+    // if (account.role.name === RoleEnum.ADMIN)
+    //   throw new HttpException('Can not ban admin user', HttpStatus.BAD_REQUEST);
 
     account.status = StatusEnum.BAN;
     return await this.save(account);
