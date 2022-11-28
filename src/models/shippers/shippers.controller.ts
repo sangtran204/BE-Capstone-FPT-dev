@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { GetUser } from 'src/decorators/user.decorator';
+import { AccountEntity } from '../accounts/entities/account.entity';
 import {
   ShipperFilterDTO,
   ShipperStatusFilter,
@@ -96,6 +98,7 @@ export class ShippersController {
     return await this.shippersService.updateShipper(id, update);
   }
 
+  // @Public()
   @Put('/status/:id')
   @ApiResponse({
     status: 200,
@@ -104,5 +107,16 @@ export class ShippersController {
   })
   async inActiveShipper(@Param('id') id: string): Promise<string> {
     return await this.shippersService.updateStatusShipper(id);
+  }
+
+  // @Public()
+  @Put('/off/byMe')
+  @ApiResponse({
+    status: 200,
+    description: 'UPDATE STATUS SHIPPER BY SHIPPER',
+    type: String,
+  })
+  async offByShipper(@GetUser() user: AccountEntity): Promise<string> {
+    return await this.shippersService.offByShipper(user);
   }
 }
