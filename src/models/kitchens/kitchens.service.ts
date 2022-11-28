@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
@@ -13,6 +13,7 @@ import { ListShipperID } from './dto/add_shipper.dto';
 import { ShipperEntity } from '../shippers/entities/shipper.entity';
 import { ShippersService } from '../shippers/shippers.service';
 import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
+import { KitchenFilterDTO } from './dto/kitchenFilter.dto';
 
 @Injectable()
 export class KitchenService extends BaseService<KitchenEntity> {
@@ -33,6 +34,19 @@ export class KitchenService extends BaseService<KitchenEntity> {
         account: true,
       },
     });
+  }
+
+  async getKitchenByStatus(filter: KitchenFilterDTO): Promise<KitchenEntity[]> {
+    const { status } = filter;
+    const list = await this.kitchensRepository.find({
+      where: { account: { status: Like(Boolean(status) ? status : '%%') } },
+      relations: { account: { profile: true }, stations: true },
+    });
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No kitchen found', HttpStatus.NOT_FOUND);
+    }
+    return list;
   }
 
   async updateKitchen(

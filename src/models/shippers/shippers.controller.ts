@@ -9,7 +9,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ShipperStatusFilter } from './dto/shipper-status-filter.dto';
+import { Public } from 'src/decorators/public.decorator';
+import {
+  ShipperFilterDTO,
+  ShipperStatusFilter,
+} from './dto/shipper-status-filter.dto';
 import { ShipperDTO } from './dto/shipper.dto';
 import { UpdateShipperDTO } from './dto/update_shipper';
 import { ShipperEntity } from './entities/shipper.entity';
@@ -41,6 +45,20 @@ export class ShippersController {
       );
     }
     return listShip;
+  }
+
+  @Get('/byStatus')
+  // @Public()
+  // @Roles(RoleEnum.ADMIN)
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL KITCHEN',
+    type: [ShipperEntity],
+  })
+  async getShipperByStatus(
+    @Query() filter: ShipperFilterDTO,
+  ): Promise<ShipperEntity[]> {
+    return await this.shippersService.getShipperByStatus(filter);
   }
 
   @Get('/:id')

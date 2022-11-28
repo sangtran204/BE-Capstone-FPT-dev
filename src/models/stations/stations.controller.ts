@@ -38,9 +38,9 @@ export class StationsController {
   @ApiResponse({
     status: 200,
     description: 'GET ALL STATION',
-    type: [StationDTO],
+    type: [StationEntity],
   })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
+  // @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
   async findAll(): Promise<StationEntity[]> {
     const listStation = await this.stationsService.getStations();
     if (listStation.length == 0) {
@@ -99,23 +99,23 @@ export class StationsController {
   }
 
   // @Public()
-  @Get('/active')
-  @ApiResponse({
-    status: 200,
-    description: 'GET ALL STATION ACTIVE',
-    type: [StationDTO],
-  })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
-  async findAllActiveStation(): Promise<StationEntity[]> {
-    const listStation = await this.stationsService.getAllActiveStations();
-    if (!listStation || listStation.length == 0) {
-      throw new HttpException(
-        "Dont't have resource station",
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return listStation;
-  }
+  // @Get('/active')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET ALL STATION ACTIVE',
+  //   type: [StationDTO],
+  // })
+  // @UseInterceptors(MapInterceptor(StationEntity, StationDTO, { isArray: true }))
+  // async findAllActiveStation(): Promise<StationEntity[]> {
+  //   const listStation = await this.stationsService.getAllActiveStations();
+  //   if (!listStation || listStation.length == 0) {
+  //     throw new HttpException(
+  //       "Dont't have resource station",
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   }
+  //   return listStation;
+  // }
 
   // @Public()
   @Get('/:id')

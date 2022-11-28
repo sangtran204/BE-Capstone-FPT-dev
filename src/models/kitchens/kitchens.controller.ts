@@ -7,11 +7,13 @@ import {
   HttpException,
   HttpStatus,
   Controller,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { ListShipperID } from './dto/add_shipper.dto';
 import { KitchenDTO } from './dto/kitchen.dto';
+import { KitchenFilterDTO } from './dto/kitchenFilter.dto';
 import { UpdateKitchenDTO } from './dto/update_kitchen.dto';
 import { KitchenEntity } from './entities/kitchens.entity';
 import { KitchenService } from './kitchens.service';
@@ -42,6 +44,21 @@ export class KitchenController {
       );
     }
     return listKitchen;
+  }
+
+  @Get('/byStatus')
+  // @Public()
+  // @Roles(RoleEnum.ADMIN)
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL KITCHEN',
+    type: [KitchenEntity],
+  })
+  // @UseInterceptors(MapInterceptor(KitchenEntity, KitchenDTO, { isArray: true }))
+  async getKitchenByStatus(
+    @Query() filter: KitchenFilterDTO,
+  ): Promise<KitchenEntity[]> {
+    return await this.kitchenService.getKitchenByStatus(filter);
   }
 
   @Get('/:id')
