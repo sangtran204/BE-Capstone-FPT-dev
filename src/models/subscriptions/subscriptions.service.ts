@@ -40,6 +40,23 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
 
   async getSubscriptionByStatus(
     subFilter: SubscriptionFilter,
+  ): Promise<SubscriptionEntity[]> {
+    const { status } = subFilter;
+    const list = await this.subscriptionRepository.find({
+      where: { status: Like(Boolean(status) ? status : '%%') },
+      relations: {
+        customer: { account: true },
+        packages: true,
+      },
+    });
+    if (!list || list.length == 0) {
+      throw new HttpException('No sub found', HttpStatus.NOT_FOUND);
+    }
+    return list;
+  }
+
+  async getSubscriptionByCustomer(
+    subFilter: SubscriptionFilter,
     user: AccountEntity,
   ): Promise<SubHistoryDTO[]> {
     const { status } = subFilter;
