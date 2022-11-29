@@ -32,7 +32,7 @@ export class ShippersController {
   // @Roles(RoleEnum.ADMIN)
   @ApiResponse({
     status: 200,
-    description: 'GET ALL KITCHEN',
+    description: 'GET ALL SHIPPER BY STATUS',
     type: [ShipperDTO],
   })
   // @UseInterceptors(MapInterceptor(ShipperEntity, ShipperDTO, { isArray: true }))

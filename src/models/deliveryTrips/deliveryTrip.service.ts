@@ -82,6 +82,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     return await this.deliveryTripRepository.find({
       where: {
         shipper: { id: user.id },
+        status: DeliveryTripEnum.WAITING,
       },
       relations: {
         kitchen: { account: { profile: true } },

@@ -49,6 +49,19 @@ export class SubscriptionController {
     return listSub;
   }
 
+  @Get('/getSubByStatus')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET SUBSCRIPTION BY STATUS',
+    type: [SubscriptionEntity],
+  })
+  async getSubscriptionByStatus(
+    @Query() subFilter: SubscriptionFilter,
+  ): Promise<SubscriptionEntity[]> {
+    return await this.subscriptionService.getSubscriptionByStatus(subFilter);
+  }
+
   @Get('/customer/getSubscription')
   @ApiResponse({
     status: 200,
@@ -58,11 +71,11 @@ export class SubscriptionController {
   // @UseInterceptors(
   //   MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
   // )
-  async getSubscriptionByStatus(
+  async getSubscriptionByCutomer(
     @Query() subFilter: SubscriptionFilter,
     @GetUser() user: AccountEntity,
   ): Promise<SubHistoryDTO[]> {
-    const listSub = await this.subscriptionService.getSubscriptionByStatus(
+    const listSub = await this.subscriptionService.getSubscriptionByCustomer(
       subFilter,
       user,
     );
