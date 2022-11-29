@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Delete,
   Render,
   UseInterceptors,
 } from '@nestjs/common';
@@ -169,5 +170,18 @@ export class SubscriptionController {
     } catch (error) {
       return error;
     }
+  }
+
+  @Delete('/delete/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'CUSTOMER DELETE SUBSCRIPTION',
+    type: String,
+  })
+  async delSub(
+    @Param('id') id: string,
+    @GetUser() user: AccountEntity,
+  ): Promise<string> {
+    return await this.subscriptionService.deleteSubscription(id, user);
   }
 }
