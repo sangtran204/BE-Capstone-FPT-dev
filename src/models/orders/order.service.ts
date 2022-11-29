@@ -250,6 +250,7 @@ export class OrdersService extends BaseService<OrderEntity> {
         status: OrderEnum.PROGRESS,
       },
       relations: {
+        kitchen: { account: { profile: true } },
         station: true,
         subscription: { customer: { account: { profile: true } } },
         timeSlot: true,
