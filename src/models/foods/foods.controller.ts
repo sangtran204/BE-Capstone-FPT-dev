@@ -20,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { FoodFilter, FoodFilterDTO } from './dto/food-filter.dto';
@@ -54,7 +55,7 @@ export class FoodsController {
   }
 
   @Get('/byCatefory_filter')
-  // @Public()
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET FOOD BY CATEGORY AND FILTER STATUS',

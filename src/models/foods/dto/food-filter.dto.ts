@@ -13,7 +13,7 @@ export class FoodFilterDTO {
 }
 
 export class FoodFilter {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   categoryId: string;
 
   @ApiProperty({
