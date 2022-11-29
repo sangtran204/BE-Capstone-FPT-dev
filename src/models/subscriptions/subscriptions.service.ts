@@ -15,6 +15,7 @@ import { CreateSubscriptionDTO } from './dto/create-subscription';
 import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubHistoryDTO } from './dto/getSub-history.dto';
+import e from 'express';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
@@ -190,6 +191,30 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       throw new HttpException('Cancel Fail', HttpStatus.BAD_REQUEST);
     }
     return 'Cancel Successful';
+  }
+
+  async deleteSubscription(id: string, user: AccountEntity): Promise<string> {
+    const subFind = await this.subscriptionRepository.findOne({
+      where: { id: id, customer: { id: user.id }, status: SubEnum.UNCONFIRMED },
+    });
+    if (!subFind) {
+      throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
+    }
+    const delSub = await this.subscriptionRepository
+      .createQueryBuilder()
+      .delete()
+      .from(SubscriptionEntity)
+      .where('id = :id', {
+        id: id,
+      })
+      .andWhere('customerId = :customerId', { customerId: user.id })
+      .andWhere('status = :status', { status: 'unConfirmed' })
+      .execute();
+    if (delSub) {
+      return 'Delete success';
+    } else {
+      return 'Delete fail';
+    }
   }
 
   async payment(
