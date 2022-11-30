@@ -40,6 +40,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         kitchen: { account: { profile: true } },
         order: true,
         station: true,
+        time_slot: true,
       },
     });
   }
