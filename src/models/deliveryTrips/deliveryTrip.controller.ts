@@ -40,7 +40,7 @@ export class DeliveryTripController {
   constructor(private readonly deliveryTripService: DeliveryTripService) {}
 
   //Get all delivery trip
-  @Public()
+  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
