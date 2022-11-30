@@ -30,7 +30,7 @@ import { DeliveryTripService } from './deliveryTrip.service';
 import { CreateDeliveryTripDTO } from './dto/createDeliveryTrip.dto';
 import { TripFilter, TripFilterByKitchen } from './dto/deliveryTrip-filter.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
-import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
+import { DirectShipperDTO, UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { DeliveryTripEntity } from './entities/deliveryTrip.entity';
 
 @ApiBearerAuth()
@@ -152,5 +152,30 @@ export class DeliveryTripController {
     @Body() dto: CreateDeliveryTripDTO,
   ): Promise<DeliveryTripEntity> {
     return await this.deliveryTripService.createDeliveryTrip(dto);
+  }
+
+  @Put('/reject/:id')
+  @Roles(RoleEnum.SHIPPER)
+  @ApiResponse({
+    status: 200,
+    description: 'REJECT DELIVERY TRIP',
+    type: String,
+  })
+  async rejectDeliveryTrip(
+    @Param('id') id: string,
+    @GetUser() user: AccountEntity,
+  ): Promise<string> {
+    return await this.deliveryTripService.rejectByShipper(id, user);
+  }
+
+  @Put('/transfer')
+  @Roles(RoleEnum.MANAGER)
+  @ApiResponse({
+    status: 200,
+    description: 'MANAGER TRANSFER SHIPPER',
+    type: String,
+  })
+  async transferShipper(@Query() transfer: DirectShipperDTO): Promise<string> {
+    return await this.deliveryTripService.directShipperByManager(transfer);
   }
 }
