@@ -40,15 +40,17 @@ export class DeliveryTripController {
   constructor(private readonly deliveryTripService: DeliveryTripService) {}
 
   //Get all delivery trip
-  // @Public()
+  @Public()
   @Get()
   @ApiResponse({
     status: 200,
     description: 'GET ALL DELIVERY TRIP',
     type: [DeliveryTripDTO],
   })
-  async getAll(): Promise<DeliveryTripEntity[] | string> {
-    const listTrip = await this.deliveryTripService.getAllDeliveryTrip();
+  async getAll(
+    @Query() filter: TripFilter,
+  ): Promise<DeliveryTripEntity[] | string> {
+    const listTrip = await this.deliveryTripService.getAllDeliveryTrip(filter);
     if (!listTrip || listTrip.length == 0) {
       throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
     } else {
