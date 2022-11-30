@@ -12,7 +12,7 @@ import { KitchenService } from '../kitchens/kitchens.service';
 import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderEnum } from 'src/common/enums/order.enum';
-import { UpdateStatusTrip } from './dto/updateStatusTrip.dto';
+import { DirectShipperDTO, UpdateStatusTrip } from './dto/updateStatusTrip.dto';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
 import { TripFilter, TripFilterByKitchen } from './dto/deliveryTrip-filter.dto';
 
@@ -177,18 +177,21 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     const trip = await this.deliveryTripRepository.findOne({
       where: { id: orderIds.deliveryTripId },
     });
-    const picktime = new Date();
-    const time =
-      picktime.getHours().toString() +
-      ':' +
-      picktime.getMinutes().toString() +
-      ':' +
-      picktime.getSeconds().toString();
+    // const picktime = new Date();
+    // const time =
+    //   picktime.getHours().toString() +
+    //   ':' +
+    //   picktime.getMinutes().toString() +
+    //   ':' +
+    //   picktime.getSeconds().toString();
 
     if (trip.status == DeliveryTripEnum.WAITING) {
       const updateTrip = await this.deliveryTripRepository.update(
         { id: orderIds.deliveryTripId },
-        { status: DeliveryTripEnum.DELIVERY, deliveryTime: time },
+        {
+          status: DeliveryTripEnum.DELIVERY,
+          deliveryTime: orderIds.updateTime,
+        },
       );
       if (updateTrip) {
         for (const item of orderIds.ordersIds) {
@@ -207,7 +210,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     } else if (trip.status == DeliveryTripEnum.DELIVERY) {
       const updateTrip = await this.deliveryTripRepository.update(
         { id: orderIds.deliveryTripId },
-        { status: DeliveryTripEnum.ARRIVED, arrivedTime: time },
+        { status: DeliveryTripEnum.ARRIVED, arrivedTime: orderIds.updateTime },
       );
       if (updateTrip) {
         for (const item of orderIds.ordersIds) {
@@ -229,5 +232,61 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       relations: { order: true },
     });
     return freshTrip;
+  }
+
+  async rejectByShipper(id: string, user: AccountEntity): Promise<string> {
+    const trip = await this.deliveryTripRepository.findOne({
+      where: { id: id, shipper: { id: user.id } },
+    });
+    if (!trip) {
+      throw new HttpException('Trip not found', HttpStatus.NOT_FOUND);
+    }
+    const reject = await this.deliveryTripRepository.update(
+      {
+        id: id,
+        shipper: { id: user.id },
+        status: DeliveryTripEnum.WAITING,
+      },
+      {
+        status: DeliveryTripEnum.REJECT,
+      },
+    );
+    if (reject) {
+      return 'Reject success';
+    } else {
+      return 'Fail to reject';
+    }
+  }
+
+  async directShipperByManager(transfer: DirectShipperDTO): Promise<string> {
+    const trip = await this.deliveryTripRepository.findOne({
+      where: { id: transfer.deliveryTripId, status: DeliveryTripEnum.REJECT },
+      relations: { shipper: true },
+    });
+    if (!trip) {
+      throw new HttpException('Trip not found', HttpStatus.NOT_FOUND);
+    }
+    if (trip.shipper.id == transfer.shipperId) {
+      throw new HttpException(
+        'Unable to transfer to old shipper',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      const directShipper = await this.deliveryTripRepository.update(
+        {
+          id: transfer.deliveryTripId,
+          status: DeliveryTripEnum.REJECT,
+        },
+        {
+          shipper: { id: transfer.shipperId },
+          status: DeliveryTripEnum.WAITING,
+        },
+      );
+      if (directShipper) {
+        return 'Transfer success';
+      } else {
+        return 'Transfer fail';
+      }
+    }
   }
 }
