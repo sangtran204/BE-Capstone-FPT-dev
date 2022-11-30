@@ -31,9 +31,16 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     super(deliveryTripRepository);
   }
 
-  async getAllDeliveryTrip(): Promise<DeliveryTripEntity[]> {
+  async getAllDeliveryTrip(filter: TripFilter): Promise<DeliveryTripEntity[]> {
+    const { status } = filter;
     return await this.deliveryTripRepository.find({
-      relations: { shipper: true, kitchen: true, order: true, station: true },
+      where: { status: Like(Boolean(status) ? status : '%%') },
+      relations: {
+        shipper: { account: { profile: true } },
+        kitchen: { account: { profile: true } },
+        order: true,
+        station: true,
+      },
     });
   }
 
