@@ -164,6 +164,22 @@ export class PackageService extends BaseService<PackageEntity> {
           },
         );
         return 'Package is active';
+      } else if (packages.status == StatusEnum.ACTIVE) {
+        await this.packagesRepository.update(
+          { id: id },
+          {
+            status: StatusEnum.IN_ACTIVE,
+          },
+        );
+        return 'Package is inActive';
+      } else if (packages.status == StatusEnum.IN_ACTIVE) {
+        await this.packagesRepository.update(
+          { id: id },
+          {
+            status: StatusEnum.ACTIVE,
+          },
+        );
+        return 'Package is active';
       }
     }
   }
