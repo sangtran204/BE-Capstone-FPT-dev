@@ -74,7 +74,7 @@ export class ShippersController {
   async findShipperByID(@Param('id') id: string): Promise<ShipperEntity> {
     const shipper = await this.shippersService.findOne({
       where: { id: id },
-      relations: { account: { profile: true }, kitchen: true },
+      relations: { account: { profile: true } },
     });
     if (!shipper) {
       throw new HttpException(

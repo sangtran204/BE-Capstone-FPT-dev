@@ -9,10 +9,6 @@ import { ProfileEntity } from '../profiles/entities/profile.entity';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { AccountsService } from '../accounts/accounts.service';
-import { ListShipperID } from './dto/add_shipper.dto';
-import { ShipperEntity } from '../shippers/entities/shipper.entity';
-import { ShippersService } from '../shippers/shippers.service';
-import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 import { KitchenFilterDTO } from './dto/kitchenFilter.dto';
 
 @Injectable()
@@ -23,7 +19,6 @@ export class KitchenService extends BaseService<KitchenEntity> {
     private readonly kitchensRepository: Repository<KitchenEntity>,
     private readonly profileService: ProfileService,
     private readonly accountService: AccountsService,
-    private readonly shipperService: ShippersService,
   ) {
     super(kitchensRepository);
   }

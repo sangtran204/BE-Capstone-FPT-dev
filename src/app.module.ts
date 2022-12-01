@@ -32,7 +32,6 @@ import { FirebaseProviderModule } from './providers/firebase/provider.module';
 import { PackageCategoriesModule } from './models/package-categories/package-categories.module';
 import { SubscriptionModule } from './models/subscriptions/subscriptions.module';
 import { FeedBackModule } from './models/feedback/feedback.module';
-import { RequestModule } from './models/request/request.module';
 import { VnpayProviderModule } from './providers/vnpay/vnpay.module';
 // import { FirebaseProviderModule } from 'providers/firebase/provider.module';
 
@@ -59,7 +58,6 @@ import { VnpayProviderModule } from './providers/vnpay/vnpay.module';
     TimeSlotsModule,
     PackageCategoriesModule,
     SubscriptionModule,
-    RequestModule,
     // ====================================
     OrdersModule,
     FirebaseProviderModule,
