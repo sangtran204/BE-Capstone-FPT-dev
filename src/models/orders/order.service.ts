@@ -139,18 +139,16 @@ export class OrdersService extends BaseService<OrderEntity> {
     if (!Boolean(stationFind)) {
       throw new HttpException('Station  not found', HttpStatus.BAD_REQUEST);
     }
+    const kitchenFind = await this.kitchenService.findOne({
+      where: { stations: { id: dto.stationID } },
+    });
+    if (!Boolean(kitchenFind)) {
+      throw new HttpException('Kitchen not found', HttpStatus.BAD_REQUEST);
+    }
 
     let order: OrderEntity;
     const callback = async (entityManager: EntityManager): Promise<void> => {
       try {
-        // const commission = await this.commissionsService.query({
-        //   order: { createdAt: 'DESC' },
-        //   take: 1,
-        // });
-        // if (commission.length === 0) {
-        //   throw new BadRequestException('No Commission');
-        // }
-        //tạo đơn
         order = await entityManager.save(
           entityManager.create(OrderEntity, {
             // commission: commission[0],
@@ -162,7 +160,7 @@ export class OrdersService extends BaseService<OrderEntity> {
             food: foodFind,
             station: stationFind,
             timeSlot: slotFind,
-            // kitchen
+            kitchen: kitchenFind,
           }),
         );
       } catch (error) {

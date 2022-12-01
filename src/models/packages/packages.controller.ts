@@ -210,7 +210,7 @@ export class PackageController {
 
   //Update package status
   // @Public()
-  @Roles(RoleEnum.ADMIN)
+  // @Roles(RoleEnum.ADMIN)
   @Put('/confirm/:id')
   @ApiResponse({
     status: 200,

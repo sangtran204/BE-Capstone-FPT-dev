@@ -15,32 +15,32 @@ export const getDataTimeSlot = (): {
     endTime: '8:00',
     flag: FlagEnum.MORNING,
   },
-  {
-    startTime: '8:00',
-    endTime: '9:00',
-    flag: FlagEnum.MORNING,
-  },
+  // {
+  //   startTime: '8:00',
+  //   endTime: '9:00',
+  //   flag: FlagEnum.MORNING,
+  // },
 
   {
-    startTime: '11:00',
-    endTime: '12:00',
+    startTime: '11:30',
+    endTime: '12:30',
     flag: FlagEnum.NOON,
   },
   {
-    startTime: '12:00',
-    endTime: '13:00',
+    startTime: '12:30',
+    endTime: '13:30',
     flag: FlagEnum.NOON,
   },
-  {
-    startTime: '13:00',
-    endTime: '14:00',
-    flag: FlagEnum.NOON,
-  },
-  {
-    startTime: '16:00',
-    endTime: '17:00',
-    flag: FlagEnum.AFTERNOON,
-  },
+  // {
+  //   startTime: '13:00',
+  //   endTime: '14:00',
+  //   flag: FlagEnum.NOON,
+  // },
+  // {
+  //   startTime: '16:00',
+  //   endTime: '17:00',
+  //   flag: FlagEnum.AFTERNOON,
+  // },
   {
     startTime: '17:00',
     endTime: '18:00',
