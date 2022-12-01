@@ -308,7 +308,7 @@ export class OrdersService extends BaseService<OrderEntity> {
         food: true,
         station: true,
         packageItem: true,
-        kitchen: true,
+        kitchen: { account: { profile: true } },
         timeSlot: true,
       },
     });
