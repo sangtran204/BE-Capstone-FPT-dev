@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AccountsSeederService } from './accounts/accounts.service';
+import { BankSeederService } from './banks/banks.service';
 import { RolesSeederService } from './roles/roles.service';
 import { TimeFrameSeederService } from './time-frame/time-frame.service';
 import { TimeSlotsSeederService } from './time-slots/time-slots.service';
@@ -11,6 +12,7 @@ export class Seeder {
     private readonly accountService: AccountsSeederService,
     private readonly timeSlotService: TimeSlotsSeederService,
     private readonly timeFrameService: TimeFrameSeederService,
+    private readonly bankService: BankSeederService,
   ) {}
 
   async insertRoles(): Promise<void> {
@@ -27,5 +29,9 @@ export class Seeder {
 
   async insertTimeFrame(): Promise<void> {
     return await this.timeFrameService.createTimeFrame();
+  }
+
+  async insertBank(): Promise<void> {
+    return await this.bankService.createBank();
   }
 }

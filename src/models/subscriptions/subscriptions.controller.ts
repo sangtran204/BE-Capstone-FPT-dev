@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Delete,
   Render,
   UseInterceptors,
@@ -26,6 +27,7 @@ import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionDTO } from './dto/subscription.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubscriptionService } from './subscriptions.service';
+import { Request } from 'express';
 
 @ApiBearerAuth()
 @Controller('subscriptions')
@@ -152,6 +154,21 @@ export class SubscriptionController {
     @GetUser() user: AccountEntity,
   ): Promise<string> {
     return await this.subscriptionService.cancelSubscription(id, user);
+  }
+
+  @Get('/:id/payment-url')
+  async paymentUrl(
+    @Req() req: Request,
+    @GetUser() user: AccountEntity,
+    @Param('id') id: string,
+    @Query('bankId') bankId: string,
+  ): Promise<string> {
+    const ip =
+      req.header('x-forwarded-for') ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress;
+
+    return await this.subscriptionService.getPaymentUrl(ip, bankId, id);
   }
 
   @Get('/payment')

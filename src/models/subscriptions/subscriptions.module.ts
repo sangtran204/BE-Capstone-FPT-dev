@@ -8,6 +8,7 @@ import { SubscriptionService } from './subscriptions.service';
 import { SubscriptionProfile } from './profile/subscription.profile';
 import { VnpayProviderModule } from 'src/providers/vnpay/vnpay.module';
 import { PaymentsModule } from '../payment/payments.module';
+import { BanksModule } from '../banks/banks.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PaymentsModule } from '../payment/payments.module';
     PackagesModule,
     VnpayProviderModule,
     PaymentsModule,
+    BanksModule,
   ],
   controllers: [SubscriptionController],
   providers: [SubscriptionService, SubscriptionProfile],

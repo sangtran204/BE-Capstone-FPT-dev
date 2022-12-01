@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderEnum } from 'src/common/enums/order.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { SubEnum } from 'src/common/enums/sub.enum';
 import { Like, Repository } from 'typeorm';
@@ -15,7 +14,7 @@ import { CreateSubscriptionDTO } from './dto/create-subscription';
 import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubHistoryDTO } from './dto/getSub-history.dto';
-import e from 'express';
+import { BanksService } from '../banks/banks.service';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
@@ -26,6 +25,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     private readonly packageService: PackageService,
     private readonly paymentsService: PaymentsService,
     private readonly vnpayService: VnpayService,
+    private readonly banksService: BanksService,
   ) {
     super(subscriptionRepository);
   }
@@ -217,17 +217,55 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     }
   }
 
+  async getPaymentUrl(
+    ip: string,
+    bankId: string,
+    subId: string,
+  ): Promise<string> {
+    const subPromise = this.findOne({ where: { id: subId } });
+    const bankPromise = this.banksService.findOne({ where: { id: bankId } });
+
+    const sub = await subPromise;
+    if (!Boolean(sub))
+      throw new HttpException(`this sub not existed`, HttpStatus.BAD_REQUEST);
+    // const twoHours = 2 * 60 * 60 * 1000;
+    // if (sub.createdAt.getTime() + twoHours < Date.now()) {
+    //   sub.status = SubEnum.CANCEL;
+    //   await this.save(sub);
+    //   throw new HttpException('Your sub expired', HttpStatus.BAD_REQUEST);
+    // }
+
+    const bank = await bankPromise;
+    if (!Boolean(bank))
+      throw new HttpException(
+        'this bank not supported',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const subInfo = `payment for order ${sub.id}`;
+
+    const result = this.vnpayService.payment(
+      ip,
+      sub.totalPrice,
+      bank.bankCode,
+      subInfo,
+      'other',
+      '',
+    );
+    return result;
+  }
+
   async payment(
     vnpayDto: VnpayDto,
   ): Promise<{ message: string; code: string }> {
-    const orderId = vnpayDto.vnp_OrderInfo.split(' ')[3];
-    const orderPromise = this.findOne({ where: { id: orderId } });
+    const subId = vnpayDto.vnp_OrderInfo.split(' ')[3];
+    const subPromise = this.findOne({ where: { id: subId } });
     const paymentPromise = this.paymentsService.findOne({
       where: { transactionNo: vnpayDto.vnp_TransactionNo },
     });
-    // const bankPromise = this.banksService.findOne({
-    //   where: { bankCode: vnpayDto.vnp_BankCode },
-    // });
+    const bankPromise = this.banksService.findOne({
+      where: { bankCode: vnpayDto.vnp_BankCode },
+    });
 
     const paymentInDB = await paymentPromise;
     // Kiểm tra trong DB xem transaction này đã tồn tại chưa trong bảng payment tại cột transactionNo
@@ -242,15 +280,15 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     if (!result || result.message !== 'success')
       throw new HttpException('You payment failed', HttpStatus.BAD_REQUEST);
 
-    const order = await orderPromise;
-    if (!Boolean(order))
+    const sub = await subPromise;
+    if (!Boolean(sub))
       throw new HttpException(
-        `this order [${orderId}] not existed`,
+        `this sub [${subId}] not existed`,
         HttpStatus.BAD_REQUEST,
       );
 
     // thêm thông tin transaction này vào DB tại bảng payment
-    // const bank = await bankPromise;
+    const bank = await bankPromise;
     const {
       vnp_PayDate,
       vnp_TransactionStatus,
@@ -261,19 +299,20 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       vnp_Amount,
     } = vnpayDto;
     await this.paymentsService.save({
-      // bank,
+      bank,
       orderInfo: vnp_OrderInfo,
       amount: parseInt(vnp_Amount),
       transactionNo: vnp_TransactionNo,
       transactionStatus: vnp_TransactionStatus,
-      // bankTranNo: vnp_BankTranNo,
+      bankTranNo: vnp_BankTranNo,
       cardType: vnp_CardType,
       payDate: vnp_PayDate,
+      subscription: sub,
       // order: order,
     });
 
-    order.status = OrderEnum.PENDING;
-    await this.save(order);
+    sub.status = SubEnum.INPROGRESS;
+    await this.save(sub);
 
     return result;
   }
