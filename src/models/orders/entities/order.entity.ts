@@ -24,7 +24,7 @@ export class OrderEntity extends BaseEntity {
   @AutoMap()
   nameFood: string;
 
-  @Column({ default: OrderEnum.PENDING })
+  @Column({ default: OrderEnum.PROGRESS })
   @AutoMap()
   status: string;
 
