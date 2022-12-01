@@ -3,7 +3,6 @@ import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
-import { RequestEntity } from 'src/models/request/entities/request.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import {
@@ -35,18 +34,11 @@ export class KitchenEntity extends BaseEntity {
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 
-  @AutoMap(() => [ShipperEntity])
-  @OneToMany(() => ShipperEntity, (shipper) => shipper.kitchen)
-  shippers: ShipperEntity[];
-
   @OneToMany(() => OrderEntity, (order) => order.kitchen)
   orders: OrderEntity[];
 
   @OneToMany(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.kitchen)
   deliveryTrips: DeliveryTripEntity[];
-
-  @OneToMany(() => RequestEntity, (request) => request.kitchen)
-  request: RequestEntity[];
 
   @OneToMany(() => StationEntity, (station) => station.kitchen)
   stations: StationEntity[];

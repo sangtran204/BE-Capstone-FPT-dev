@@ -83,26 +83,26 @@ export class KitchenController {
     return listKitchen;
   }
 
-  @Get('shipper/:id')
-  // @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'GET SHIPPER OF KITCHEN BY ID',
-    type: KitchenDTO,
-  })
-  async findShipOfKitchen(@Param('id') id: string): Promise<KitchenEntity> {
-    const listKitchen = await this.kitchenService.findOne({
-      where: { id: id },
-      relations: { shippers: { account: { profile: true } } },
-    });
-    if (!listKitchen) {
-      throw new HttpException(
-        "Dont't have resource Kitchen",
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return listKitchen;
-  }
+  // @Get('shipper/:id')
+  // // @Public()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET SHIPPER OF KITCHEN BY ID',
+  //   type: KitchenDTO,
+  // })
+  // async findShipOfKitchen(@Param('id') id: string): Promise<KitchenEntity> {
+  //   const listKitchen = await this.kitchenService.findOne({
+  //     where: { id: id },
+  //     relations: { shippers: { account: { profile: true } } },
+  //   });
+  //   if (!listKitchen) {
+  //     throw new HttpException(
+  //       "Dont't have resource Kitchen",
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   }
+  //   return listKitchen;
+  // }
 
   // @Post('/addShipper/:id')
   // // @Public()
