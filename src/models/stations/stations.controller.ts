@@ -124,10 +124,11 @@ export class StationsController {
     description: 'GET STATION BY ID',
     type: StationDTO,
   })
-  @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
+  // @UseInterceptors(MapInterceptor(StationEntity, StationDTO))
   async findStationById(@Param('id') id: string): Promise<StationEntity> {
     const station = await this.stationsService.findOne({
       where: { id: id },
+      relations: { kitchen: { account: { profile: true } } },
     });
     if (!station) {
       throw new HttpException(
