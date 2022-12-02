@@ -23,7 +23,11 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodDTO } from './dto/create-food.dto';
-import { FoodFilter, FoodFilterDTO } from './dto/food-filter.dto';
+import {
+  FoodFilter,
+  FoodFilterDTO,
+  FoodFindByPackage,
+} from './dto/food-filter.dto';
 import { FoodDTO } from './dto/food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { FoodEntity } from './entities/foods.entity';
@@ -52,6 +56,20 @@ export class FoodsController {
       );
     }
     return listFood;
+  }
+
+  @Get('/food-onPackage')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL FOOD',
+    type: [FoodDTO],
+  })
+  // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  async findFoodOnPackage(
+    @Query() find: FoodFindByPackage,
+  ): Promise<FoodDTO[]> {
+    return await this.foodsService.getFoodOnPackage(find);
   }
 
   @Get('/byCatefory_filter')

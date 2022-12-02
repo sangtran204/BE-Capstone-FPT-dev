@@ -24,3 +24,8 @@ export class FoodFilter {
   })
   status: InActiveEnum;
 }
+
+export class FoodFindByPackage {
+  @ApiProperty()
+  packageId: string;
+}

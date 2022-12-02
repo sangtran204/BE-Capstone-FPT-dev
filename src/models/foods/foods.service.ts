@@ -9,7 +9,12 @@ import { FoodCategoriesService } from '../food-categories/food-categories.servic
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
 import { StatusEnum } from 'src/common/enums/status.enum';
-import { FoodFilter, FoodFilterDTO } from './dto/food-filter.dto';
+import {
+  FoodFilter,
+  FoodFilterDTO,
+  FoodFindByPackage,
+} from './dto/food-filter.dto';
+import { FoodDTO } from './dto/food.dto';
 
 @Injectable()
 export class FoodsService extends BaseService<FoodEntity> {
@@ -20,6 +25,23 @@ export class FoodsService extends BaseService<FoodEntity> {
     private readonly foodCategoryService: FoodCategoriesService,
   ) {
     super(foodsRepository);
+  }
+
+  async getFoodOnPackage(id: FoodFindByPackage): Promise<FoodDTO[]> {
+    const list = await this.foodsRepository
+      .createQueryBuilder('foods')
+      .select('foods.id, foods.name, foods.image')
+      .leftJoin('foods.foodGroups', 'food_groups')
+      .leftJoin('food_groups.packageItem', 'package_item')
+      .leftJoin('package_item.packages', 'packages')
+      .where('packages.id = :id', { id: id.packageId })
+      .groupBy('foods.id, foods.name, foods.image')
+      .execute();
+
+    if (!list || list.length == 0) {
+      throw new HttpException('No food found!', HttpStatus.NOT_FOUND);
+    }
+    return list;
   }
 
   async getAllFood(): Promise<FoodEntity[]> {
