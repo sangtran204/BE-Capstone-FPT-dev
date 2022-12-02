@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { SubEnum } from 'src/common/enums/sub.enum';
@@ -15,6 +21,7 @@ import { SubscriptionFilter } from './dto/subscription-filter.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubHistoryDTO } from './dto/getSub-history.dto';
 import { BanksService } from '../banks/banks.service';
+import { OrdersService } from '../orders/order.service';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
@@ -26,6 +33,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     private readonly paymentsService: PaymentsService,
     private readonly vnpayService: VnpayService,
     private readonly banksService: BanksService,
+    @Inject(forwardRef(() => OrdersService))
+    private readonly orderService: OrdersService,
   ) {
     super(subscriptionRepository);
   }
@@ -130,7 +139,10 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   }
 
   async customerConfirm(id: string, user: AccountEntity): Promise<string> {
-    const subscription = await this.findById(id);
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { id: id },
+      relations: { orders: true, customer: true },
+    });
     if (subscription.customer.id !== user.customer.id) {
       throw new HttpException(
         'You are not the owner of this subscription',
@@ -143,6 +155,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     );
     if (!updateSubscription) {
       throw new HttpException('Fail to Buy', HttpStatus.BAD_REQUEST);
+    } else {
+      await this.orderService.confirmSubOrder(subscription.orders);
     }
     return 'Confirm Successful';
   }
@@ -196,22 +210,28 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async deleteSubscription(id: string, user: AccountEntity): Promise<string> {
     const subFind = await this.subscriptionRepository.findOne({
       where: { id: id, customer: { id: user.id }, status: SubEnum.UNCONFIRMED },
+      relations: { orders: true },
     });
     if (!subFind) {
       throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
     }
-    const delSub = await this.subscriptionRepository
-      .createQueryBuilder()
-      .delete()
-      .from(SubscriptionEntity)
-      .where('id = :id', {
-        id: id,
-      })
-      .andWhere('customerId = :customerId', { customerId: user.id })
-      .andWhere('status = :status', { status: 'unConfirmed' })
-      .execute();
-    if (delSub) {
-      return 'Delete success';
+    const delOrders = await this.orderService.deleteSubOrder(subFind.orders);
+    if (delOrders) {
+      const delSub = await this.subscriptionRepository
+        .createQueryBuilder()
+        .delete()
+        .from(SubscriptionEntity)
+        .where('id = :id', {
+          id: id,
+        })
+        .andWhere('customerId = :customerId', { customerId: user.id })
+        .andWhere('status = :status', { status: 'unConfirmed' })
+        .execute();
+      if (delSub) {
+        return 'Delete success';
+      } else {
+        return 'Delete fail';
+      }
     } else {
       return 'Delete fail';
     }
