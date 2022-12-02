@@ -24,6 +24,13 @@ export class PackageService extends BaseService<PackageEntity> {
     super(packagesRepository);
   }
 
+  // async getFoodOnPackage(): Promise<FoodDTO[]> {
+  //   const list = await this.foodsRepository
+  //     .createQueryBuilder('foods')
+  //     .select('foods.id, foods.name, foods.image')
+  //     .leftJoin()
+  // }
+
   async listAllPackage(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
       relations: {
