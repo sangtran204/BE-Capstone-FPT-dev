@@ -41,7 +41,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
   // }
 
   async createFoodGroup(data: CreateFoodGroupDTO): Promise<FoodGroupEntity> {
-    const { foodIds, name, description, totalFood } = data;
+    const { foodIds, name, description } = data;
     const foods = await this.foodsService.query({
       where: foodIds.map((id) => ({ id })),
     });
@@ -49,16 +49,16 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     if (!foods || foods.length === 0) {
       throw new HttpException('Not found food in system', HttpStatus.NOT_FOUND);
     }
-    if (foods.length > totalFood) {
-      throw new HttpException(
-        'Foods must be less than or equal to TotalFood',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (foods.length > totalFood) {
+    //   throw new HttpException(
+    //     'Foods must be less than or equal to TotalFood',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
     const newFoodGroup = await this.foodGroupRepository.save({
       name: name,
       description: description,
-      totalFood: totalFood,
+      // totalFood: totalFood,
       foods,
     });
 
@@ -82,7 +82,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
       );
     } else {
       try {
-        const { foodIds, name, description, totalFood } = data;
+        const { foodIds, name, description } = data;
         const foods = await this.foodsService.query({
           where: foodIds.map((id) => ({ id })),
         });
@@ -92,17 +92,17 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
             HttpStatus.NOT_FOUND,
           );
         }
-        if (foods.length > totalFood) {
-          throw new HttpException(
-            'Foods must be less than or equal to TotalFood',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
+        // if (foods.length > totalFood) {
+        //   throw new HttpException(
+        //     'Foods must be less than or equal to TotalFood',
+        //     HttpStatus.BAD_REQUEST,
+        //   );
+        // }
         await this.save({
           id: id,
           name: name,
           description: description,
-          totalFood: totalFood,
+          // totalFood: totalFood,
           foods,
         });
         return 'Update food group successfull';

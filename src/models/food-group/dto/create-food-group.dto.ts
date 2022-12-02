@@ -8,8 +8,8 @@ export class CreateFoodGroupDTO {
   @ApiProperty()
   description: string;
 
-  @ApiProperty()
-  totalFood: number;
+  // @ApiProperty()
+  // totalFood: number;
 
   @ApiProperty({ type: [String] })
   @IsUUID(null, { each: true, message: 'ID food must be unique' })

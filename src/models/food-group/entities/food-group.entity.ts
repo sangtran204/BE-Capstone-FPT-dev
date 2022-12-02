@@ -15,9 +15,9 @@ export class FoodGroupEntity extends BaseEntity {
   @AutoMap()
   description: string;
 
-  @Column()
-  @AutoMap()
-  totalFood: number;
+  // @Column()
+  // @AutoMap()
+  // totalFood: number;
 
   @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()

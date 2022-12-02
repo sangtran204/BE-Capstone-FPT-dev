@@ -8,6 +8,7 @@ import {
   OrderFilterDTO,
   OrderGetByKitchen,
   OrderSearchByDate,
+  PreFoodByWeek,
 } from './dto/order-filter.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
@@ -281,17 +282,48 @@ export class OrdersService extends BaseService<OrderEntity> {
   ): Promise<FoodByKitchenDTO[]> {
     const list = await this.ordersRepository
       .createQueryBuilder('orders')
-      .select('nameFood, time_slots.flag as flag, count(foodId) as quantity')
+      .select(
+        'foodId, nameFood, time_slots.flag as flag, count(foodId) as quantity, foods.image',
+      )
       // .from('foods', 'foods')
       // .leftJoinAndSelect('orders.foods', 'foods')
+      .leftJoin('orders.food', 'foods')
       .leftJoin('orders.timeSlot', 'time_slots')
       .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
       .andWhere('orders.deliveryDate = :deliveryDate', {
         deliveryDate: data.deliveryDate,
       })
-      .groupBy('nameFood, timeSlotId')
+      .groupBy('foodId, nameFood, timeSlotId, foods.image')
       .execute();
     // const list = await this.ordersRepository.findAndCountBy
+    if (!list || list.length == 0) {
+      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+    } else {
+      return list;
+    }
+  }
+
+  async getPreFoodByWeek(
+    user: AccountEntity,
+    data: PreFoodByWeek,
+  ): Promise<FoodByKitchenDTO[]> {
+    // const dateFilter: Article
+    const list = await this.ordersRepository
+      .createQueryBuilder('orders')
+      .select(
+        'foodId, nameFood, foods.description, count(foodId) as quantity, deliveryDate, foods.image',
+      )
+      .leftJoin('orders.food', 'foods')
+      .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
+      .andWhere('orders.deliveryDate >= :startDate', {
+        startDate: data.startDate,
+      })
+      .andWhere('orders.deliveryDate <= :endDate', {
+        endDate: data.endDate,
+      })
+      .groupBy('foodId, nameFood, foods.description, deliveryDate, foods.image')
+      .orderBy('deliveryDate', 'ASC')
+      .execute();
     if (!list || list.length == 0) {
       throw new HttpException('No food found', HttpStatus.NOT_FOUND);
     } else {
