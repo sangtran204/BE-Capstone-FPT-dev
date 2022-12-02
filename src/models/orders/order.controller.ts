@@ -23,6 +23,7 @@ import {
   OrderFilterDTO,
   OrderGetByKitchen,
   OrderSearchByDate,
+  PreFoodByWeek,
 } from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -137,6 +138,20 @@ export class OrdersController {
     @Query() data: OrderSearchByDate,
   ): Promise<FoodByKitchenDTO[]> {
     return await this.ordersService.getFoodByKitchen(user, data);
+  }
+
+  @Get('/food-prepare/byWeek')
+  // @Roles(RoleEnum.KITCHEN)
+  @ApiResponse({
+    status: 200,
+    description: 'KITCHEN GET PREPARE FOOD BY WEEK',
+    type: FoodByKitchenDTO,
+  })
+  async getPreFoodByWeek(
+    @GetUser() user: AccountEntity,
+    @Query() data: PreFoodByWeek,
+  ): Promise<FoodByKitchenDTO[]> {
+    return await this.ordersService.getPreFoodByWeek(user, data);
   }
   //   @Get('/:id/payment-url')
   //   async paymentUrl(

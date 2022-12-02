@@ -58,3 +58,10 @@ export class OrderGetByKitchen {
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   deliveryDate: Date;
 }
+export class PreFoodByWeek {
+  @ApiProperty()
+  startDate: Date;
+
+  @ApiProperty()
+  endDate: Date;
+}
