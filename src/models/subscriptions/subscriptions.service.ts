@@ -215,8 +215,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     if (!subFind) {
       throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
     }
-    const delOrders = await this.orderService.deleteSubOrder(subFind.orders);
-    if (delOrders) {
+    if (!subFind.orders || subFind.orders.length == 0) {
       const delSub = await this.subscriptionRepository
         .createQueryBuilder()
         .delete()
@@ -233,7 +232,26 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         return 'Delete fail';
       }
     } else {
-      return 'Delete fail';
+      const delOrders = await this.orderService.deleteSubOrder(subFind.orders);
+      if (delOrders) {
+        const delSub = await this.subscriptionRepository
+          .createQueryBuilder()
+          .delete()
+          .from(SubscriptionEntity)
+          .where('id = :id', {
+            id: id,
+          })
+          .andWhere('customerId = :customerId', { customerId: user.id })
+          .andWhere('status = :status', { status: 'unConfirmed' })
+          .execute();
+        if (delSub) {
+          return 'Delete success';
+        } else {
+          return 'Delete fail';
+        }
+      } else {
+        return 'Delete fail';
+      }
     }
   }
 
