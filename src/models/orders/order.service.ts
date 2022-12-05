@@ -1,6 +1,13 @@
 // import { AccountEntity } from 'models/accounts/entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { OrderEntity } from './entities/order.entity';
 import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
@@ -25,6 +32,7 @@ import { TimeSlotsService } from '../time-slots/time-slots.service';
 import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { OrderDetailRes } from './dto/order-detail-res';
+import { SubEnum } from 'src/common/enums/sub.enum';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -49,6 +57,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     @InjectRepository(OrderEntity)
     private readonly ordersRepository: Repository<OrderEntity>,
     @InjectMapper() private readonly mapper: Mapper,
+    @Inject(forwardRef(() => SubscriptionService))
     private readonly subscriptionService: SubscriptionService,
     private readonly packageItemService: PackageItemService,
     private readonly foodsService: FoodsService,
@@ -196,6 +205,37 @@ export class OrdersService extends BaseService<OrderEntity> {
     await this.transaction(callback, this.dataSource);
 
     return await this.findById(order.id);
+  }
+
+  async deleteSubOrder(orders: OrderEntity[]): Promise<boolean> {
+    for (let i = 0; i < orders.length; i++) {
+      const del = await this.ordersRepository
+        .createQueryBuilder()
+        .delete()
+        .from(OrderEntity)
+        .where('id = :id', { id: orders[i].id })
+        .execute();
+      if (!del) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  async confirmSubOrder(orders: OrderEntity[]): Promise<boolean> {
+    for (let i = 0; i < orders.length; i++) {
+      const confirm = await this.ordersRepository.update(
+        { id: orders[i].id },
+        { status: OrderEnum.PROGRESS },
+      );
+      if (!confirm) {
+        throw new HttpException(
+          `Order ${orders[i].id} can not confirm`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    return true;
   }
 
   async getOrderDetail(id: string): Promise<OrderDetailRes> {
