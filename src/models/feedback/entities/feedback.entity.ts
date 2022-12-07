@@ -8,15 +8,19 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 export class FeedBackEntity extends BaseEntity {
   @Column()
   @AutoMap()
-  title: string;
+  packageRate: number;
 
   @Column()
   @AutoMap()
-  content: string;
+  foodRate: number;
 
   @Column()
   @AutoMap()
-  rating: number;
+  deliveryRate: number;
+
+  @Column()
+  @AutoMap()
+  comment: string;
 
   @AutoMap(() => CustomerEntity)
   @ManyToOne(() => CustomerEntity, (customer) => customer.feedback)
