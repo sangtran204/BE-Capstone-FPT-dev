@@ -62,4 +62,24 @@ export class PackageCategoriesService extends BaseService<PackageCategoryEntity>
 
     return 'Package Category updated';
   }
+
+  async deletePackageCategory(id: string): Promise<string> {
+    try {
+      const findCate = await this.packgeCategoriesRepository.findOne({
+        where: { id: id },
+      });
+
+      if (!findCate || findCate == null) {
+        return 'Package category not found!';
+      } else {
+        await this.deleteById(id);
+        return 'Delete susccess';
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Cannot delete (Get Foreign Key)',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 }

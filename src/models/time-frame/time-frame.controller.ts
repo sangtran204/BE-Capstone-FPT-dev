@@ -101,14 +101,14 @@ export class TimeFrameController {
     return await this.timeFrameService.updateTimeFrame(id, updateFrame);
   }
 
-  // @Delete('/:id')
-  // @Roles(RoleEnum.MANAGER)
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Delete frame successfully',
-  //   type: String,
-  // })
-  // async deleteTimeFrame(@Param('id') id: string): Promise<string> {
-  //   return await this.timeFrameService.deleteTimeFrame(id);
-  // }
+  @Delete('/:id')
+  @Roles(RoleEnum.MANAGER)
+  @ApiResponse({
+    status: 200,
+    description: 'Delete frame successfully',
+    type: String,
+  })
+  async deleteTimeFrame(@Param('id') id: string): Promise<string> {
+    return await this.timeFrameService.deleteTimeFrame(id);
+  }
 }

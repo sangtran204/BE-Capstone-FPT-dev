@@ -38,10 +38,10 @@ export class TimeFrameService extends BaseService<TimeFrameEntity> {
         where: { id: id },
       });
       if (!frame) {
-        throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
+        return 'Time frame not found';
       } else {
         await this.deleteById(id);
-        return `Delete Successfully : ${id}`;
+        return `Delete Successfully`;
       }
     } catch (error) {
       throw new HttpException(
