@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Delete,
   UseInterceptors,
   HttpException,
   HttpStatus,
@@ -18,7 +19,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
+import { RoleEnum } from 'src/common/enums/role.enum';
+import { Roles } from 'src/decorators/roles.decorator';
 import { CreatePackageCategoryDTO } from './dto/create-package-category';
 import { PackageCategoryDTO } from './dto/package-category.dto';
 import { UpdatePackageCategoryDTO } from './dto/update-package-category';
@@ -109,5 +111,15 @@ export class PackgeCategoriesController {
       update.name,
       image,
     );
+  }
+  @Delete('/:id')
+  @Roles(RoleEnum.MANAGER)
+  @ApiResponse({
+    status: 200,
+    description: 'Delete Category by Id',
+    type: String,
+  })
+  async removeCategory(@Param('id') id: string): Promise<string> {
+    return await this.packageCategoriesService.deletePackageCategory(id);
   }
 }
