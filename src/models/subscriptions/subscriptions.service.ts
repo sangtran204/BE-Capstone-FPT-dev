@@ -42,7 +42,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async getAllSubscription(): Promise<SubscriptionEntity[]> {
     return await this.subscriptionRepository.find({
       relations: {
-        customer: { account: true },
+        customer: { account: { profile: true } },
         packages: true,
       },
     });
@@ -55,7 +55,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const list = await this.subscriptionRepository.find({
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
-        customer: { account: true },
+        customer: { account: { profile: true } },
         packages: true,
       },
     });

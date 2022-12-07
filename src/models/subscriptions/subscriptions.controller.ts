@@ -53,7 +53,6 @@ export class SubscriptionController {
   }
 
   @Get('/getSubByStatus')
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET SUBSCRIPTION BY STATUS',
