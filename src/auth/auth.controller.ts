@@ -32,6 +32,22 @@ export class AuthenticationController {
     return await this.authService.checkPhoneExist(phone);
   }
 
+  @Post('/checkPhone_shipper')
+  @Public()
+  async checkExistPhoneShipper(
+    @Body() phone: CheckPhoneDTO,
+  ): Promise<LoginResponseDto> {
+    return await this.authService.checkPhoneShipperExist(phone);
+  }
+
+  @Post('/checkPhone_customer')
+  @Public()
+  async checkExistPhoneCustomer(
+    @Body() phone: CheckPhoneDTO,
+  ): Promise<LoginResponseDto> {
+    return await this.authService.checkPhoneCustomerExist(phone);
+  }
+
   @Post('sign-up/customer')
   @Public()
   async signUpCustomer(
