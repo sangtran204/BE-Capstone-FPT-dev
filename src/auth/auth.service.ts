@@ -276,6 +276,74 @@ export class AuthService {
     };
   }
 
+  async checkPhoneShipperExist(dto: CheckPhoneDTO): Promise<LoginResponseDto> {
+    const { phone } = dto;
+    const user = await this.accountsService.findOne({
+      relations: { role: true },
+      where: { phone, role: { name: RoleEnum.SHIPPER } },
+    });
+
+    if (!user)
+      throw new HttpException('Phone not exist', HttpStatus.BAD_REQUEST);
+    if (user.status != StatusEnum.ACTIVE) {
+      throw new HttpException(
+        'This phone do not active',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const role = user.role.name;
+    const payload: Payload = { phone, role };
+    const refreshToken = this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: this.jwtConfigService.refreshTokenSecret,
+        expiresIn: this.jwtConfigService.refreshTokenExpiresIn,
+      },
+    );
+    await this.accountsService.updateRefreshToken(refreshToken, user.id);
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.jwtConfigService.accessTokenSecret,
+        expiresIn: this.jwtConfigService.accessTokenExpiresIn,
+      }),
+      refresh_token: refreshToken,
+    };
+  }
+
+  async checkPhoneCustomerExist(dto: CheckPhoneDTO): Promise<LoginResponseDto> {
+    const { phone } = dto;
+    const user = await this.accountsService.findOne({
+      relations: { role: true },
+      where: { phone, role: { name: RoleEnum.CUSTOMER } },
+    });
+
+    if (!user)
+      throw new HttpException('Phone not exist', HttpStatus.BAD_REQUEST);
+    if (user.status != StatusEnum.ACTIVE) {
+      throw new HttpException(
+        'This phone do not active',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const role = user.role.name;
+    const payload: Payload = { phone, role };
+    const refreshToken = this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: this.jwtConfigService.refreshTokenSecret,
+        expiresIn: this.jwtConfigService.refreshTokenExpiresIn,
+      },
+    );
+    await this.accountsService.updateRefreshToken(refreshToken, user.id);
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.jwtConfigService.accessTokenSecret,
+        expiresIn: this.jwtConfigService.accessTokenExpiresIn,
+      }),
+      refresh_token: refreshToken,
+    };
+  }
+
   async loginAll(dto: LoginDto): Promise<LoginResponseDto> {
     const { phone, password } = dto;
     const user = await this.accountsService.findOne({
