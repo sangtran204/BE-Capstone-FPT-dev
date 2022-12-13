@@ -19,7 +19,7 @@ export class AccountEntity extends BaseEntity {
   @AutoMap()
   password: string;
 
-  @Column({ default: StatusEnum.IN_ACTIVE })
+  @Column({ default: StatusEnum.ACTIVE })
   @AutoMap()
   status: string;
 
