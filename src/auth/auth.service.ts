@@ -46,7 +46,7 @@ export class AuthService {
     const account = await this.accountsService.findOne({
       where: { phone: register.phone },
     });
-    if (!Boolean(account)) {
+    if (account) {
       throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
     }
     register.password = await bcrypt.hash(register.password, 10);
@@ -97,7 +97,7 @@ export class AuthService {
     await this.accountsService.transaction(callback, this.dataSource);
 
     return this.accountsService.findOne({
-      relations: { role: true, customer: true },
+      relations: { role: true, customer: true, profile: true },
       where: { phone: register.phone },
     });
   }

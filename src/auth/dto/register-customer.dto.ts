@@ -3,10 +3,13 @@ import { ApiProperty } from '@nestjs/swagger';
 export class RegisterCustomerDTO {
   @ApiProperty()
   phone: string;
+
   @ApiProperty()
   password: string;
+
   @ApiProperty()
   fullName: string;
+
   @ApiProperty({
     type: Date,
     description: 'dateOfBirth',
@@ -15,8 +18,7 @@ export class RegisterCustomerDTO {
   public DOB: Date;
   @ApiProperty()
   email: string;
-  @ApiProperty()
+
+  @ApiProperty({ default: 'Default address' })
   address: string;
-  @ApiProperty()
-  avatar: string;
 }
