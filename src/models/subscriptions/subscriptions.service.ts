@@ -280,13 +280,13 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         HttpStatus.BAD_REQUEST,
       );
 
-    const subInfo = `payment for order ${sub.id}`;
+    const orderInfo = `payment for order ${sub.id}`;
 
     const result = this.vnpayService.payment(
       ip,
       sub.totalPrice,
       bank.bankCode,
-      subInfo,
+      orderInfo,
       'other',
       '',
     );
