@@ -31,7 +31,7 @@ export class FeedBackController {
     type: String,
   })
   async createFeedback(
-    @Query() feedback: CreateFeedbackDTO,
+    @Body() feedback: CreateFeedbackDTO,
     @GetUser() user: AccountEntity,
   ): Promise<string> {
     return await this.feedbackService.createFeedBack(feedback, user);
