@@ -49,6 +49,12 @@ export class AuthService {
     if (account) {
       throw new HttpException('Account already exists', HttpStatus.BAD_REQUEST);
     }
+    const emailFind = await this.profileService.findOne({
+      where: { email: register.email },
+    });
+    if (emailFind) {
+      throw new HttpException('Email existed', HttpStatus.BAD_REQUEST);
+    }
     register.password = await bcrypt.hash(register.password, 10);
     const callback = async (entityManager: EntityManager): Promise<void> => {
       // const otp = this.sharedService.generateOtp();
