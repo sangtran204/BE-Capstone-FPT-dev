@@ -8,6 +8,7 @@ import { FeedBackEntity } from './entities/feedback.entity';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { CreateFeedbackDTO } from './dto/create_feedback.dto';
 import { PackageService } from '../packages/packages.service';
+import { SubscriptionService } from '../subscriptions/subscriptions.service';
 
 @Injectable()
 export class FeedBackService extends BaseService<FeedBackEntity> {
@@ -16,6 +17,7 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
     private readonly feedbackRepository: Repository<FeedBackEntity>,
     @InjectMapper() private readonly mapper: Mapper,
     private readonly packageService: PackageService,
+    private readonly subscriptionService: SubscriptionService,
   ) {
     super(feedbackRepository);
   }
@@ -24,9 +26,14 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
     dto: CreateFeedbackDTO,
     user: AccountEntity,
   ): Promise<string> {
-    const packageFind = await this.packageService.findOne({
+    const subFind = await this.subscriptionService.findOne({
       where: { id: dto.packageId },
+      relations: { packages: true },
     });
+    const packageFind = await this.packageService.findOne({
+      where: { id: subFind.packages.id },
+    });
+
     if (!packageFind)
       throw new HttpException('Package not found', HttpStatus.NOT_FOUND);
     const newFeedback = await this.feedbackRepository.save({
