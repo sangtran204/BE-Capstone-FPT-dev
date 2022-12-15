@@ -90,7 +90,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
       await entityManager.update(
         ProfileEntity,
         { id: id },
-        { fullName: update.fullName, email: update.email },
+        { fullName: update.fullName, email: update.email, DOB: update.DOB },
       );
     };
 
@@ -103,11 +103,14 @@ export class ShippersService extends BaseService<ShipperEntity> {
   }
 
   async updateStatusShipper(id: string): Promise<string> {
-    const shipper = await this.shipperRepository.findOne({ where: { id: id } });
+    const shipper = await this.shipperRepository.findOne({
+      where: { id: id },
+      relations: { account: true },
+    });
     if (!shipper) {
       throw new HttpException(`Shipper ${id} not found`, HttpStatus.NOT_FOUND);
     }
-    if (shipper.status == StatusEnum.ACTIVE) {
+    if (shipper.account.status == StatusEnum.ACTIVE) {
       const callback = async (entityManager: EntityManager): Promise<void> => {
         await entityManager.update(
           ShipperEntity,
@@ -123,7 +126,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
       };
       await this.accountService.transaction(callback, this.dataSource);
       return 'Shipper inactive!';
-    } else if (shipper.status == StatusEnum.IN_ACTIVE) {
+    } else if (shipper.account.status == StatusEnum.BAN) {
       const callback = async (entityManager: EntityManager): Promise<void> => {
         await entityManager.update(
           ShipperEntity,

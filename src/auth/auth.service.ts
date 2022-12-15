@@ -95,6 +95,8 @@ export class AuthService {
         ProfileEntity,
         entityManager.create(ProfileEntity, {
           account: accountEntity,
+          avatar:
+            'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
           ...register,
         }),
       );
@@ -145,7 +147,6 @@ export class AuthService {
     if (Boolean(checkNoPlate)) {
       throw new HttpException('noPlate already exists', HttpStatus.BAD_REQUEST);
     }
-
     register.password = await bcrypt.hash(register.password, 10);
     const callback = async (entityManager: EntityManager): Promise<void> => {
       const role = await entityManager.findOne(RoleEntity, {
@@ -176,6 +177,8 @@ export class AuthService {
         ProfileEntity,
         entityManager.create(ProfileEntity, {
           account: accountEntity,
+          avatar:
+            'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
           ...register,
         }),
       );
