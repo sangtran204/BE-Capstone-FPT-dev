@@ -98,6 +98,17 @@ export class SubscriptionController {
     return this.subscriptionService.findById(id);
   }
 
+  @Get('/byCustomer/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'CUSTOMER GET SUB BY ID',
+    type: SubscriptionDTO,
+  })
+  @UseInterceptors(MapInterceptor(SubscriptionEntity, SubscriptionDTO))
+  async cusFindSubById(@Param('id') id: string): Promise<SubscriptionEntity> {
+    return this.subscriptionService.cusFindSubById(id);
+  }
+
   @Post()
   @Roles(RoleEnum.CUSTOMER)
   @ApiResponse({
