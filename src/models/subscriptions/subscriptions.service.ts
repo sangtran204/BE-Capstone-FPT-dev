@@ -138,6 +138,20 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     return subscription;
   }
 
+  async cusFindSubById(id: string): Promise<SubscriptionEntity> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { id: id },
+      relations: {
+        packages: true,
+        orders: { food: true },
+      },
+    });
+    if (!subscription) {
+      throw new HttpException('Subsriptions not found', HttpStatus.NOT_FOUND);
+    }
+    return subscription;
+  }
+
   async customerConfirm(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
