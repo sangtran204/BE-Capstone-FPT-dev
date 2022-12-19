@@ -81,6 +81,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       .andWhere('subscriptions.status = :status', {
         status: statuss.value,
       })
+      .orderBy('startDelivery', 'DESC')
       .execute();
   }
 
@@ -141,6 +142,9 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async cusFindSubById(id: string): Promise<SubscriptionEntity> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
+      order: {
+        orders: { deliveryDate: 'ASC' },
+      },
       relations: {
         // packages: true,
         orders: { food: true, station: true, timeSlot: true },
