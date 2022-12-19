@@ -104,7 +104,7 @@ export class SubscriptionController {
     description: 'CUSTOMER GET SUB BY ID',
     type: SubscriptionDTO,
   })
-  @UseInterceptors(MapInterceptor(SubscriptionEntity, SubscriptionDTO))
+  // @UseInterceptors(MapInterceptor(SubscriptionEntity, SubscriptionDTO))
   async cusFindSubById(@Param('id') id: string): Promise<SubscriptionEntity> {
     return this.subscriptionService.cusFindSubById(id);
   }

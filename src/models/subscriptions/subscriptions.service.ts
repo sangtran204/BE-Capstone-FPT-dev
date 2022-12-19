@@ -142,8 +142,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
       relations: {
-        packages: true,
-        orders: { food: true },
+        // packages: true,
+        orders: { food: true, station: true, timeSlot: true },
       },
     });
     if (!subscription) {
