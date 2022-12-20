@@ -22,9 +22,10 @@ import {
 } from './dto/account-filter.dto';
 import { AccountInfoDTO } from './dto/account-info..dto';
 import { ForgotPasswordDTO } from './dto/forgotPassword.dto';
-import { DeviceTokenDTO } from './dto/deviceToken.dto';
+import { CheckToken, DeviceTokenDTO } from './dto/deviceToken.dto';
 import { AccountEntity } from './entities/account.entity';
 import { ChangePasswordDTO } from './dto/changePassword.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('accounts')
 @ApiBearerAuth()
@@ -65,6 +66,11 @@ export class AccountsController {
     });
   }
 
+  @Post('/checkToken')
+  @Public()
+  async checkToken(@Query() tokenFilter: CheckToken): Promise<string> {
+    return await this.accountsService.checkTokne(tokenFilter.token);
+  }
   // @Get()
   // @Roles(RoleEnum.ADMIN)
   // async getAll(

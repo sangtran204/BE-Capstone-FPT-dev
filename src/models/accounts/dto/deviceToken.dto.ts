@@ -10,3 +10,12 @@ export class DeviceTokenDTO {
   @IsNotEmptyString()
   deviceToken: string;
 }
+
+export class CheckToken {
+  @ApiProperty({
+    type: String,
+    description: 'Token check exist',
+    required: true,
+  })
+  token: string;
+}

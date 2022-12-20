@@ -56,6 +56,16 @@ export class AccountsService extends BaseService<AccountEntity> {
       : 'Update deviceToken success';
   }
 
+  async checkTokne(token: string): Promise<string> {
+    const accountFind = await this.accountsRepository.findOne({
+      where: { refreshToken: token },
+    });
+    if (!accountFind || accountFind == null) {
+      throw new HttpException('token not exist', HttpStatus.NOT_FOUND);
+    }
+    return 'token exist';
+  }
+
   // async getAccounts(
   //   accountFilter: AccountFilterDTO,
   // ): Promise<[AccountInfoDTO[], number]> {
