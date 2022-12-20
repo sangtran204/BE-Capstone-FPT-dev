@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { StatusEnum } from 'src/common/enums/status.enum';
 
-const pass = bcrypt.hashSync('123456', 10);
+const pass = bcrypt.hashSync('Tien1235!', 10);
 
 export const getData = (): {
   phone: string;
@@ -16,54 +16,58 @@ export const getData = (): {
   email: string;
 }[] => [
   {
-    phone: '0969080408',
+    phone: '0346754957',
     password: pass,
     role: RoleEnum.ADMIN,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Võ Minh Tiến',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'minhT@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'tienvmt02@gmail.com',
   },
-  {
-    phone: '0383706959',
-    password: pass,
-    role: RoleEnum.ADMIN,
-    status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
-    dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'admin2@gmail.com',
-  },
+  // {
+  //   phone: '0383706959',
+  //   password: pass,
+  //   role: RoleEnum.ADMIN,
+  //   status: StatusEnum.ACTIVE,
+  //   fullName: faker.name.firstName(),
+  //   dob: faker.date.birthdate(),
+  //   avatar: '/images/default.png',
+  //   email: 'admin2@gmail.com',
+  // },
   {
     phone: '0363946361',
     password: pass,
     role: RoleEnum.MANAGER,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Phạm Mạnh Toàn',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'nhi123@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'toanpm@gmail.com',
   },
   {
-    phone: '0346754957',
+    phone: '0969080408',
     password: pass,
     role: RoleEnum.MANAGER,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Huỳnh Ngọc Linh',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'tsama@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'linhhn2zz@gmail.com',
   },
   {
-    phone: '0346754958',
+    phone: '0901384204',
     password: pass,
     role: RoleEnum.SHIPPER,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Thanh Nhi',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'shipper@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'nhipt2k@gmail.com',
   },
   // {
   //   phone: '0456789123',
@@ -80,10 +84,11 @@ export const getData = (): {
     password: pass,
     role: RoleEnum.KITCHEN,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Bếp Quận 9',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'kitchen@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'bepquan9mesup@gmail.com',
   },
   // {
   //   phone: '0111223344',
@@ -100,9 +105,10 @@ export const getData = (): {
     password: pass,
     role: RoleEnum.CUSTOMER,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Anh Sang',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
     email: 'sangtran@gmail.com',
   },
   {
@@ -110,9 +116,10 @@ export const getData = (): {
     password: pass,
     role: RoleEnum.CUSTOMER,
     status: StatusEnum.ACTIVE,
-    fullName: faker.name.firstName(),
+    fullName: 'Quốc Lộc',
     dob: faker.date.birthdate(),
-    avatar: '/images/default.png',
-    email: 'tien@gmail.com',
+    avatar:
+      'https://firebasestorage.googleapis.com/v0/b/meal-subcription-plan.appspot.com/o/default_avatar.png?alt=media&token=5623e4d3-4139-4fb8-abd0-eea54c02cc83',
+    email: 'locdq@gmail.com',
   },
 ];
