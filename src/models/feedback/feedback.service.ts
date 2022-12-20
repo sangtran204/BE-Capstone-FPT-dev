@@ -9,6 +9,7 @@ import { AccountEntity } from '../accounts/entities/account.entity';
 import { CreateFeedbackDTO } from './dto/create_feedback.dto';
 import { PackageService } from '../packages/packages.service';
 import { SubscriptionService } from '../subscriptions/subscriptions.service';
+import { SubEnum } from 'src/common/enums/sub.enum';
 
 @Injectable()
 export class FeedBackService extends BaseService<FeedBackEntity> {
@@ -30,9 +31,13 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
       where: { id: dto.packageId },
       relations: { packages: true },
     });
+    if (!subFind || subFind == null)
+      throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
     const packageFind = await this.packageService.findOne({
       where: { id: subFind.packages.id },
     });
+    if (!packageFind || packageFind == null)
+      throw new HttpException('Package not found', HttpStatus.NOT_FOUND);
 
     if (!packageFind)
       throw new HttpException('Package not found', HttpStatus.NOT_FOUND);
@@ -45,6 +50,8 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
       customer: user,
     });
     if (newFeedback) {
+      subFind.status = SubEnum.DONE;
+      await this.subscriptionService.save(subFind);
       return 'Send feedback success';
     } else {
       return 'Send feedback fail';
