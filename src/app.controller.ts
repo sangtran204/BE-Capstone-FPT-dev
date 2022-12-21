@@ -30,8 +30,6 @@ export class TestController {
 
   @Post()
   async testNotify(@GetUser() user: AccountEntity): Promise<string> {
-    console.log(user);
-
     if (user.deviceToken === null) {
       return 'sorry you can not device token';
     }
