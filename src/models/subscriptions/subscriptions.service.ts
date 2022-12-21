@@ -22,6 +22,9 @@ import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubHistoryDTO } from './dto/getSub-history.dto';
 import { BanksService } from '../banks/banks.service';
 import { OrdersService } from '../orders/order.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
+import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
@@ -33,8 +36,10 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     private readonly paymentsService: PaymentsService,
     private readonly vnpayService: VnpayService,
     private readonly banksService: BanksService,
+    private readonly notificationsService: NotificationsService,
     @Inject(forwardRef(() => OrdersService))
     private readonly orderService: OrdersService,
+    private readonly firebaseMessageService: FirebaseMessageService,
   ) {
     super(subscriptionRepository);
   }
@@ -171,10 +176,31 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const updateSubscription = await this.subscriptionRepository.save(
       subscription,
     );
+
     if (!updateSubscription) {
       throw new HttpException('Fail to Buy', HttpStatus.BAD_REQUEST);
     } else {
       await this.orderService.confirmSubOrder(subscription.orders);
+    }
+    if (Boolean(subscription)) {
+      const title = `Gói ăn đã được thanh toán bởi ${user.profile.fullName}`;
+      const body = `Gói ăn: ${subscription.packages.name}`;
+      const data = { ['id']: subscription.id };
+      const saveNotify = this.notificationsService.save({
+        account: { id: user.id },
+        title,
+        body,
+        data: JSON.stringify(data),
+        type: TypeNotificationEnum.ORDER,
+      });
+      const sendNotify = this.firebaseMessageService.sendCustomNotification(
+        user.customer.account.deviceToken,
+        title,
+        body,
+        data,
+      );
+      await saveNotify;
+      await sendNotify;
     }
     return 'Confirm Successful';
   }

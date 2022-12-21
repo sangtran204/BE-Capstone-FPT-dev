@@ -19,6 +19,7 @@ import {
   TripFilterByKitchen,
   TripFilterDate,
 } from './dto/deliveryTrip-filter.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -31,6 +32,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     private readonly kitchenService: KitchenService,
     private readonly timeSlotService: TimeSlotsService,
     private readonly stationService: StationsService,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(deliveryTripRepository);
   }

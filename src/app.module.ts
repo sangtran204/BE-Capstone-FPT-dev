@@ -34,8 +34,6 @@ import { SubscriptionModule } from './models/subscriptions/subscriptions.module'
 import { FeedBackModule } from './models/feedback/feedback.module';
 import { VnpayProviderModule } from './providers/vnpay/vnpay.module';
 import { TestController } from './app.controller';
-// import { FirebaseProviderModule } from 'providers/firebase/provider.module';
-
 @Module({
   imports: [
     AppConfigModule,
