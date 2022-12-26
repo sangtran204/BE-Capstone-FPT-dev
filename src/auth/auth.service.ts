@@ -187,7 +187,7 @@ export class AuthService {
     await this.accountsService.transaction(callback, this.dataSource);
 
     return this.accountsService.findOne({
-      relations: { role: true, shipper: true },
+      relations: { role: true, shipper: true, kitchen: true },
       where: { phone: register.phone },
     });
   }
@@ -226,7 +226,6 @@ export class AuthService {
         entityManager.create(KitchenEntity, {
           id: accountEntity.id,
           address: register.address,
-          ability: register.ability,
         }),
       );
 

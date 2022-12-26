@@ -10,6 +10,8 @@ import { VnpayProviderModule } from 'src/providers/vnpay/vnpay.module';
 import { PaymentsModule } from '../payment/payments.module';
 import { BanksModule } from '../banks/banks.module';
 import { OrdersModule } from '../orders/order.module';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { FirebaseProviderModule } from '../../providers/firebase/provider.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { OrdersModule } from '../orders/order.module';
     PaymentsModule,
     BanksModule,
     forwardRef(() => OrdersModule),
+    NotificationsModule,
+    FirebaseProviderModule,
   ],
   controllers: [SubscriptionController],
   providers: [SubscriptionService, SubscriptionProfile],

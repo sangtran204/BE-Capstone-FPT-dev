@@ -162,12 +162,12 @@ export class OrdersService extends BaseService<OrderEntity> {
         order = await entityManager.save(
           entityManager.create(OrderEntity, {
             // commission: commission[0],
-            deliveryDate: dto.deliveryDate,
-            priceFood: dto.priceFood,
-            nameFood: dto.nameFood,
+            // deliveryDate: dto.deliveryDate,
+            // priceFood: dto.priceFood,
+            // nameFood: dto.nameFood,
             subscription: subFind,
             packageItem: packageItem,
-            food: foodFind,
+            // food: foodFind,
             station: stationFind,
             timeSlot: slotFind,
             kitchen: kitchenFind,
@@ -283,7 +283,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     const listOrder = await this.ordersRepository.find({
       where: {
         kitchen: { id: find.kitchenId },
-        deliveryDate: find.deliveryDate,
+        // deliveryDate: find.deliveryDate,
         station: { id: find.stationId },
         timeSlot: { id: find.time_slotId },
         status: OrderEnum.PROGRESS,
@@ -377,7 +377,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         subscription: { customer: { account: { profile: true } } },
-        food: true,
+        // food: true,
         station: true,
         packageItem: true,
         kitchen: { account: { profile: true } },
@@ -394,11 +394,10 @@ export class OrdersService extends BaseService<OrderEntity> {
     return await this.ordersRepository.find({
       where: {
         status: Like(Boolean(status) ? status : '%%'),
-        deliveryDate: deliveryDate.deliveryDate,
       },
       relations: {
         subscription: { customer: { account: { profile: true } } },
-        food: true,
+        // food: true,
         station: true,
         packageItem: true,
         kitchen: true,

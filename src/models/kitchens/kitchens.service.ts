@@ -10,6 +10,8 @@ import { AccountEntity } from '../accounts/entities/account.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { AccountsService } from '../accounts/accounts.service';
 import { KitchenFilterDTO } from './dto/kitchenFilter.dto';
+import { ShipperEntity } from '../shippers/entities/shipper.entity';
+import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 
 @Injectable()
 export class KitchenService extends BaseService<KitchenEntity> {
@@ -69,7 +71,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
       await entityManager.update(
         KitchenEntity,
         { id: id },
-        { address: update.address, ability: update.ability },
+        { address: update.address },
       );
       await entityManager.update(
         ProfileEntity,
@@ -156,7 +158,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
   //             HttpStatus.BAD_REQUEST,
   //           );
   //         }
-  //         if (itemShipper.status !== ShipperStatusEnum.NEW) {
+  //         if (itemShipper.status !== ShipperStatusEnum.ACTIVE) {
   //           throw new HttpException(
   //             `Only shipper with status NEW can add (ERROR AT: ${itemShipper.id})`,
   //             HttpStatus.BAD_REQUEST,

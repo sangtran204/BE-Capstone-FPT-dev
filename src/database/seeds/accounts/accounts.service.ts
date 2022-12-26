@@ -69,7 +69,6 @@ export class AccountsSeederService {
             manager.create(KitchenEntity, {
               id: account.id,
               address: 'Q9',
-              ability: '100',
             }),
           );
         }

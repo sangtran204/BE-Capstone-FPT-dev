@@ -34,6 +34,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         account: { profile: true },
+        kitchen: true,
       },
     });
   }
@@ -44,7 +45,7 @@ export class ShippersService extends BaseService<ShipperEntity> {
       where: {
         account: { status: Like(Boolean(statusAcc) ? statusAcc : '%%') },
       },
-      relations: { account: { profile: true } },
+      relations: { account: { profile: true }, kitchen: true },
     });
     if (!list || list.length == 0) {
       throw new HttpException('No shipper found', HttpStatus.NOT_FOUND);

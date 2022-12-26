@@ -24,7 +24,4 @@ export class RegisterKitchenDTO {
 
   @ApiProperty()
   address: string;
-
-  @ApiProperty()
-  ability: string;
 }
