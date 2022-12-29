@@ -12,7 +12,4 @@ export class UpdateKitchenDTO extends BaseDTO {
 
   @ApiProperty()
   address: string;
-
-  @ApiProperty()
-  ability: string;
 }

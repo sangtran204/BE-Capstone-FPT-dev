@@ -156,7 +156,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
   //             HttpStatus.BAD_REQUEST,
   //           );
   //         }
-  //         if (itemShipper.status !== ShipperStatusEnum.NEW) {
+  //         if (itemShipper.status !== ShipperStatusEnum.ACTIVE) {
   //           throw new HttpException(
   //             `Only shipper with status NEW can add (ERROR AT: ${itemShipper.id})`,
   //             HttpStatus.BAD_REQUEST,

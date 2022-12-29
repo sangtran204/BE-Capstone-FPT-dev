@@ -39,6 +39,7 @@ export class PackageService extends BaseService<PackageEntity> {
     return await this.packagesRepository.find({
       where: { status: Like(Boolean(statusPackage) ? statusPackage : '%%') },
       relations: {
+        // timeFrame: true,
         packageCategory: true,
         packageItem: true,
       },
@@ -49,6 +50,9 @@ export class PackageService extends BaseService<PackageEntity> {
     data: CreatePackageDTO,
     image: Express.Multer.File,
   ): Promise<PackageEntity> {
+    // const frame = await this.frameService.findOne({
+    //   where: { id: data.timeFrameID },
+    // });
     const category = await this.categoryService.findOne({
       where: { id: data.categoryID },
     });
@@ -57,6 +61,12 @@ export class PackageService extends BaseService<PackageEntity> {
         'start Sale must less than end Sale',
         HttpStatus.BAD_REQUEST,
       );
+    // if (!frame) {
+    //   throw new HttpException(
+    //     `Frame ID not found : ${data.timeFrameID}`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
+    // }
     if (!category) {
       throw new HttpException(
         `Category ID not found: ${data.categoryID}`,
@@ -73,6 +83,8 @@ export class PackageService extends BaseService<PackageEntity> {
       image: imageRes,
       totalDate: data.totalDate,
       totalMeal: data.totalMeal,
+      // totalStation: data.totalStation,
+      // timeFrame: frame,
       packageCategory: category,
     });
   }
@@ -122,6 +134,8 @@ export class PackageService extends BaseService<PackageEntity> {
           image: imageRes,
           totalDate: data.totalDate,
           totalMeal: data.totalMeal,
+          // totalStation: data.totalStation,
+          // timeFrame: frame,
           packageCategory: category,
         });
         return 'Update Package Successful';

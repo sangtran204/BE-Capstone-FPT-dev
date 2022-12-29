@@ -33,6 +33,7 @@ import { SubscriptionModule } from './models/subscriptions/subscriptions.module'
 import { FeedBackModule } from './models/feedback/feedback.module';
 import { VnpayProviderModule } from './providers/vnpay/vnpay.module';
 import { TestController } from './app.controller';
+import { SessionModule } from './models/sessions/sessions.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -59,10 +60,12 @@ import { TestController } from './app.controller';
     // ====================================
     OrdersModule,
     FirebaseProviderModule,
-    // DeliveryTripModule,
-    // FeedBackModule,
+    DeliveryTripModule,
+    FeedBackModule,
     VnpayProviderModule,
     ScheduleModule.forRoot(),
+
+    SessionModule,
   ],
   controllers: [TestController],
   providers: [

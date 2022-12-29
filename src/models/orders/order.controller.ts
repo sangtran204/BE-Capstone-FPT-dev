@@ -51,14 +51,29 @@ export class OrdersController {
   //   );
   // }
 
+  // @Post()
+  // @Roles(RoleEnum.CUSTOMER)
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  // async orderSub(
+  //   @Body() dto: OrderCreationDTO,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   return await this.ordersService.orderSub(dto, user);
+  // }
+
   @Post()
+  @ApiResponse({
+    description: 'CUSTOMER CREATE ORDER',
+    status: 200,
+    type: OrderEntity,
+  })
   @Roles(RoleEnum.CUSTOMER)
-  @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
+  // @UseInterceptors(MapInterceptor(OrderEntity, OrderDTO))
   async orderSub(
     @Body() dto: OrderCreationDTO,
-    @GetUser() user: AccountEntity,
+    // @GetUser() user: AccountEntity,
   ): Promise<OrderEntity> {
-    return await this.ordersService.orderSub(dto, user);
+    return await this.ordersService.createOrders(dto);
   }
 
   @Get('/byStatus')
@@ -126,33 +141,33 @@ export class OrdersController {
   //   return await this.ordersService.getFoodByKitchen(kitchenId);
   // }
 
-  @Get('/food-prepare')
-  @Roles(RoleEnum.KITCHEN)
-  @ApiResponse({
-    status: 200,
-    description: 'Get food by kitchen',
-    type: FoodByKitchenDTO,
-  })
-  async getFoodByKitchen(
-    @GetUser() user: AccountEntity,
-    @Query() data: OrderSearchByDate,
-  ): Promise<FoodByKitchenDTO[]> {
-    return await this.ordersService.getFoodByKitchen(user, data);
-  }
-
-  @Get('/food-prepare/byWeek')
+  // @Get('/food-prepare')
   // @Roles(RoleEnum.KITCHEN)
-  @ApiResponse({
-    status: 200,
-    description: 'KITCHEN GET PREPARE FOOD BY WEEK',
-    type: FoodByKitchenDTO,
-  })
-  async getPreFoodByWeek(
-    @GetUser() user: AccountEntity,
-    @Query() data: PreFoodByWeek,
-  ): Promise<FoodByKitchenDTO[]> {
-    return await this.ordersService.getPreFoodByWeek(user, data);
-  }
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Get food by kitchen',
+  //   type: FoodByKitchenDTO,
+  // })
+  // async getFoodByKitchen(
+  //   @GetUser() user: AccountEntity,
+  //   @Query() data: OrderSearchByDate,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   return await this.ordersService.getFoodByKitchen(user, data);
+  // }
+
+  // @Get('/food-prepare/byWeek')
+  // // @Roles(RoleEnum.KITCHEN)
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'KITCHEN GET PREPARE FOOD BY WEEK',
+  //   type: FoodByKitchenDTO,
+  // })
+  // async getPreFoodByWeek(
+  //   @GetUser() user: AccountEntity,
+  //   @Query() data: PreFoodByWeek,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   return await this.ordersService.getPreFoodByWeek(user, data);
+  // }
   //   @Get('/:id/payment-url')
   //   async paymentUrl(
   //     @Req() req: Request,

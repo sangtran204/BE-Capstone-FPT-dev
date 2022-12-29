@@ -5,11 +5,7 @@ import { BaseService } from '../base/base.service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { FeedBackEntity } from './entities/feedback.entity';
-import { AccountEntity } from '../accounts/entities/account.entity';
-import { CreateFeedbackDTO } from './dto/create_feedback.dto';
-import { PackageService } from '../packages/packages.service';
 import { SubscriptionService } from '../subscriptions/subscriptions.service';
-import { SubEnum } from 'src/common/enums/sub.enum';
 
 @Injectable()
 export class FeedBackService extends BaseService<FeedBackEntity> {
@@ -17,7 +13,6 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
     @InjectRepository(FeedBackEntity)
     private readonly feedbackRepository: Repository<FeedBackEntity>,
     @InjectMapper() private readonly mapper: Mapper,
-    private readonly packageService: PackageService,
     private readonly subscriptionService: SubscriptionService,
   ) {
     super(feedbackRepository);
