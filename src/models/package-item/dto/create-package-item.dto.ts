@@ -3,8 +3,8 @@ import { IsNotEmpty, Max, Min } from 'class-validator';
 
 export class CreatePackageItemDTO {
   @ApiProperty()
-  @Max(18)
-  @Min(1)
+  @Max(2)
+  @Min(0)
   itemCode: number;
 
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })

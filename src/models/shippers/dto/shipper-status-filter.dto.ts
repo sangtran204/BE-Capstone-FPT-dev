@@ -3,6 +3,9 @@ import { AccountStatusEnum } from 'src/common/enums/accountStatus.enum';
 import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 
 export class ShipperStatusFilter {
+  @ApiProperty()
+  kitchenId: string;
+
   @ApiProperty({
     enum: ShipperStatusEnum,
     required: false,
