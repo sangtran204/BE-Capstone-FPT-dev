@@ -79,6 +79,17 @@ export class ShippersController {
     return await this.shippersService.getShipperByStatus(filter);
   }
 
+  @Get('/free_shipper')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET SHIPPER BY ID',
+    type: ShipperEntity,
+  })
+  async getFreeShipper(): Promise<ShipperEntity[]> {
+    return await this.shippersService.getFreeShipper();
+  }
+
   @Get('/:id')
   // @Public()
   @ApiResponse({
@@ -90,7 +101,7 @@ export class ShippersController {
   async findShipperByID(@Param('id') id: string): Promise<ShipperEntity> {
     const shipper = await this.shippersService.findOne({
       where: { id: id },
-      relations: { account: { profile: true } },
+      relations: { account: { profile: true }, kitchen: true },
     });
     if (!shipper) {
       throw new HttpException(
