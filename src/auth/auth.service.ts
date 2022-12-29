@@ -7,8 +7,7 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { JwtConfigService } from 'src/config/jwt/config.service';
 import { AccountsService } from 'src/models/accounts/accounts.service';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
-import { CustomersService } from 'src/models/customers/customers.service';
-import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
+
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { ProfileService } from 'src/models/profiles/profile.service';
@@ -23,7 +22,7 @@ import { RegisterAccountDTO } from './dto/register-account.dto';
 import { RegisterCustomerDTO } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
 import { RegisterShipperDTO } from './dto/register-shipper.dto';
-import { VerifySignUp } from './dto/verify-signup.dto';
+// import { VerifySignUp } from './dto/verify-signup.dto';
 // import { VerifySignUp } from './dto/verify-signup.dto';
 import { Payload } from './payload';
 import { LoginResponseDto } from './response/login-response.dto';
@@ -35,7 +34,6 @@ export class AuthService {
     private readonly accountsService: AccountsService,
     private readonly profileService: ProfileService,
     private readonly rolesService: RolesService,
-    private readonly customerService: CustomersService,
     private readonly shipperService: ShippersService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
@@ -78,18 +76,18 @@ export class AuthService {
           // password: register.password,
           ...register,
           role,
-          codeVerify: 1111,
-          dateExpiredVerifyCode: new Date(),
+          // codeVerify: 1111,
+          // dateExpiredVerifyCode: new Date(),
         }),
       );
 
-      await entityManager.save(
-        CustomerEntity,
-        entityManager.create(CustomerEntity, {
-          id: accountEntity.id,
-          address: register.address,
-        }),
-      );
+      // await entityManager.save(
+      //   CustomerEntity,
+      //   entityManager.create(CustomerEntity, {
+      //     id: accountEntity.id,
+      //     address: register.address,
+      //   }),
+      // );
 
       await entityManager.save(
         ProfileEntity,
@@ -105,27 +103,27 @@ export class AuthService {
     await this.accountsService.transaction(callback, this.dataSource);
 
     return this.accountsService.findOne({
-      relations: { role: true, customer: true, profile: true },
+      relations: { role: true, profile: true },
       where: { phone: register.phone },
     });
   }
 
-  async verifySignUp(dto: VerifySignUp): Promise<string> {
-    const { phone, otp } = dto;
-    const user = await this.accountsService.findOne({
-      where: { phone: phone },
-    });
-    if (!user) {
-      throw new HttpException('Account not found', HttpStatus.NOT_FOUND);
-    }
-    this.sharedService.verifyOTPSignUp(
-      +otp,
-      user.codeVerify,
-      user.dateExpiredVerifyCode,
-    );
-    await this.accountsService.updateConfirmVerifyStatusAccount(user.id);
-    return 'Verify OTP Successfully';
-  }
+  // async verifySignUp(dto: VerifySignUp): Promise<string> {
+  //   const { phone, otp } = dto;
+  //   const user = await this.accountsService.findOne({
+  //     where: { phone: phone },
+  //   });
+  //   if (!user) {
+  //     throw new HttpException('Account not found', HttpStatus.NOT_FOUND);
+  //   }
+  //   this.sharedService.verifyOTPSignUp(
+  //     +otp,
+  //     user.codeVerify,
+  //     user.dateExpiredVerifyCode,
+  //   );
+  //   await this.accountsService.updateConfirmVerifyStatusAccount(user.id);
+  //   return 'Verify OTP Successfully';
+  // }
 
   async registerShipper(register: RegisterShipperDTO): Promise<AccountEntity> {
     const account = await this.accountsService.findOne({
@@ -465,8 +463,6 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           ...register,
           role,
-          codeVerify: 1111,
-          dateExpiredVerifyCode: new Date(),
         }),
       );
       await entityManager.save(
@@ -507,8 +503,6 @@ export class AuthService {
         entityManager.create(AccountEntity, {
           ...register,
           role,
-          codeVerify: 1111,
-          dateExpiredVerifyCode: new Date(),
         }),
       );
       await entityManager.save(

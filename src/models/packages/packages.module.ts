@@ -4,15 +4,10 @@ import { PackageService } from './packages.service';
 import { PackageController } from './packages.controller';
 import { PackageEntity } from './entities/packages.entity';
 import { PackageProfile } from './profile/package.profile';
-import { TimeFrameModule } from '../time-frame/time-frame.module';
 import { PackageCategoriesModule } from '../package-categories/package-categories.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([PackageEntity]),
-    TimeFrameModule,
-    PackageCategoriesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([PackageEntity]), PackageCategoriesModule],
   controllers: [PackageController],
   providers: [PackageService, PackageProfile],
   exports: [PackageService],

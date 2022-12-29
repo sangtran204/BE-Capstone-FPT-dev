@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreatePackageDTO {
   @ApiProperty({ default: new Date() })
@@ -29,14 +29,6 @@ export class CreatePackageDTO {
   @ApiProperty()
   @IsNotEmpty()
   totalMeal: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  totalFood: number;
-
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // totalStation: number;
 
   // @ApiProperty({ type: String })
   // @IsNotEmpty()

@@ -24,7 +24,7 @@ export class KitchenEntity extends BaseEntity {
   @AutoMap()
   address: string;
 
-  // @AutoMap(() => AccountEntity)
+  @AutoMap(() => AccountEntity)
   @OneToOne(() => AccountEntity, (account) => account.kitchen, {
     onDelete: 'CASCADE',
   })

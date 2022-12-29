@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { InActiveEnum } from 'src/common/enums/active.enum';
+import { PackageEnum } from 'src/common/enums/package.enum';
 
 export class PackageFilterDTO {
   @ApiProperty({
-    enum: InActiveEnum,
+    enum: PackageEnum,
     required: false,
     description: 'Package status',
-    default: InActiveEnum.ACTIVE,
+    default: PackageEnum.ACTIVE,
   })
-  statusPackage: InActiveEnum;
+  statusPackage: PackageEnum;
 }

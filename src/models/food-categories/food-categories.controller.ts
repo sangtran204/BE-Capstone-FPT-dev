@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodCategoryDTO } from './dto/create-food-category';
 import { FoodCategoryDTO } from './dto/food-category.dto';
@@ -27,7 +26,6 @@ import { FoodCategoriesService } from './food-categories.service';
 export class FoodCategoriesController {
   constructor(private readonly foodCategoriesService: FoodCategoriesService) {}
 
-  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -45,7 +43,6 @@ export class FoodCategoriesController {
     return listCategory;
   }
 
-  // @Public()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -62,7 +59,6 @@ export class FoodCategoriesController {
     return category;
   }
 
-  // @Public()
   @Roles(RoleEnum.MANAGER)
   @Post()
   @ApiResponse({

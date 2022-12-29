@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Param } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -13,7 +13,7 @@ import { RegisterCustomerDTO } from './dto/register-customer.dto';
 // import { RegisterCustomerDto } from './dto/register-customer.dto';
 import { RegisterKitchenDTO } from './dto/register-kitchen.dto';
 import { RegisterShipperDTO } from './dto/register-shipper.dto';
-import { VerifySignUp } from './dto/verify-signup.dto';
+// import { VerifySignUp } from './dto/verify-signup.dto';
 // import { VerifySignUp } from './dto/verify-signup.dto';
 import { LoginResponseDto } from './response/login-response.dto';
 import { RefreshTokenResponseDTO } from './response/refresh-token-response.dto';
@@ -56,11 +56,11 @@ export class AuthenticationController {
     return await this.authService.signUpCustomer(dto);
   }
 
-  @Post('/verify/sign-up/customer')
-  @Public()
-  async verifySignUpTourist(@Body() dto: VerifySignUp): Promise<string> {
-    return await this.authService.verifySignUp(dto);
-  }
+  // @Post('/verify/sign-up/customer')
+  // @Public()
+  // async verifySignUpTourist(@Body() dto: VerifySignUp): Promise<string> {
+  //   return await this.authService.verifySignUp(dto);
+  // }
 
   @Roles(RoleEnum.ADMIN)
   @Post('register/shipper')

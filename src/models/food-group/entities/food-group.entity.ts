@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { FoodGroupEnum } from 'src/common/enums/food-group.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodEntity } from 'src/models/foods/entities/foods.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
@@ -15,11 +15,7 @@ export class FoodGroupEntity extends BaseEntity {
   @AutoMap()
   description: string;
 
-  // @Column()
-  // @AutoMap()
-  // totalFood: number;
-
-  @Column({ default: StatusEnum.ACTIVE })
+  @Column({ default: FoodGroupEnum.ACTIVE })
   @AutoMap()
   status: string;
 
@@ -30,7 +26,4 @@ export class FoodGroupEntity extends BaseEntity {
 
   @OneToMany(() => PackageItemEntity, (packageItems) => packageItems.foodGroup)
   packageItem: PackageItemEntity[];
-
-  // @ManyToMany(() => PackageItemEntity, (packageItem) => packageItem.foodGroups)
-  // packageItem: PackageItemEntity[];
 }

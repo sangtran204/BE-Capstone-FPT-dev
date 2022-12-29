@@ -1,12 +1,12 @@
 import { AutoMap } from '@automapper/classes';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { AccountStatusEnum } from 'src/common/enums/accountStatus.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { NotificationEntity } from 'src/models/notifications/entities/notification.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
 import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 @Entity({ name: 'accounts' })
@@ -19,7 +19,7 @@ export class AccountEntity extends BaseEntity {
   @AutoMap()
   password: string;
 
-  @Column({ default: StatusEnum.ACTIVE })
+  @Column({ default: AccountStatusEnum.ACTIVE })
   @AutoMap()
   status: string;
 
@@ -30,27 +30,6 @@ export class AccountEntity extends BaseEntity {
   @Column({ nullable: true })
   @AutoMap()
   deviceToken: string;
-
-  @Column('boolean', { default: false })
-  public confirmedVerify: boolean;
-
-  @Column('integer', {
-    name: 'codeVerify',
-    nullable: true,
-  })
-  public codeVerify: number;
-
-  @Column('datetime', {
-    name: 'dateExpiredVerifyCode',
-    nullable: true,
-  })
-  public dateExpiredVerifyCode: Date;
-
-  @AutoMap(() => CustomerEntity)
-  @OneToOne(() => CustomerEntity, (customer) => customer.account, {
-    onDelete: 'CASCADE',
-  })
-  customer: CustomerEntity;
 
   @AutoMap(() => ShipperEntity)
   @OneToOne(() => ShipperEntity, (shipper) => shipper.account, {
@@ -74,4 +53,7 @@ export class AccountEntity extends BaseEntity {
 
   @OneToMany(() => NotificationEntity, (notification) => notification.account)
   notifications: NotificationEntity[];
+
+  @OneToMany(() => SubscriptionEntity, (subscription) => subscription.account)
+  subscriptions: SubscriptionEntity[];
 }

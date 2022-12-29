@@ -13,7 +13,6 @@ import { VnpayDto } from 'src/providers/vnpay/vnpay.dto';
 import { VnpayService } from 'src/providers/vnpay/vnpay.service';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { BaseService } from '../base/base.service';
-import { CustomersService } from '../customers/customers.service';
 import { PackageService } from '../packages/packages.service';
 import { PaymentsService } from '../payment/payments.service';
 import { CreateSubscriptionDTO } from './dto/create-subscription';
@@ -25,21 +24,23 @@ import { OrdersService } from '../orders/order.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
+import { AccountsService } from '../accounts/accounts.service';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class SubscriptionService extends BaseService<SubscriptionEntity> {
   constructor(
     @InjectRepository(SubscriptionEntity)
     private readonly subscriptionRepository: Repository<SubscriptionEntity>,
-    private readonly customerService: CustomersService,
     private readonly packageService: PackageService,
     private readonly paymentsService: PaymentsService,
     private readonly vnpayService: VnpayService,
     private readonly banksService: BanksService,
-    private readonly notificationsService: NotificationsService,
+    private readonly accountService: AccountsService,
+    // private readonly notificationsService: NotificationsService,
+    // private readonly firebaseMessageService: FirebaseMessageService,
     @Inject(forwardRef(() => OrdersService))
     private readonly orderService: OrdersService,
-    private readonly firebaseMessageService: FirebaseMessageService,
   ) {
     super(subscriptionRepository);
   }
@@ -47,7 +48,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async getAllSubscription(): Promise<SubscriptionEntity[]> {
     return await this.subscriptionRepository.find({
       relations: {
-        customer: { account: { profile: true } },
+        account: { profile: true },
         packages: true,
       },
     });
@@ -60,7 +61,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     const list = await this.subscriptionRepository.find({
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
-        customer: { account: { profile: true } },
+        account: { profile: true },
         packages: true,
       },
     });
@@ -98,9 +99,16 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       const packgeFind = await this.packageService.findOne({
         where: { id: dto.packageId },
       });
-      const customerFind = await this.customerService.findOne({
+      const customerFind = await this.accountService.findOne({
         where: { id: user.id },
       });
+
+      if (customerFind.role.name !== RoleEnum.CUSTOMER) {
+        throw new HttpException(
+          `Only Customer can do this function`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
       if (packgeFind.status !== StatusEnum.ACTIVE) {
         throw new HttpException(
           `Package is not Active`,
@@ -161,9 +169,9 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
   async customerConfirm(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: id },
-      relations: { orders: true, customer: true },
+      relations: { orders: true, account: true },
     });
-    if (subscription.customer.id !== user.customer.id) {
+    if (subscription.account.id !== user.id) {
       throw new HttpException(
         'You are not the owner of this subscription',
         HttpStatus.BAD_REQUEST,
@@ -179,33 +187,33 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     } else {
       await this.orderService.confirmSubOrder(subscription.orders);
     }
-    if (Boolean(subscription)) {
-      const title = `Gói ăn đã được thanh toán bởi ${user.profile.fullName}`;
-      const body = `Gói ăn: ${subscription.packages.name}`;
-      const data = { ['id']: subscription.id };
-      const saveNotify = this.notificationsService.save({
-        account: { id: user.id },
-        title,
-        body,
-        data: JSON.stringify(data),
-        type: TypeNotificationEnum.ORDER,
-      });
-      const sendNotify = this.firebaseMessageService.sendCustomNotification(
-        user.customer.account.deviceToken,
-        title,
-        body,
-        data,
-      );
-      await saveNotify;
-      await sendNotify;
-    }
+    // if (Boolean(subscription)) {
+    //   const title = `Gói ăn đã được thanh toán bởi ${user.profile.fullName}`;
+    //   const body = `Gói ăn: ${subscription.packages.name}`;
+    //   const data = { ['id']: subscription.id };
+    //   const saveNotify = this.notificationsService.save({
+    //     account: { id: user.id },
+    //     title,
+    //     body,
+    //     data: JSON.stringify(data),
+    //     type: TypeNotificationEnum.ORDER,
+    //   });
+    //   const sendNotify = this.firebaseMessageService.sendCustomNotification(
+    //     user.deviceToken,
+    //     title,
+    //     body,
+    //     data,
+    //   );
+    //   await saveNotify;
+    //   await sendNotify;
+    // }
     return 'Confirm Successful';
   }
 
   async doneSub(id: string, user: AccountEntity): Promise<string> {
     const subscription = await this.findById(id);
 
-    if (subscription.customer.id !== user.customer.id) {
+    if (subscription.account.id !== user.id) {
       throw new HttpException(
         'You are not the owner of this subscription',
         HttpStatus.BAD_REQUEST,
@@ -227,30 +235,30 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     return 'Subscription done';
   }
 
-  async cancelSubscription(id: string, user: AccountEntity): Promise<string> {
-    const subscription = await this.findById(id);
-    if (subscription.customer.id !== user.customer.id) {
-      throw new HttpException(
-        'You are not the owner of this subscription',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const dateCancel = new Date();
-    if (subscription.startDelivery < dateCancel) {
-      throw new HttpException('Cancel before 24h', HttpStatus.BAD_REQUEST);
-    }
-    subscription.status = SubEnum.CANCEL;
-    subscription.cancelDate = new Date();
-    const subscriptionCancel = await this.save(subscription);
-    if (!subscriptionCancel) {
-      throw new HttpException('Cancel Fail', HttpStatus.BAD_REQUEST);
-    }
-    return 'Cancel Successful';
-  }
+  // async cancelSubscription(id: string, user: AccountEntity): Promise<string> {
+  //   const subscription = await this.findById(id);
+  //   if (subscription.customer.id !== user.customer.id) {
+  //     throw new HttpException(
+  //       'You are not the owner of this subscription',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  //   const dateCancel = new Date();
+  //   if (subscription.startDelivery < dateCancel) {
+  //     throw new HttpException('Cancel before 24h', HttpStatus.BAD_REQUEST);
+  //   }
+  //   subscription.status = SubEnum.CANCEL;
+  //   subscription.cancelDate = new Date();
+  //   const subscriptionCancel = await this.save(subscription);
+  //   if (!subscriptionCancel) {
+  //     throw new HttpException('Cancel Fail', HttpStatus.BAD_REQUEST);
+  //   }
+  //   return 'Cancel Successful';
+  // }
 
   async deleteSubscription(id: string, user: AccountEntity): Promise<string> {
     const subFind = await this.subscriptionRepository.findOne({
-      where: { id: id, customer: { id: user.id }, status: SubEnum.UNCONFIRMED },
+      where: { id: id, account: { id: user.id }, status: SubEnum.UNCONFIRMED },
       relations: { orders: true },
     });
     if (!subFind) {

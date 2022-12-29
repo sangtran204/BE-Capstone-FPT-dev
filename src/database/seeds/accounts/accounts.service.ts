@@ -5,10 +5,9 @@ import { RoleEntity } from 'src/models/roles/entities/role.entity';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { CustomerEntity } from 'src/models/customers/entities/customer.entity';
-import { StatusEnum } from 'src/common/enums/status.enum';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
+import { AccountStatusEnum } from 'src/common/enums/accountStatus.enum';
 
 @Injectable()
 export class AccountsSeederService {
@@ -53,15 +52,15 @@ export class AccountsSeederService {
           }),
         );
 
-        if (account.role.name === RoleEnum.CUSTOMER) {
-          await manager.save(
-            CustomerEntity,
-            manager.create(CustomerEntity, {
-              id: account.id,
-              address: 'NVL_GV',
-            }),
-          );
-        }
+        // if (account.role.name === RoleEnum.CUSTOMER) {
+        //   await manager.save(
+        //     CustomerEntity,
+        //     manager.create(CustomerEntity, {
+        //       id: account.id,
+        //       address: 'NVL_GV',
+        //     }),
+        //   );
+        // }
 
         if (account.role.name === RoleEnum.KITCHEN) {
           await manager.save(
@@ -80,13 +79,13 @@ export class AccountsSeederService {
               id: account.id,
               noPlate: 'ABC123',
               vehicleType: 'wave',
-              status: StatusEnum.WAITING,
+              status: AccountStatusEnum.ACTIVE,
             }),
           );
         }
       }
       await queryRunner.commitTransaction();
-      console.info('create account success');
+      console.info('++ Create account success');
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();

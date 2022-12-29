@@ -26,8 +26,8 @@ export class JwtStratery extends PassportStrategy(Strategy) {
     const user = await this.accountsServive.findOne({
       relations: {
         role: true,
-        customer: true,
-        // kitchen: true,
+        // customer: true,
+        kitchen: true,
         profile: true,
         shipper: true,
       },

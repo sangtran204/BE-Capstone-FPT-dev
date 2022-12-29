@@ -1,8 +1,8 @@
 import { AutoMap } from '@automapper/classes';
-import { CustomerDTO } from 'src/models/customers/dto/customer.dto';
+// import { CustomerDTO } from 'src/models/customers/dto/customer.dto';
 import { FoodDTO } from 'src/models/foods/dto/food.dto';
 import { PackageItemDTO } from 'src/models/package-item/dto/package-item.dto';
-import { PackageDTO } from 'src/models/packages/dto/packages.dto';
+// import { PackageDTO } from 'src/models/packages/dto/packages.dto';
 import { StationDTO } from 'src/models/stations/dto/stations.dto';
 import { SubscriptionDTO } from 'src/models/subscriptions/dto/subscription.dto';
 import { BaseDTO } from '../../base/base.dto';

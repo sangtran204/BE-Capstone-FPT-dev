@@ -1,11 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { FoodGroupEnum } from 'src/common/enums/food-group.enum';
 import { Repository } from 'typeorm';
 import { BaseService } from '../base/base.service';
 import { FoodGroupService } from '../food-group/food-group.service';
 import { PackageService } from '../packages/packages.service';
-import { TimeFrameService } from '../time-frame/time-frame.service';
 import { CreatePackageItemDTO } from './dto/create-package-item.dto';
 import { UpdatePackageItemDTO } from './dto/update-package-item';
 import { PackageItemEntity } from './entities/package-item.entity';
@@ -17,7 +16,6 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     private readonly packageItemRepository: Repository<PackageItemEntity>,
     private readonly foodGroupService: FoodGroupService,
     private readonly packageService: PackageService,
-    private readonly frameService: TimeFrameService,
   ) {
     super(packageItemRepository);
   }
@@ -31,16 +29,13 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
   async createPackageItem(
     data: CreatePackageItemDTO,
   ): Promise<PackageItemEntity> {
-    const { itemCode, packageID, foodGroupID } = data;
+    const { itemCode, deliveryDate, packageID, foodGroupID } = data;
     const packageCheck = await this.packageService.findOne({
       where: { id: packageID },
     });
     const foodGroupCheck = await this.foodGroupService.findOne({
       where: { id: foodGroupID },
     });
-    // const frameCheck = await this.frameService.findOne({
-    //   where: { id: timeFrameID },
-    // });
     if (!packageCheck) {
       throw new HttpException(
         `${packageID} package:  not found`,
@@ -48,20 +43,13 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
       );
     }
 
-    // if (!frameCheck) {
-    //   throw new HttpException(
-    //     `${timeFrameID} frame:  not found`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
-    // }
-
     if (!foodGroupCheck) {
       throw new HttpException(
         `${foodGroupID} foodGroup: Not found`,
         HttpStatus.NOT_FOUND,
       );
     }
-    if (foodGroupCheck.status == StatusEnum.IN_ACTIVE) {
+    if (foodGroupCheck.status == FoodGroupEnum.IN_ACTIVE) {
       throw new HttpException(
         'Food Group is InActive can not add',
         HttpStatus.BAD_REQUEST,
@@ -69,8 +57,7 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     }
     const newPackageItem = await this.packageItemRepository.save({
       itemCode: itemCode,
-      // timeFrame: frameCheck,
-      deliveryDate: data.deliveryDate,
+      deliveryDate: deliveryDate,
       packages: packageCheck,
       foodGroup: foodGroupCheck,
     });
@@ -129,7 +116,7 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
         HttpStatus.NOT_FOUND,
       );
     }
-    if (foodGroupCheck.status == StatusEnum.IN_ACTIVE) {
+    if (foodGroupCheck.status == FoodGroupEnum.IN_ACTIVE) {
       throw new HttpException(
         'Food Group is InActive can not add',
         HttpStatus.BAD_REQUEST,

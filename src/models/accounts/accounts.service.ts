@@ -34,15 +34,15 @@ export class AccountsService extends BaseService<AccountEntity> {
     );
   }
 
-  async updateConfirmVerifyStatusAccount(id: string): Promise<UpdateResult> {
-    return await this.accountsRepository.update(
-      { id: id },
-      {
-        confirmedVerify: true,
-        status: StatusEnum.ACTIVE,
-      },
-    );
-  }
+  // async updateConfirmVerifyStatusAccount(id: string): Promise<UpdateResult> {
+  //   return await this.accountsRepository.update(
+  //     { id: id },
+  //     {
+  //       confirmedVerify: true,
+  //       status: StatusEnum.ACTIVE,
+  //     },
+  //   );
+  // }
 
   async updateDeviceToken(deviceToken: string, id: string): Promise<string> {
     const result = await this.accountsRepository.update(

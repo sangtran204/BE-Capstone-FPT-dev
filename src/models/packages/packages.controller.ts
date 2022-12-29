@@ -24,7 +24,6 @@ import { PackageDTO } from './dto/packages.dto';
 import { PackageEntity } from './entities/packages.entity';
 import { CreatePackageDTO } from './dto/create-package.dto';
 import { MapInterceptor } from '@automapper/nestjs';
-import { StatusEnum } from 'src/common/enums/status.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { UpdatePackageDTO } from './dto/update-package.dto';
@@ -37,7 +36,6 @@ export class PackageController {
   constructor(private readonly packageService: PackageService) {}
 
   //Get all package
-  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -72,7 +70,6 @@ export class PackageController {
     return listPackages;
   }
 
-  // @Public()
   @Get('find/:id')
   @ApiResponse({
     status: 200,
@@ -84,7 +81,6 @@ export class PackageController {
     const packageRes = await this.packageService.findOne({
       where: { id: id },
       relations: {
-        // timeFrame: true,
         packageCategory: true,
         packageItem: { foodGroup: true },
       },
@@ -95,61 +91,7 @@ export class PackageController {
     return packageRes;
   }
 
-  //Get package
-  // @Public()
-  // @Get('/waiting')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'GET WAITING PACKAGE',
-  //   type: [PackageEntity],
-  // })
-  // // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
-  // async getPackageWaiting(): Promise<PackageEntity[]> {
-  //   const listPackages = await this.packageService.query({
-  //     where: { status: StatusEnum.WAITING },
-  //     relations: {
-  //       timeFrame: true,
-  //       packageCategory: true,
-  //       packageItem: true,
-  //     },
-  //   });
-  //   if (!listPackages || listPackages.length == 0) {
-  //     throw new HttpException(
-  //       "Dont't have resource Waiting",
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-  //   return listPackages;
-  // }
-
-  // @Public()
-  @Get('/active')
-  @ApiResponse({
-    status: 200,
-    description: 'GET ACTIVE PACKAGE',
-    type: [PackageEntity],
-  })
-  // @UseInterceptors(MapInterceptor(PackageEntity, PackageDTO, { isArray: true }))
-  async getPackageActive(): Promise<PackageEntity[]> {
-    const listPackages = await this.packageService.query({
-      where: { status: StatusEnum.ACTIVE },
-      relations: {
-        // timeFrame: true,
-        packageCategory: true,
-        packageItem: true,
-      },
-    });
-    if (!listPackages || listPackages.length == 0) {
-      throw new HttpException(
-        "Dont't have resource Active",
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return listPackages;
-  }
-
   @Get('item/:id')
-  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET Package Item BY ID PACKAGE',
@@ -171,8 +113,7 @@ export class PackageController {
   }
 
   // Create package
-  @Public()
-  // @Roles(RoleEnum.MANAGER)
+  @Roles(RoleEnum.MANAGER)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -190,7 +131,6 @@ export class PackageController {
   }
 
   //Update package
-  // @Public()
   @Roles(RoleEnum.MANAGER)
   @Put('/update/:id')
   @UseInterceptors(FileInterceptor('image'))

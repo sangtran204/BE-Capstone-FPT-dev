@@ -3,8 +3,7 @@ import { StatusEnum } from 'src/common/enums/status.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { FoodCategoryEntity } from 'src/models/food-categories/entities/food-categories.entity';
 import { FoodGroupEntity } from 'src/models/food-group/entities/food-group.entity';
-import { OrderEntity } from 'src/models/orders/entities/order.entity';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'foods' })
 export class FoodEntity extends BaseEntity {
@@ -34,7 +33,4 @@ export class FoodEntity extends BaseEntity {
 
   @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.foods)
   foodGroups: FoodGroupEntity[];
-
-  // @OneToMany(() => OrderEntity, (order) => order.food)
-  // orders: OrderEntity[];
 }
