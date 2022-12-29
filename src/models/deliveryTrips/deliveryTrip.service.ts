@@ -43,10 +43,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         shipper: { account: { profile: true } },
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         order: true,
         station: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }
@@ -58,15 +58,15 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     const { status } = filter;
     return await this.deliveryTripRepository.find({
       where: {
-        kitchen: { id: kitchen.id },
+        // kitchen: { id: kitchen.id },
         status: Like(Boolean(status) ? status : '%%'),
         deliveryDate: filter.deliveryDate,
       },
       relations: {
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         order: true,
         station: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }
@@ -82,10 +82,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         order: true,
         station: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }
@@ -100,10 +100,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         deliveryDate: filter.deliveryDate,
       },
       relations: {
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         order: true,
         station: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }
@@ -117,10 +117,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         // status: DeliveryTripEnum.WAITING || DeliveryTripEnum.DELIVERY,
       },
       relations: {
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         order: true,
         station: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }
@@ -183,9 +183,9 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       relations: {
         shipper: true,
         station: true,
-        kitchen: true,
+        // kitchen: true,
         order: true,
-        time_slot: true,
+        // time_slot: true,
       },
     });
   }

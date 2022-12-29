@@ -29,10 +29,10 @@ import { FoodsService } from '../foods/foods.service';
 import { StationsService } from '../stations/stations.service';
 import { KitchenService } from '../kitchens/kitchens.service';
 import { TimeSlotsService } from '../time-slots/time-slots.service';
-import { FoodByKitchenDTO } from '../foods/dto/foodByKitchen.dto';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { OrderDetailRes } from './dto/order-detail-res';
 import { SubEnum } from 'src/common/enums/sub.enum';
+import { SessionService } from '../sessions/sessions.service';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -60,13 +60,14 @@ export class OrdersService extends BaseService<OrderEntity> {
     @Inject(forwardRef(() => SubscriptionService))
     private readonly subscriptionService: SubscriptionService,
     private readonly packageItemService: PackageItemService,
-    private readonly foodsService: FoodsService,
+    // private readonly foodsService: FoodsService,
     private readonly stationService: StationsService,
     private readonly kitchenService: KitchenService,
     private readonly timeSlotService: TimeSlotsService,
     private readonly dataSource: DataSource,
     private readonly notificationsService: NotificationsService,
-    private readonly firebaseMessageService: FirebaseMessageService, // private readonly firebaseMessageService: FirebaseMessageService, // private readonly tourService: ToursService, // private readonly tourPlanService: TourPlansService, // private readonly notificationsService: NotificationsService,  // private readonly dataSource: DataSource, // private readonly vnpayService: VnpayService, // private readonly banksService: BanksService, // private readonly paymentsService: PaymentsService, // private readonly commissionsService: CommissionsService, // private readonly firebaseMessage: FirebaseMessageService,
+    private readonly firebaseMessageService: FirebaseMessageService,
+    private readonly sessionService: SessionService, // private readonly firebaseMessageService: FirebaseMessageService, // private readonly tourService: ToursService, // private readonly tourPlanService: TourPlansService, // private readonly notificationsService: NotificationsService,  // private readonly dataSource: DataSource, // private readonly vnpayService: VnpayService, // private readonly banksService: BanksService, // private readonly paymentsService: PaymentsService, // private readonly commissionsService: CommissionsService, // private readonly firebaseMessage: FirebaseMessageService,
   ) {
     super(ordersRepository);
   }
@@ -108,104 +109,168 @@ export class OrdersService extends BaseService<OrderEntity> {
   //   }
   // }
 
-  async orderSub(
-    dto: OrderCreationDTO,
-    user: AccountEntity,
-  ): Promise<OrderEntity> {
-    const subFind = await this.subscriptionService.findOne({
-      where: { id: dto.subscriptionID },
-    });
-    if (!Boolean(subFind))
-      throw new HttpException('Sub not Found', HttpStatus.BAD_REQUEST);
-
-    const packageItem = await this.packageItemService.findOne({
+  async createOrders(dto: OrderCreationDTO): Promise<OrderEntity> {
+    const itemFind = await this.packageItemService.findOne({
       where: { id: dto.packageItemID },
     });
-
-    if (!Boolean(packageItem)) {
-      throw new HttpException('PackageItem  not found', HttpStatus.BAD_REQUEST);
-    }
-
-    const foodFind = await this.foodsService.findOne({
-      where: { id: dto.foodID },
-    });
-
-    if (!Boolean(foodFind)) {
-      throw new HttpException('food not found', HttpStatus.BAD_REQUEST);
-    }
-
+    if (!itemFind || itemFind == null)
+      throw new HttpException('Package item not found', HttpStatus.NOT_FOUND);
     const slotFind = await this.timeSlotService.findOne({
       where: { id: dto.timeSlotID },
     });
-
-    if (!Boolean(slotFind)) {
-      throw new HttpException('Slot not found', HttpStatus.BAD_REQUEST);
-    }
-
+    if (!slotFind || slotFind == null)
+      throw new HttpException('Time slot not found', HttpStatus.NOT_FOUND);
     const stationFind = await this.stationService.findOne({
       where: { id: dto.stationID },
+      relations: {
+        kitchen: true,
+      },
     });
+    if (!stationFind || stationFind == null)
+      throw new HttpException('Station not found', HttpStatus.NOT_FOUND);
+    const subFind = await this.subscriptionService.findOne({
+      where: { id: dto.subscriptionID },
+    });
+    if (!subFind || slotFind == null)
+      throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
 
-    if (!Boolean(stationFind)) {
-      throw new HttpException('Station  not found', HttpStatus.BAD_REQUEST);
-    }
     const kitchenFind = await this.kitchenService.findOne({
-      where: { stations: { id: dto.stationID } },
+      where: { id: stationFind.kitchen.id },
     });
-    if (!Boolean(kitchenFind)) {
-      throw new HttpException('Kitchen not found', HttpStatus.BAD_REQUEST);
-    }
-
-    let order: OrderEntity;
-    const callback = async (entityManager: EntityManager): Promise<void> => {
-      try {
-        order = await entityManager.save(
-          entityManager.create(OrderEntity, {
-            // commission: commission[0],
-            deliveryDate: dto.deliveryDate,
-            priceFood: dto.priceFood,
-            nameFood: dto.nameFood,
-            subscription: subFind,
-            packageItem: packageItem,
-            food: foodFind,
-            station: stationFind,
-            timeSlot: slotFind,
-            kitchen: kitchenFind,
-          }),
-        );
-      } catch (error) {
-        console.error(error);
+    if (!kitchenFind || kitchenFind == null)
+      throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+    let sessionFind = await this.sessionService.findOne({
+      where: {
+        kitchen: { id: stationFind.kitchen.id },
+        timeSlot: { id: slotFind.id },
+        workDate: itemFind.deliveryDate,
+      },
+    });
+    // let newSession;
+    if (!sessionFind || sessionFind == null) {
+      sessionFind = await this.sessionService.save({
+        workDate: itemFind.deliveryDate,
+        kitchen: kitchenFind,
+        timeSlot: slotFind,
+      });
+      if (!sessionFind || sessionFind == null)
         throw new HttpException(
-          'cannot order this sub',
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          'Can not create session',
+          HttpStatus.BAD_REQUEST,
         );
-      }
-
-      // if (Boolean(order)) {
-      //   const title = `You was booked by ${user.profile.fullName}`;
-      //   const body = `Food ${foodFind.name}`;
-      //   const data = { ['idOrder']: order.id };
-      //   const saveNotify = this.notificationsService.save({
-      //     account: { id: user.id },
-      //     title,
-      //     body,
-      //     data: JSON.stringify(data),
-      //     type: TypeNotificationEnum.ORDER,
-      //   });
-      //   const sendNotify = this.firebaseMessageService.sendCustomNotification(
-      //     customer.account.deviceToken,
-      //     title,
-      //     body,
-      //     data,
-      //   );
-      //   await saveNotify;
-      //   await sendNotify;
-      // }
-    };
-    await this.transaction(callback, this.dataSource);
-
-    return await this.findById(order.id);
+    }
+    const newOrder = await this.ordersRepository.save({
+      subscription: subFind,
+      packageItem: itemFind,
+      kitchen: kitchenFind,
+      timeSlot: slotFind,
+      station: stationFind,
+      session: sessionFind,
+    });
+    if (!newOrder || newOrder == null)
+      throw new HttpException('Create order fail', HttpStatus.BAD_REQUEST);
+    return newOrder;
   }
+
+  //---------------------------Before remake--------------------------------
+  // async orderSub(
+  //   dto: OrderCreationDTO,
+  //   user: AccountEntity,
+  // ): Promise<OrderEntity> {
+  //   const subFind = await this.subscriptionService.findOne({
+  //     where: { id: dto.subscriptionID },
+  //   });
+  //   if (!Boolean(subFind))
+  //     throw new HttpException('Sub not Found', HttpStatus.BAD_REQUEST);
+
+  //   const packageItem = await this.packageItemService.findOne({
+  //     where: { id: dto.packageItemID },
+  //   });
+
+  //   if (!Boolean(packageItem)) {
+  //     throw new HttpException('PackageItem  not found', HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   const foodFind = await this.foodsService.findOne({
+  //     where: { id: dto.foodID },
+  //   });
+
+  //   if (!Boolean(foodFind)) {
+  //     throw new HttpException('food not found', HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   const slotFind = await this.timeSlotService.findOne({
+  //     where: { id: dto.timeSlotID },
+  //   });
+
+  //   if (!Boolean(slotFind)) {
+  //     throw new HttpException('Slot not found', HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   const stationFind = await this.stationService.findOne({
+  //     where: { id: dto.stationID },
+  //   });
+
+  //   if (!Boolean(stationFind)) {
+  //     throw new HttpException('Station  not found', HttpStatus.BAD_REQUEST);
+  //   }
+  //   const kitchenFind = await this.kitchenService.findOne({
+  //     where: { stations: { id: dto.stationID } },
+  //   });
+  //   if (!Boolean(kitchenFind)) {
+  //     throw new HttpException('Kitchen not found', HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   let order: OrderEntity;
+  //   const callback = async (entityManager: EntityManager): Promise<void> => {
+  //     try {
+  //       order = await entityManager.save(
+  //         entityManager.create(OrderEntity, {
+  //           // commission: commission[0],
+  //           // deliveryDate: dto.deliveryDate,
+  //           // priceFood: dto.priceFood,
+  //           // nameFood: dto.nameFood,
+  //           subscription: subFind,
+  //           packageItem: packageItem,
+  //           // food: foodFind,
+  //           station: stationFind,
+  //           timeSlot: slotFind,
+  //           kitchen: kitchenFind,
+  //         }),
+  //       );
+  //     } catch (error) {
+  //       console.error(error);
+  //       throw new HttpException(
+  //         'cannot order this sub',
+  //         HttpStatus.INTERNAL_SERVER_ERROR,
+  //       );
+  //     }
+
+  //     // if (Boolean(order)) {
+  //     //   const title = `You was booked by ${user.profile.fullName}`;
+  //     //   const body = `Food ${foodFind.name}`;
+  //     //   const data = { ['idOrder']: order.id };
+  //     //   const saveNotify = this.notificationsService.save({
+  //     //     account: { id: user.id },
+  //     //     title,
+  //     //     body,
+  //     //     data: JSON.stringify(data),
+  //     //     type: TypeNotificationEnum.ORDER,
+  //     //   });
+  //     //   const sendNotify = this.firebaseMessageService.sendCustomNotification(
+  //     //     customer.account.deviceToken,
+  //     //     title,
+  //     //     body,
+  //     //     data,
+  //     //   );
+  //     //   await saveNotify;
+  //     //   await sendNotify;
+  //     // }
+  //   };
+  //   await this.transaction(callback, this.dataSource);
+
+  //   return await this.findById(order.id);
+  // }
 
   async deleteSubOrder(orders: OrderEntity[]): Promise<boolean> {
     for (let i = 0; i < orders.length; i++) {
@@ -283,7 +348,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     const listOrder = await this.ordersRepository.find({
       where: {
         kitchen: { id: find.kitchenId },
-        deliveryDate: find.deliveryDate,
+        // deliveryDate: find.deliveryDate,
         station: { id: find.stationId },
         timeSlot: { id: find.time_slotId },
         status: OrderEnum.PROGRESS,
@@ -302,6 +367,8 @@ export class OrdersService extends BaseService<OrderEntity> {
     }
   }
 
+  //---------------------------Before remake---------------------------------------
+
   // async getOrderByKitchen(data: OrderSearchByDate): Promise<OrderEntity[]> {
   //   const list = await this.ordersRepository.find({
   //     relations: {
@@ -316,60 +383,62 @@ export class OrdersService extends BaseService<OrderEntity> {
   //   return list;
   // }
 
-  async getFoodByKitchen(
-    user: AccountEntity,
-    data: OrderSearchByDate,
-  ): Promise<FoodByKitchenDTO[]> {
-    const list = await this.ordersRepository
-      .createQueryBuilder('orders')
-      .select(
-        'foodId, nameFood, time_slots.flag as flag, count(foodId) as quantity, foods.image',
-      )
-      // .from('foods', 'foods')
-      // .leftJoinAndSelect('orders.foods', 'foods')
-      .leftJoin('orders.food', 'foods')
-      .leftJoin('orders.timeSlot', 'time_slots')
-      .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
-      .andWhere('orders.deliveryDate = :deliveryDate', {
-        deliveryDate: data.deliveryDate,
-      })
-      .groupBy('foodId, nameFood, timeSlotId, foods.image')
-      .execute();
-    // const list = await this.ordersRepository.findAndCountBy
-    if (!list || list.length == 0) {
-      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
-    } else {
-      return list;
-    }
-  }
+  // async getFoodByKitchen(
+  //   user: AccountEntity,
+  //   data: OrderSearchByDate,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   const list = await this.ordersRepository
+  //     .createQueryBuilder('orders')
+  //     .select(
+  //       'foodId, nameFood, time_slots.flag as flag, count(foodId) as quantity, foods.image',
+  //     )
+  //     // .from('foods', 'foods')
+  //     // .leftJoinAndSelect('orders.foods', 'foods')
+  //     .leftJoin('orders.food', 'foods')
+  //     .leftJoin('orders.timeSlot', 'time_slots')
+  //     .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
+  //     .andWhere('orders.deliveryDate = :deliveryDate', {
+  //       deliveryDate: data.deliveryDate,
+  //     })
+  //     .groupBy('foodId, nameFood, timeSlotId, foods.image')
+  //     .execute();
+  //   // const list = await this.ordersRepository.findAndCountBy
+  //   if (!list || list.length == 0) {
+  //     throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     return list;
+  //   }
+  // }
 
-  async getPreFoodByWeek(
-    user: AccountEntity,
-    data: PreFoodByWeek,
-  ): Promise<FoodByKitchenDTO[]> {
-    // const dateFilter: Article
-    const list = await this.ordersRepository
-      .createQueryBuilder('orders')
-      .select(
-        'foodId, nameFood, foods.description, count(foodId) as quantity, deliveryDate, foods.image',
-      )
-      .leftJoin('orders.food', 'foods')
-      .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
-      .andWhere('orders.deliveryDate >= :startDate', {
-        startDate: data.startDate,
-      })
-      .andWhere('orders.deliveryDate <= :endDate', {
-        endDate: data.endDate,
-      })
-      .groupBy('foodId, nameFood, foods.description, deliveryDate, foods.image')
-      .orderBy('deliveryDate', 'ASC')
-      .execute();
-    if (!list || list.length == 0) {
-      throw new HttpException('No food found', HttpStatus.NOT_FOUND);
-    } else {
-      return list;
-    }
-  }
+  // async getPreFoodByWeek(
+  //   user: AccountEntity,
+  //   data: PreFoodByWeek,
+  // ): Promise<FoodByKitchenDTO[]> {
+  //   // const dateFilter: Article
+  //   const list = await this.ordersRepository
+  //     .createQueryBuilder('orders')
+  //     .select(
+  //       'foodId, nameFood, foods.description, count(foodId) as quantity, deliveryDate, foods.image',
+  //     )
+  //     .leftJoin('orders.food', 'foods')
+  //     .where('orders.kitchenId = :kitchenId', { kitchenId: user.id })
+  //     .andWhere('orders.deliveryDate >= :startDate', {
+  //       startDate: data.startDate,
+  //     })
+  //     .andWhere('orders.deliveryDate <= :endDate', {
+  //       endDate: data.endDate,
+  //     })
+  //     .groupBy('foodId, nameFood, foods.description, deliveryDate, foods.image')
+  //     .orderBy('deliveryDate', 'ASC')
+  //     .execute();
+  //   if (!list || list.length == 0) {
+  //     throw new HttpException('No food found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     return list;
+  //   }
+  // }
+
+  //-----------------------------------------------------------------------------
 
   async getOrderByStatus(orderFilter: OrderFilterDTO): Promise<OrderEntity[]> {
     const { status } = orderFilter;
@@ -377,7 +446,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
         subscription: { customer: { account: { profile: true } } },
-        food: true,
+        // food: true,
         station: true,
         packageItem: true,
         kitchen: { account: { profile: true } },
@@ -394,11 +463,10 @@ export class OrdersService extends BaseService<OrderEntity> {
     return await this.ordersRepository.find({
       where: {
         status: Like(Boolean(status) ? status : '%%'),
-        deliveryDate: deliveryDate.deliveryDate,
       },
       relations: {
         subscription: { customer: { account: { profile: true } } },
-        food: true,
+        // food: true,
         station: true,
         packageItem: true,
         kitchen: true,
@@ -406,6 +474,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       },
     });
   }
+  //---------------------------------------------------------------------------------------
 
   // async checkIn(id: string, user: AccountEntity): Promise<OrderEntity> {
   //   const order = await this.findById(id);

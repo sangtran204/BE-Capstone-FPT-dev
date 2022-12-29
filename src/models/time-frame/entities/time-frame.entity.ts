@@ -14,8 +14,8 @@ export class TimeFrameEntity extends BaseEntity {
   @AutoMap()
   dateFilter: string;
 
-  @OneToMany(() => PackageEntity, (packages) => packages.timeFrame)
-  packages: PackageEntity[];
+  // @OneToMany(() => PackageEntity, (packages) => packages.timeFrame)
+  // packages: PackageEntity[];
 
   // @OneToMany(() => PackageItemEntity, (packageItem) => packageItem.timeFrame)
   // packageItem: PackageItemEntity[];

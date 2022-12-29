@@ -70,6 +70,7 @@ export class PackageItemService extends BaseService<PackageItemEntity> {
     const newPackageItem = await this.packageItemRepository.save({
       itemCode: itemCode,
       // timeFrame: frameCheck,
+      deliveryDate: data.deliveryDate,
       packages: packageCheck,
       foodGroup: foodGroupCheck,
     });

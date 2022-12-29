@@ -46,9 +46,9 @@ export class PackageEntity extends BaseEntity {
   @AutoMap()
   totalMeal: number;
 
-  @Column()
-  @AutoMap()
-  totalStation: number;
+  // @Column()
+  // @AutoMap()
+  // totalStation: number;
 
   @Column({ default: StatusEnum.WAITING })
   @AutoMap()
@@ -58,9 +58,9 @@ export class PackageEntity extends BaseEntity {
   @OneToMany(() => PackageItemEntity, (packageItem) => packageItem.packages)
   packageItem: PackageItemEntity[];
 
-  @AutoMap(() => TimeFrameEntity)
-  @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
-  timeFrame: TimeFrameEntity;
+  // @AutoMap(() => TimeFrameEntity)
+  // @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
+  // timeFrame: TimeFrameEntity;
 
   @OneToMany(
     () => SubscriptionEntity,

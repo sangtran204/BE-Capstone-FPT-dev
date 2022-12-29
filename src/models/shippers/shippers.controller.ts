@@ -9,9 +9,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RoleEnum } from 'src/common/enums/role.enum';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { ListShipperID } from './dto/addShipper.dto';
 import {
   ShipperFilterDTO,
   ShipperStatusFilter,
@@ -49,6 +52,20 @@ export class ShippersController {
     return listShip;
   }
 
+  @Get('/byKitchen')
+  @Roles(RoleEnum.KITCHEN)
+  @ApiResponse({
+    status: 200,
+    description: 'GET SHIPPER BY KITCHEN',
+    type: [ShipperEntity],
+  })
+  async getShipperByKitchen(
+    @GetUser() user: AccountEntity,
+    @Query() filter: ShipperStatusFilter,
+  ): Promise<ShipperEntity[]> {
+    return await this.shippersService.getShipperByKitchen(user, filter);
+  }
+
   @Get('/byStatus')
   // @Public()
   // @Roles(RoleEnum.ADMIN)
@@ -83,6 +100,16 @@ export class ShippersController {
       );
     }
     return shipper;
+  }
+
+  @Put('/addKitchen')
+  @ApiResponse({
+    status: 200,
+    description: 'ADD SHIPPER TO KITCHEN',
+    type: String,
+  })
+  async addShipperToKitchen(@Body() dto: ListShipperID): Promise<string> {
+    return await this.shippersService.addShipperToKitchen(dto);
   }
 
   @Put('/:id')

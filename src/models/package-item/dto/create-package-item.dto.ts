@@ -18,4 +18,7 @@ export class CreatePackageItemDTO {
   @ApiProperty({ type: String })
   @IsNotEmpty()
   foodGroupID: string;
+
+  @ApiProperty()
+  deliveryDate: Date;
 }

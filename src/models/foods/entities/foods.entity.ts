@@ -35,6 +35,6 @@ export class FoodEntity extends BaseEntity {
   @ManyToMany(() => FoodGroupEntity, (foodGroup) => foodGroup.foods)
   foodGroups: FoodGroupEntity[];
 
-  @OneToMany(() => OrderEntity, (order) => order.food)
-  orders: OrderEntity[];
+  // @OneToMany(() => OrderEntity, (order) => order.food)
+  // orders: OrderEntity[];
 }

@@ -11,6 +11,9 @@ export class PackageItemDTO extends BaseDTO {
   @AutoMap(() => FoodGroupDTO)
   foodGroup: FoodGroupDTO;
 
+  @AutoMap()
+  deliveryDate: Date;
+
   // @AutoMap(() => PackageDTO)
   // packages: PackageDTO;
 

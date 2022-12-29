@@ -20,6 +20,10 @@ export class PackageItemEntity extends BaseEntity {
   @ManyToOne(() => PackageEntity, (packages) => packages.packageItem)
   packages: PackageEntity;
 
+  @Column('date')
+  @AutoMap()
+  deliveryDate: Date;
+
   // @AutoMap(() => TimeFrameEntity)
   // @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packageItem)
   // timeFrame: TimeFrameEntity;
