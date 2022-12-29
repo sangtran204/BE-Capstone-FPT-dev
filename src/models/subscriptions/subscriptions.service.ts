@@ -101,6 +101,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       });
       const customerFind = await this.accountService.findOne({
         where: { id: user.id },
+        relations: { role: true },
       });
 
       if (customerFind.role.name !== RoleEnum.CUSTOMER) {
@@ -128,8 +129,9 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       } else {
         return await this.subscriptionRepository.save({
           totalPrice: dto.totalPrice,
-          startDelivery: dto.startDelivery,
-          customer: customerFind,
+          // startDelivery: dto.startDelivery,
+          subscriptionDelivery: dto.startDelivery,
+          account: customerFind,
           packages: packgeFind,
         });
       }

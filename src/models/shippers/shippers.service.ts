@@ -181,22 +181,18 @@ export class ShippersService extends BaseService<ShipperEntity> {
   }
 
   async getShipperByKitchen(
-    user: AccountEntity,
     filter: ShipperStatusFilter,
   ): Promise<ShipperEntity[]> {
-    // eslint-disable-next-line no-console
-    console.log(user.id);
-
     const { status } = filter;
     const kitchenFind = await this.kitchenService.findOne({
-      where: { id: user.id },
+      where: { id: filter.kitchenId },
     });
     if (kitchenFind == null)
       throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
 
     const listShipper = await this.shipperRepository.find({
       where: {
-        kitchen: { id: user.id },
+        kitchen: { id: filter.kitchenId },
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
