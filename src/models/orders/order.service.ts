@@ -167,7 +167,7 @@ export class OrdersService extends BaseService<OrderEntity> {
             nameFood: dto.nameFood,
             subscription: subFind,
             packageItem: packageItem,
-            food: foodFind,
+            // food: foodFind,
             station: stationFind,
             timeSlot: slotFind,
             kitchen: kitchenFind,
@@ -263,7 +263,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     const order = await this.findOne({
       where: { id: id },
       relations: {
-        subscription: { customer: { account: { profile: true } } },
+        subscription: { account: { profile: true } },
         // food: true,
         station: true,
         packageItem: true,
@@ -291,7 +291,7 @@ export class OrdersService extends BaseService<OrderEntity> {
       relations: {
         kitchen: { account: { profile: true } },
         station: true,
-        subscription: { customer: { account: { profile: true } } },
+        subscription: { account: { profile: true } },
         timeSlot: true,
       },
     });
@@ -376,8 +376,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     return await this.ordersRepository.find({
       where: { status: Like(Boolean(status) ? status : '%%') },
       relations: {
-        subscription: { customer: { account: { profile: true } } },
-        food: true,
+        subscription: { account: { profile: true } },
         station: true,
         packageItem: true,
         kitchen: { account: { profile: true } },
@@ -397,8 +396,7 @@ export class OrdersService extends BaseService<OrderEntity> {
         deliveryDate: deliveryDate.deliveryDate,
       },
       relations: {
-        subscription: { customer: { account: { profile: true } } },
-        food: true,
+        subscription: { account: { profile: true } },
         station: true,
         packageItem: true,
         kitchen: true,

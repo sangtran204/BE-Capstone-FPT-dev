@@ -7,13 +7,12 @@ export class CreatePackageItemDTO {
   @Min(1)
   itemCode: number;
 
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  deliveryDate: Date;
+
   @ApiProperty({ type: String })
   @IsNotEmpty()
   packageID: string;
-
-  // @ApiProperty({ type: String })
-  // @IsNotEmpty()
-  // timeFrameID: string;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()

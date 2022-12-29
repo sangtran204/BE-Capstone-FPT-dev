@@ -1,15 +1,4 @@
-import { MapInterceptor } from '@automapper/nestjs';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
@@ -23,39 +12,38 @@ import { FeedBackService } from './feedback.service';
 export class FeedBackController {
   constructor(private readonly feedbackService: FeedBackService) {}
 
-  @Post()
-  // @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'CREATE FEEDBACK',
-    type: String,
-  })
-  async createFeedback(
-    @Body() feedback: CreateFeedbackDTO,
-    @GetUser() user: AccountEntity,
-  ): Promise<string> {
-    return await this.feedbackService.createFeedBack(feedback, user);
-  }
+  // @Post()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'CREATE FEEDBACK',
+  //   type: String,
+  // })
+  // async createFeedback(
+  //   @Body() feedback: CreateFeedbackDTO,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<string> {
+  //   return await this.feedbackService.createFeedBack(feedback, user);
+  // }
 
-  @Get('/byPackage/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'GET FEEDBACK BY PACKAGE',
-    type: FeedBackEntity,
-  })
-  async getFeedbackByPackage(
-    @Param('id') packageId: string,
-  ): Promise<FeedBackEntity[]> {
-    return await this.feedbackService.getFeedbackByPackage(packageId);
-  }
+  // @Get('/byPackage/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET FEEDBACK BY PACKAGE',
+  //   type: FeedBackEntity,
+  // })
+  // async getFeedbackByPackage(
+  //   @Param('id') packageId: string,
+  // ): Promise<FeedBackEntity[]> {
+  //   return await this.feedbackService.getFeedbackByPackage(packageId);
+  // }
 
-  @Get()
-  @ApiResponse({
-    status: 200,
-    description: 'GET ALL FEEDBACK',
-    type: FeedBackEntity,
-  })
-  async getAllFeedback(): Promise<FeedBackEntity[]> {
-    return await this.feedbackService.getAllFeedback();
-  }
+  // @Get()
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET ALL FEEDBACK',
+  //   type: FeedBackEntity,
+  // })
+  // async getAllFeedback(): Promise<FeedBackEntity[]> {
+  //   return await this.feedbackService.getAllFeedback();
+  // }
 }

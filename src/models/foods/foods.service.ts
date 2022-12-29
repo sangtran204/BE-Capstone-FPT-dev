@@ -3,8 +3,6 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { FoodEntity } from './entities/foods.entity';
-import { InjectMapper } from '@automapper/nestjs';
-import { Mapper } from '@automapper/core';
 import { FoodCategoriesService } from '../food-categories/food-categories.service';
 import { CreateFoodDTO } from './dto/create-food.dto';
 import { UpdateFoodDTO } from './dto/update-food.dto';
@@ -21,7 +19,6 @@ export class FoodsService extends BaseService<FoodEntity> {
   constructor(
     @InjectRepository(FoodEntity)
     private readonly foodsRepository: Repository<FoodEntity>,
-    @InjectMapper() private readonly mapper: Mapper,
     private readonly foodCategoryService: FoodCategoriesService,
   ) {
     super(foodsRepository);
@@ -87,24 +84,6 @@ export class FoodsService extends BaseService<FoodEntity> {
     } else {
       return foods;
     }
-  }
-
-  // async getAllActiveFood(): Promise<FoodEntity[]> {
-  //   return await this.foodsRepository.find({
-  //     where: { status: StatusEnum.ACTIVE },
-  //     relations: {
-  //       foodCategory: true,
-  //     },
-  //   });
-  // }
-
-  async getAllWaitingFood(): Promise<FoodEntity[]> {
-    return await this.foodsRepository.find({
-      where: { status: StatusEnum.WAITING },
-      relations: {
-        foodCategory: true,
-      },
-    });
   }
 
   async getFoodByCategory(idCate: string): Promise<FoodEntity[]> {
@@ -208,50 +187,4 @@ export class FoodsService extends BaseService<FoodEntity> {
       }
     }
   }
-
-  // async getFoodByKitchen(kitchenId: string): Promise<FoodByKitchenDTO[]> {
-  //   const list = await this.foodsRepository
-  //     .createQueryBuilder()
-  //     .select(
-  //       'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-  //     )
-  //     .from('foods', 'foods')
-  //     .leftJoinAndSelect('orders', 'orders', 'foods.id = oders.foodId')
-  //     .leftJoinAndSelect(
-  //       'time_slots',
-  //       'time_slots',
-  //       'orders.timeSlotId = time_slots.id',
-  //     )
-  //     .where('orders.kitchenId =: kitchenId', { kitchenId: kitchenId })
-  //     .groupBy(
-  //       'foods.name, foods.description, time_slots.flag, count(foods.id) as quantity',
-  //     )
-  //     .getMany();
-
-  //   if (!list || list.length == 0) {
-  //     throw new HttpException('No food found', HttpStatus.NOT_FOUND);
-  //   } else {
-  //     return list;
-  //   }
-  // }
-
-  // async getFoodByKitchen(
-  //   kitchenId: string,
-  //   // deliveryDate: string,
-  // ): Promise<FoodByKitchenDTO> {
-  //   const list = await this.foodsRepository
-  //     .createQueryBuilder('foods')
-  //     .select('foods.name, time_slots.flag, count(foods.id)')
-  //     // .from('foods')
-  //     .leftJoinAndSelect('foods.orders', 'orders')
-  //     .leftJoinAndSelect('orders.time_slots', 'time_slots')
-  //     .where('orders.kitchenId = :kitchenId', { kitchenId: kitchenId })
-  //     // .andWhere('orders.deliveryDate = :deliveryDate', {
-  //     //   deliveryDate: deliveryDate,
-  //     // })
-  //     .groupBy('foods.name, time_slots.flag')
-  //     .getMany();
-
-  //   return list;
-  // }
 }

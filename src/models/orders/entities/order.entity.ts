@@ -2,7 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { OrderEnum } from 'src/common/enums/order.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
-import { FoodEntity } from 'src/models/foods/entities/foods.entity';
+// import { FoodEntity } from 'src/models/foods/entities/foods.entity';
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
@@ -40,9 +40,9 @@ export class OrderEntity extends BaseEntity {
   })
   packageItem: PackageItemEntity;
 
-  @AutoMap(() => FoodEntity)
-  @ManyToOne(() => FoodEntity, (food) => food.orders)
-  food: FoodEntity;
+  // @AutoMap(() => FoodEntity)
+  // @ManyToOne(() => FoodEntity, (food) => food.orders)
+  // food: FoodEntity;
 
   @AutoMap(() => TimeSlotEntity)
   @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.orders)

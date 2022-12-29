@@ -41,7 +41,6 @@ export class AccountsController {
       relations: {
         role: true,
         profile: true,
-        customer: true,
         shipper: true,
         kitchen: true,
       },
@@ -59,7 +58,6 @@ export class AccountsController {
       relations: {
         profile: true,
         role: true,
-        customer: true,
         shipper: true,
         kitchen: true,
       },
@@ -71,18 +69,6 @@ export class AccountsController {
   async checkToken(@Query() tokenFilter: CheckToken): Promise<string> {
     return await this.accountsService.checkTokne(tokenFilter.token);
   }
-  // @Get()
-  // @Roles(RoleEnum.ADMIN)
-  // async getAll(
-  //   @Query() accountFilter: AccountFilterDTO,
-  // ): Promise<IPaginate<AccountInfoDTO>> {
-  //   const data = await this.accountsService.getAccounts(accountFilter);
-  //   return paginate<AccountInfoDTO>(
-  //     data,
-  //     accountFilter.currentPage,
-  //     accountFilter.sizePage,
-  //   );
-  // }
 
   @Get()
   @Roles(RoleEnum.ADMIN)

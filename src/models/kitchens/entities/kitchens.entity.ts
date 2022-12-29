@@ -3,7 +3,6 @@ import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { DeliveryTripEntity } from 'src/models/deliveryTrips/entities/deliveryTrip.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
-import { ShipperEntity } from 'src/models/shippers/entities/shipper.entity';
 import { StationEntity } from 'src/models/stations/entities/stations.entity';
 import {
   Column,
@@ -23,11 +22,7 @@ export class KitchenEntity extends BaseEntity {
   @AutoMap()
   address: string;
 
-  @Column()
-  @AutoMap()
-  ability: string;
-
-  // @AutoMap(() => AccountEntity)
+  @AutoMap(() => AccountEntity)
   @OneToOne(() => AccountEntity, (account) => account.kitchen, {
     onDelete: 'CASCADE',
   })

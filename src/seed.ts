@@ -9,7 +9,7 @@ async function bootstrap(): Promise<void> {
     await seeder.insertRoles();
     await seeder.insertAccount();
     await seeder.insertTimeSlot();
-    await seeder.insertTimeFrame();
+    // await seeder.insertTimeFrame();
     await seeder.insertBank();
   } catch (error) {
     console.error(error);

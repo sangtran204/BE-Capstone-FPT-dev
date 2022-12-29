@@ -1,7 +1,5 @@
-export enum AccountStatusEnum {
+export enum PackageEnum {
   ACTIVE = 'active',
   IN_ACTIVE = 'inActive',
-  BAN = 'ban',
-  DELETE = 'delete',
   WAITING = 'waiting',
 }

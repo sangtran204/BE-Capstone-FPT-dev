@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateFoodGroupDTO } from './dto/create-food-group.dto';
 import { FoodGroupDTO } from './dto/food-group.dto';
@@ -29,7 +28,6 @@ export class FoodGroupController {
   constructor(private readonly foodGroupService: FoodGroupService) {}
 
   //List all foodGroup
-  // @Public()
   @Get()
   @ApiResponse({
     status: 200,
@@ -48,7 +46,6 @@ export class FoodGroupController {
     }
   }
 
-  // @Public()
   @Get('/byStatus')
   @ApiResponse({
     status: 200,
@@ -68,7 +65,6 @@ export class FoodGroupController {
     }
   }
 
-  // @Public()
   @Get('find/:id')
   @ApiResponse({
     status: 200,
@@ -86,27 +82,6 @@ export class FoodGroupController {
     }
     return foodGroup;
   }
-
-  //List all foodgroup active
-  // @Public()
-  // @Get('/active')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'LIST ALL FOOD GROUP ACTIVE',
-  //   type: [FoodGroupDTO],
-  // })
-  // // @UseInterceptors(
-  // //   MapInterceptor(FoodGroupEntity, FoodGroupDTO, { isArray: true }),
-  // // )
-  // async listFoodGroupActive(): Promise<FoodGroupEntity[]> {
-  //   const listFoodGroupActive =
-  //     await this.foodGroupService.getFoodGroupActive();
-  //   if (!listFoodGroupActive || listFoodGroupActive.length == 0) {
-  //     throw new HttpException('No food group active', HttpStatus.NOT_FOUND);
-  //   } else {
-  //     return listFoodGroupActive;
-  //   }
-  // }
 
   //Create foodGroup
   @Roles(RoleEnum.MANAGER)

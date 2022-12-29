@@ -69,7 +69,7 @@ export class KitchenService extends BaseService<KitchenEntity> {
       await entityManager.update(
         KitchenEntity,
         { id: id },
-        { address: update.address, ability: update.ability },
+        { address: update.address },
       );
       await entityManager.update(
         ProfileEntity,

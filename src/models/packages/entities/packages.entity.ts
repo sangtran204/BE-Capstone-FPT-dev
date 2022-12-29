@@ -1,11 +1,9 @@
 import { AutoMap } from '@automapper/classes';
-import { StatusEnum } from 'src/common/enums/status.enum';
+import { PackageEnum } from 'src/common/enums/package.enum';
 import { BaseEntity } from 'src/models/base/base.entity';
-import { FeedBackEntity } from 'src/models/feedback/entities/feedback.entity';
 import { PackageCategoryEntity } from 'src/models/package-categories/entities/package-categories.entity';
 import { PackageItemEntity } from 'src/models/package-item/entities/package-item.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
-import { TimeFrameEntity } from 'src/models/time-frame/entities/time-frame.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'packages' })
@@ -40,17 +38,9 @@ export class PackageEntity extends BaseEntity {
 
   @Column()
   @AutoMap()
-  totalFood: number;
-
-  @Column()
-  @AutoMap()
   totalMeal: number;
 
-  @Column()
-  @AutoMap()
-  totalStation: number;
-
-  @Column({ default: StatusEnum.WAITING })
+  @Column({ default: PackageEnum.WAITING })
   @AutoMap()
   status: string;
 
@@ -58,9 +48,9 @@ export class PackageEntity extends BaseEntity {
   @OneToMany(() => PackageItemEntity, (packageItem) => packageItem.packages)
   packageItem: PackageItemEntity[];
 
-  @AutoMap(() => TimeFrameEntity)
-  @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
-  timeFrame: TimeFrameEntity;
+  // @AutoMap(() => TimeFrameEntity)
+  // @ManyToOne(() => TimeFrameEntity, (timeFrame) => timeFrame.packages)
+  // timeFrame: TimeFrameEntity;
 
   @OneToMany(
     () => SubscriptionEntity,
@@ -74,8 +64,4 @@ export class PackageEntity extends BaseEntity {
     (packageCategory) => packageCategory.packages,
   )
   packageCategory: PackageCategoryEntity;
-
-  @AutoMap(() => [FeedBackEntity])
-  @OneToMany(() => FeedBackEntity, (feedback) => feedback.packages)
-  feedback: FeedBackEntity[];
 }

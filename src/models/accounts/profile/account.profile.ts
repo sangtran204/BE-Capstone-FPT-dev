@@ -19,15 +19,10 @@ export class AccountProfile extends AutomapperProfile {
 
   override get profile(): MappingProfile {
     return (mapper) => {
-      // createMap(mapper, AccountEntity, AccountInfoDTO);
       createMap(
         mapper,
         AccountEntity,
         AccountInfoDTO,
-        forMember(
-          (destination) => destination.customer,
-          mapFrom((s) => s.customer),
-        ),
         forMember(
           (destination) => destination.kitchen,
           mapFrom((s) => s.kitchen),

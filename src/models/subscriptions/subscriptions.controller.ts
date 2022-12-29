@@ -70,9 +70,9 @@ export class SubscriptionController {
     description: 'CUSTOMER GET SUBSCRIPTION BY STATUS',
     type: [SubscriptionDTO],
   })
-  // @UseInterceptors(
-  //   MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
-  // )
+  @UseInterceptors(
+    MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
+  )
   async getSubscriptionByCutomer(
     @Query() subFilter: SubscriptionFilter,
     @GetUser() user: AccountEntity,
@@ -152,19 +152,19 @@ export class SubscriptionController {
     return await this.subscriptionService.doneSub(id, user);
   }
 
-  @Put('/cancel/:id')
-  @Roles(RoleEnum.CUSTOMER)
-  @ApiResponse({
-    status: 200,
-    description: 'CANCEL SUB',
-    type: String,
-  })
-  async cancelSubscription(
-    @Param('id') id: string,
-    @GetUser() user: AccountEntity,
-  ): Promise<string> {
-    return await this.subscriptionService.cancelSubscription(id, user);
-  }
+  // @Put('/cancel/:id')
+  // @Roles(RoleEnum.CUSTOMER)
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'CANCEL SUB',
+  //   type: String,
+  // })
+  // async cancelSubscription(
+  //   @Param('id') id: string,
+  //   @GetUser() user: AccountEntity,
+  // ): Promise<string> {
+  //   return await this.subscriptionService.cancelSubscription(id, user);
+  // }
 
   @Get('/:id/payment-url')
   async paymentUrl(

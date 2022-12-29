@@ -6,8 +6,8 @@ import { FoodGroupEntity } from './entities/food-group.entity';
 import { CreateFoodGroupDTO } from './dto/create-food-group.dto';
 import { FoodsService } from '../foods/foods.service';
 import { UpdateFoodGroupDTO } from './dto/update-food-group.dto';
-import { StatusEnum } from 'src/common/enums/status.enum';
 import { FoodGroupFilterDTO } from './dto/foodGroup-filter.dto';
+import { FoodGroupEnum } from 'src/common/enums/food-group.enum';
 
 @Injectable()
 export class FoodGroupService extends BaseService<FoodGroupEntity> {
@@ -33,13 +33,6 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     });
   }
 
-  // async getFoodGroupActive(): Promise<FoodGroupEntity[]> {
-  //   return await this.query({
-  //     where: { status: StatusEnum.ACTIVE },
-  //     relations: { foods: true },
-  //   });
-  // }
-
   async createFoodGroup(data: CreateFoodGroupDTO): Promise<FoodGroupEntity> {
     const { foodIds, name, description } = data;
     const foods = await this.foodsService.query({
@@ -49,21 +42,13 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     if (!foods || foods.length === 0) {
       throw new HttpException('Not found food in system', HttpStatus.NOT_FOUND);
     }
-    // if (foods.length > totalFood) {
-    //   throw new HttpException(
-    //     'Foods must be less than or equal to TotalFood',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
     const newFoodGroup = await this.foodGroupRepository.save({
       name: name,
       description: description,
-      // totalFood: totalFood,
       foods,
     });
-
     if (!newFoodGroup)
-      throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Error when create FG', HttpStatus.BAD_REQUEST);
 
     return await this.findOne({
       where: { id: newFoodGroup.id },
@@ -92,17 +77,10 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
             HttpStatus.NOT_FOUND,
           );
         }
-        // if (foods.length > totalFood) {
-        //   throw new HttpException(
-        //     'Foods must be less than or equal to TotalFood',
-        //     HttpStatus.BAD_REQUEST,
-        //   );
-        // }
         await this.save({
           id: id,
           name: name,
           description: description,
-          // totalFood: totalFood,
           foods,
         });
         return 'Update food group successfull';
@@ -122,7 +100,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
       await this.foodGroupRepository.update(
         { id: id },
         {
-          status: StatusEnum.ACTIVE,
+          status: FoodGroupEnum.ACTIVE,
         },
       );
       return 'Food group active';
@@ -138,7 +116,7 @@ export class FoodGroupService extends BaseService<FoodGroupEntity> {
     } else {
       await this.foodGroupRepository.update(
         { id: id },
-        { status: StatusEnum.IN_ACTIVE },
+        { status: FoodGroupEnum.IN_ACTIVE },
       );
       return 'Food group inactive';
     }

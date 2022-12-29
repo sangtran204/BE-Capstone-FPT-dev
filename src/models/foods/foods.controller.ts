@@ -40,7 +40,6 @@ export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
 
   @Get()
-  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET ALL FOOD',
@@ -106,27 +105,7 @@ export class FoodsController {
     return listFood;
   }
 
-  // @Get('/active')
-  // // @Public()
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'GET ALL ACTIVE FOOD',
-  //   type: [FoodDTO],
-  // })
-  // // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
-  // async findAllActiveFood(): Promise<FoodEntity[]> {
-  //   const listFood = await this.foodsService.getAllActiveFood();
-  //   if (!listFood || listFood.length == 0) {
-  //     throw new HttpException(
-  //       "Dont't have resource active food",
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-  //   return listFood;
-  // }
-
   @Get('/:id')
-  // @Public()
   @ApiResponse({
     status: 200,
     description: 'GET FOOD BY ID',
@@ -204,18 +183,4 @@ export class FoodsController {
   async updateStatusFood(@Param('id') id: string): Promise<string> {
     return await this.foodsService.updateStatusFood(id);
   }
-
-  //Get food by kitchen
-  // @Get('/food-prepare')
-  // @Public()
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Get food by kitchen',
-  //   type: FoodByKitchenDTO,
-  // })
-  // async getFoodByKitchen(
-  //   @Param('kitchenId') kitchenId: string,
-  // ): Promise<FoodByKitchenDTO[]> {
-  //   return this.foodsService.getFoodByKitchen(kitchenId);
-  // }
 }

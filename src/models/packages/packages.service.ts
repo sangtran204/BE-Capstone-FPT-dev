@@ -3,38 +3,29 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '../base/base.service';
 import { PackageEntity } from './entities/packages.entity';
-import { StatusEnum } from 'src/common/enums/status.enum';
 import { CreatePackageDTO } from './dto/create-package.dto';
-import { TimeFrameService } from '../time-frame/time-frame.service';
 import { UpdatePackageDTO } from './dto/update-package.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { PackageCategoriesService } from '../package-categories/package-categories.service';
 import { Mapper } from '@automapper/core';
 import { PackageFilterDTO } from './dto/package-filter.dto';
+import { PackageEnum } from 'src/common/enums/package.enum';
 
 @Injectable()
 export class PackageService extends BaseService<PackageEntity> {
   constructor(
     @InjectRepository(PackageEntity)
     private readonly packagesRepository: Repository<PackageEntity>,
-    private readonly frameService: TimeFrameService,
+    // private readonly frameService: TimeFrameService,
     @InjectMapper() private readonly mapper: Mapper,
     private readonly categoryService: PackageCategoriesService,
   ) {
     super(packagesRepository);
   }
 
-  // async getFoodOnPackage(): Promise<FoodDTO[]> {
-  //   const list = await this.foodsRepository
-  //     .createQueryBuilder('foods')
-  //     .select('foods.id, foods.name, foods.image')
-  //     .leftJoin()
-  // }
-
   async listAllPackage(): Promise<PackageEntity[]> {
     return await this.packagesRepository.find({
       relations: {
-        timeFrame: true,
         packageCategory: true,
         packageItem: true,
       },
@@ -48,7 +39,6 @@ export class PackageService extends BaseService<PackageEntity> {
     return await this.packagesRepository.find({
       where: { status: Like(Boolean(statusPackage) ? statusPackage : '%%') },
       relations: {
-        timeFrame: true,
         packageCategory: true,
         packageItem: true,
       },
@@ -59,9 +49,6 @@ export class PackageService extends BaseService<PackageEntity> {
     data: CreatePackageDTO,
     image: Express.Multer.File,
   ): Promise<PackageEntity> {
-    const frame = await this.frameService.findOne({
-      where: { id: data.timeFrameID },
-    });
     const category = await this.categoryService.findOne({
       where: { id: data.categoryID },
     });
@@ -70,12 +57,6 @@ export class PackageService extends BaseService<PackageEntity> {
         'start Sale must less than end Sale',
         HttpStatus.BAD_REQUEST,
       );
-    if (!frame) {
-      throw new HttpException(
-        `Frame ID not found : ${data.timeFrameID}`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
     if (!category) {
       throw new HttpException(
         `Category ID not found: ${data.categoryID}`,
@@ -91,10 +72,7 @@ export class PackageService extends BaseService<PackageEntity> {
       price: data.price,
       image: imageRes,
       totalDate: data.totalDate,
-      totalFood: data.totalFood,
       totalMeal: data.totalMeal,
-      totalStation: data.totalStation,
-      timeFrame: frame,
       packageCategory: category,
     });
   }
@@ -110,9 +88,9 @@ export class PackageService extends BaseService<PackageEntity> {
     if (!packageId) {
       throw new HttpException(`${id} not found`, HttpStatus.NOT_FOUND);
     } else {
-      const frame = await this.frameService.findOne({
-        where: { id: data.timeFrameID },
-      });
+      // const frame = await this.frameService.findOne({
+      //   where: { id: data.timeFrameID },
+      // });
       const category = await this.categoryService.findOne({
         where: { id: data.categoryID },
       });
@@ -121,12 +99,13 @@ export class PackageService extends BaseService<PackageEntity> {
           'start Sale must less than end Sale',
           HttpStatus.BAD_REQUEST,
         );
-      if (!frame) {
-        throw new HttpException(
-          `Frame ID not found : ${data.timeFrameID}`,
-          HttpStatus.NOT_FOUND,
-        );
-      } else if (!category) {
+      // if (!frame) {
+      //   throw new HttpException(
+      //     `Frame ID not found : ${data.timeFrameID}`,
+      //     HttpStatus.NOT_FOUND,
+      //   );
+      // } else
+      if (!category) {
         throw new HttpException(
           `Category ID not found: ${data.categoryID}`,
           HttpStatus.NOT_FOUND,
@@ -142,10 +121,7 @@ export class PackageService extends BaseService<PackageEntity> {
           price: data.price,
           image: imageRes,
           totalDate: data.totalDate,
-          totalFood: data.totalFood,
           totalMeal: data.totalMeal,
-          totalStation: data.totalStation,
-          timeFrame: frame,
           packageCategory: category,
         });
         return 'Update Package Successful';
@@ -163,27 +139,27 @@ export class PackageService extends BaseService<PackageEntity> {
         HttpStatus.NOT_FOUND,
       );
     } else {
-      if (packages.status == StatusEnum.WAITING) {
+      if (packages.status == PackageEnum.WAITING) {
         await this.packagesRepository.update(
           { id: id },
           {
-            status: StatusEnum.ACTIVE,
+            status: PackageEnum.ACTIVE,
           },
         );
         return 'Package is active';
-      } else if (packages.status == StatusEnum.ACTIVE) {
+      } else if (packages.status == PackageEnum.ACTIVE) {
         await this.packagesRepository.update(
           { id: id },
           {
-            status: StatusEnum.IN_ACTIVE,
+            status: PackageEnum.IN_ACTIVE,
           },
         );
         return 'Package is inActive';
-      } else if (packages.status == StatusEnum.IN_ACTIVE) {
+      } else if (packages.status == PackageEnum.IN_ACTIVE) {
         await this.packagesRepository.update(
           { id: id },
           {
-            status: StatusEnum.ACTIVE,
+            status: PackageEnum.ACTIVE,
           },
         );
         return 'Package is active';
