@@ -27,7 +27,7 @@ export const getData = (): {
     email: 'tienvmt02@gmail.com',
   },
   {
-    phone: '0363946361',
+    phone: '0363964361',
     password: pass,
     role: RoleEnum.MANAGER,
     status: StatusEnum.ACTIVE,

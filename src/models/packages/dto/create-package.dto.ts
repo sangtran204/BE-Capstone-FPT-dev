@@ -34,13 +34,13 @@ export class CreatePackageDTO {
   @IsNotEmpty()
   totalFood: number;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  totalStation: number;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // totalStation: number;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  timeFrameID: string;
+  // @ApiProperty({ type: String })
+  // @IsNotEmpty()
+  // timeFrameID: string;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()

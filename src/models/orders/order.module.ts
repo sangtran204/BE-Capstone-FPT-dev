@@ -12,6 +12,7 @@ import { PackageItemModule } from '../package-item/package-item.module';
 import { StationsModule } from '../stations/stations.module';
 import { KitchenModule } from '../kitchens/kitchens.module';
 import { TimeSlotsModule } from '../time-slots/time-slots.module';
+import { SessionModule } from '../sessions/sessions.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderEntity]),
@@ -24,6 +25,7 @@ import { TimeSlotsModule } from '../time-slots/time-slots.module';
 
     FirebaseProviderModule,
     NotificationsModule,
+    SessionModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrderProfile],

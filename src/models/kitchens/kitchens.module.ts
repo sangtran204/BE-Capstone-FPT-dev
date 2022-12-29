@@ -6,14 +6,11 @@ import { KitchenEntity } from './entities/kitchens.entity';
 import { KitchenProfile } from './profile/kitchens.profile';
 import { ProfileModule } from '../profiles/profile.module';
 import { AccountsModule } from '../accounts/accounts.module';
-// import { ShippersModule } from '../shippers/shippers.module';
-// import { forwardRef } from '@nestjs/common';
 @Module({
   imports: [
     TypeOrmModule.forFeature([KitchenEntity]),
     ProfileModule,
     AccountsModule,
-    // ShippersModule,
   ],
   controllers: [KitchenController],
   providers: [KitchenService, KitchenProfile],

@@ -10,8 +10,6 @@ import { AccountEntity } from '../accounts/entities/account.entity';
 import { StatusEnum } from 'src/common/enums/status.enum';
 import { AccountsService } from '../accounts/accounts.service';
 import { KitchenFilterDTO } from './dto/kitchenFilter.dto';
-import { ShipperEntity } from '../shippers/entities/shipper.entity';
-import { ShipperStatusEnum } from 'src/common/enums/shipperStatus.enum';
 
 @Injectable()
 export class KitchenService extends BaseService<KitchenEntity> {

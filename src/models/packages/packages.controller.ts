@@ -84,7 +84,7 @@ export class PackageController {
     const packageRes = await this.packageService.findOne({
       where: { id: id },
       relations: {
-        timeFrame: true,
+        // timeFrame: true,
         packageCategory: true,
         packageItem: { foodGroup: true },
       },
@@ -134,7 +134,7 @@ export class PackageController {
     const listPackages = await this.packageService.query({
       where: { status: StatusEnum.ACTIVE },
       relations: {
-        timeFrame: true,
+        // timeFrame: true,
         packageCategory: true,
         packageItem: true,
       },
