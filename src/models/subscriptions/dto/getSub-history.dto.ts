@@ -9,7 +9,7 @@ export class SubHistoryDTO {
   totalPrice: number;
 
   @ApiProperty()
-  startDelivery: Date;
+  subscriptionDate: Date;
 
   @ApiProperty()
   @IsEmpty()

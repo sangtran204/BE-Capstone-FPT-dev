@@ -6,7 +6,7 @@ export class CreateSubscriptionDTO {
   totalPrice: number;
 
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
-  startDelivery: Date;
+  subscriptionDate: Date;
 
   @ApiProperty()
   @IsUUID()

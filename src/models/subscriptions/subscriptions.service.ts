@@ -128,7 +128,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       } else {
         return await this.subscriptionRepository.save({
           totalPrice: dto.totalPrice,
-          startDelivery: dto.startDelivery,
+          startDelivery: dto.subscriptionDate,
           customer: customerFind,
           packages: packgeFind,
         });
