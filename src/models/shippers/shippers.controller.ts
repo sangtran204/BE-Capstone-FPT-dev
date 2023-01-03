@@ -53,17 +53,16 @@ export class ShippersController {
   }
 
   @Get('/byKitchen')
-  @Roles(RoleEnum.KITCHEN)
+  // @Roles(RoleEnum.KITCHEN)
   @ApiResponse({
     status: 200,
     description: 'GET SHIPPER BY KITCHEN',
     type: [ShipperEntity],
   })
   async getShipperByKitchen(
-    @GetUser() user: AccountEntity,
     @Query() filter: ShipperStatusFilter,
   ): Promise<ShipperEntity[]> {
-    return await this.shippersService.getShipperByKitchen(user, filter);
+    return await this.shippersService.getShipperByKitchen(filter);
   }
 
   @Get('/byStatus')
@@ -80,6 +79,17 @@ export class ShippersController {
     return await this.shippersService.getShipperByStatus(filter);
   }
 
+  @Get('/free_shipper')
+  // @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET SHIPPER BY ID',
+    type: ShipperEntity,
+  })
+  async getFreeShipper(): Promise<ShipperEntity[]> {
+    return await this.shippersService.getFreeShipper();
+  }
+
   @Get('/:id')
   // @Public()
   @ApiResponse({
@@ -91,7 +101,7 @@ export class ShippersController {
   async findShipperByID(@Param('id') id: string): Promise<ShipperEntity> {
     const shipper = await this.shippersService.findOne({
       where: { id: id },
-      relations: { account: { profile: true } },
+      relations: { account: { profile: true }, kitchen: true },
     });
     if (!shipper) {
       throw new HttpException(

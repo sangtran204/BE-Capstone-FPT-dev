@@ -6,7 +6,7 @@ export class SessionFilterDTO {
   kitchenId: string;
 
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
-  deliveryDate: Date;
+  workDate: Date;
 
   @ApiProperty({
     enum: SessionEnum,
@@ -15,4 +15,17 @@ export class SessionFilterDTO {
     description: 'Session status',
   })
   status: SessionEnum;
+}
+
+export class SessionByDate {
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  workDate: Date;
+}
+
+export class KitchenFilterSession {
+  @ApiProperty()
+  timeSlotId: string;
+
+  @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
+  workDate: Date;
 }

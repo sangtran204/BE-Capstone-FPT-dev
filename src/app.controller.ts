@@ -28,7 +28,13 @@ export class TestController {
     return url;
   }
 
-  @Post()
+  @Get('/returnVnpay')
+  @Public()
+  vnpayReturn(@Query() vnpayDto: VnpayDto): { message: string; code: string } {
+    return this.vnpay.returnUrl(vnpayDto);
+  }
+
+  @Post('/testNotify')
   async testNotify(@GetUser() user: AccountEntity): Promise<string> {
     if (user.deviceToken === null) {
       return 'sorry you can not device token';
@@ -43,12 +49,6 @@ export class TestController {
       },
     });
     return 'send notification success';
-  }
-
-  @Get('/return')
-  @Public()
-  vnpayReturn(@Query() vnpayDto: VnpayDto): { message: string; code: string } {
-    return this.vnpay.returnUrl(vnpayDto);
   }
 
   // @Get('/abc')

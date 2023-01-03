@@ -21,7 +21,6 @@ import { FirebaseProviderModule } from '../../providers/firebase/provider.module
     // FeedBackModule,
     PackagesModule,
     VnpayProviderModule,
-    // NotificationsModule,
     PaymentsModule,
     BanksModule,
     forwardRef(() => OrdersModule),

@@ -48,12 +48,38 @@ export class ShippersService extends BaseService<ShipperEntity> {
       where: {
         account: { status: Like(Boolean(statusAcc) ? statusAcc : '%%') },
       },
-      relations: { account: { profile: true }, kitchen: true },
+      relations: {
+        account: { profile: true },
+        kitchen: { account: { profile: true } },
+      },
     });
     if (!list || list.length == 0) {
       throw new HttpException('No shipper found', HttpStatus.NOT_FOUND);
     }
     return list;
+  }
+
+  async getFreeShipper(): Promise<ShipperEntity[]> {
+    const listFree = [];
+    const listShipper = await this.shipperRepository.find({
+      relations: {
+        account: { profile: true },
+        kitchen: true,
+      },
+      where: {
+        status: ShipperStatusEnum.ACTIVE,
+        account: { status: AccountStatusEnum.ACTIVE },
+      },
+    });
+    if (!listShipper || listShipper.length == 0)
+      throw new HttpException('No shipper free', HttpStatus.NOT_FOUND);
+
+    for (const item of listShipper) {
+      if (item.kitchen == null) {
+        listFree.push(item);
+      }
+    }
+    return listFree;
   }
 
   async updateShipper(
@@ -181,22 +207,18 @@ export class ShippersService extends BaseService<ShipperEntity> {
   }
 
   async getShipperByKitchen(
-    user: AccountEntity,
     filter: ShipperStatusFilter,
   ): Promise<ShipperEntity[]> {
-    // eslint-disable-next-line no-console
-    console.log(user.id);
-
     const { status } = filter;
     const kitchenFind = await this.kitchenService.findOne({
-      where: { id: user.id },
+      where: { id: filter.kitchenId },
     });
     if (kitchenFind == null)
       throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
 
     const listShipper = await this.shipperRepository.find({
       where: {
-        kitchen: { id: user.id },
+        kitchen: { id: filter.kitchenId },
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
