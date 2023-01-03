@@ -8,6 +8,7 @@ import { OrderEntity } from 'src/models/orders/entities/order.entity';
 // import { TimeSlotEntity } from 'src/models/time-slots/entities/time-slots.entity';
 import { SessionEntity } from 'src/models/sessions/entities/sessions.entity';
 import { BatchEntity } from 'src/models/batchs/entities/batch.entity';
+import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
 
 @Entity({ name: 'delivery_trips' })
 export class DeliveryTripEntity extends BaseEntity {
@@ -23,24 +24,24 @@ export class DeliveryTripEntity extends BaseEntity {
   @AutoMap()
   deliveryDate: Date;
 
-  @Column()
+  @Column({ default: DeliveryTripEnum.WAITING })
   @AutoMap()
   status: string;
 
-  @AutoMap(() => StationEntity)
-  @ManyToOne(() => StationEntity, (station) => station.deliveryTrips)
-  station: StationEntity;
+  // @AutoMap(() => StationEntity)
+  // @ManyToOne(() => StationEntity, (stations) => stations.deliveryTrip)
+  // station: StationEntity[];
 
   @AutoMap(() => ShipperEntity)
   @ManyToOne(() => ShipperEntity, (shipper) => shipper.deliveryTrips)
   shipper: ShipperEntity;
 
-  @OneToMany(() => OrderEntity, (order) => order.deliveryTrips)
-  order: OrderEntity[];
+  // @OneToMany(() => OrderEntity, (order) => order.deliveryTrips)
+  // order: OrderEntity[];
 
   @ManyToOne(() => SessionEntity, (session) => session.deliveryTrips)
   session: SessionEntity;
 
   @OneToMany(() => BatchEntity, (batchs) => batchs.deliveryTrip)
-  batchs: BaseEntity[];
+  batchs: BatchEntity[];
 }

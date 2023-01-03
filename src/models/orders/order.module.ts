@@ -13,6 +13,9 @@ import { StationsModule } from '../stations/stations.module';
 import { KitchenModule } from '../kitchens/kitchens.module';
 import { TimeSlotsModule } from '../time-slots/time-slots.module';
 import { SessionModule } from '../sessions/sessions.module';
+import { BatchModule } from '../batchs/batch.module';
+import { DeliveryTripModule } from '../deliveryTrips/deliveryTrip.module';
+import { forwardRef } from '@nestjs/common/utils';
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderEntity]),
@@ -26,6 +29,8 @@ import { SessionModule } from '../sessions/sessions.module';
     FirebaseProviderModule,
     NotificationsModule,
     SessionModule,
+    BatchModule,
+    forwardRef(() => DeliveryTripModule),
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrderProfile],

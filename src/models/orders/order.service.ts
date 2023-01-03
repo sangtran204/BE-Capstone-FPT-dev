@@ -33,6 +33,9 @@ import { OrderEnum } from 'src/common/enums/order.enum';
 import { OrderDetailRes } from './dto/order-detail-res';
 import { SubEnum } from 'src/common/enums/sub.enum';
 import { SessionService } from '../sessions/sessions.service';
+import { BatchService } from '../batchs/batch.service';
+import { SettingConfig } from 'src/common/types/setting_config';
+import { DeliveryTripService } from '../deliveryTrips/deliveryTrip.service';
 
 // import { OrderTourCreationDto } from './dto/order-tour-creation.dto';
 // import { TourGuidesService } from 'models/tour-guides/tour-guides.service';
@@ -67,6 +70,9 @@ export class OrdersService extends BaseService<OrderEntity> {
     private readonly dataSource: DataSource,
     private readonly notificationsService: NotificationsService,
     private readonly firebaseMessageService: FirebaseMessageService,
+    private readonly batchService: BatchService,
+    @Inject(forwardRef(() => DeliveryTripService))
+    private readonly tripService: DeliveryTripService,
     private readonly sessionService: SessionService, // private readonly firebaseMessageService: FirebaseMessageService, // private readonly tourService: ToursService, // private readonly tourPlanService: TourPlansService, // private readonly notificationsService: NotificationsService,  // private readonly dataSource: DataSource, // private readonly vnpayService: VnpayService, // private readonly banksService: BanksService, // private readonly paymentsService: PaymentsService, // private readonly commissionsService: CommissionsService, // private readonly firebaseMessage: FirebaseMessageService,
   ) {
     super(ordersRepository);
@@ -159,13 +165,32 @@ export class OrdersService extends BaseService<OrderEntity> {
           HttpStatus.BAD_REQUEST,
         );
     }
+    let batchFind = await this.batchService.findOne({
+      where: {
+        session: { id: sessionFind.id },
+        station: { id: stationFind.id },
+      },
+      relations: { orders: true },
+    });
+    if (
+      !batchFind ||
+      batchFind == null ||
+      batchFind.orders.length >= SettingConfig.MAX_ORDER
+    ) {
+      batchFind = await this.batchService.save({
+        session: sessionFind,
+        station: stationFind,
+      });
+      if (!batchFind || batchFind == null)
+        throw new HttpException('Can not create batch', HttpStatus.BAD_REQUEST);
+    }
     const newOrder = await this.ordersRepository.save({
       subscription: subFind,
       packageItem: itemFind,
       kitchen: kitchenFind,
       timeSlot: slotFind,
       station: stationFind,
-      session: sessionFind,
+      batch: batchFind,
     });
     if (!newOrder || newOrder == null)
       throw new HttpException('Create order fail', HttpStatus.BAD_REQUEST);
