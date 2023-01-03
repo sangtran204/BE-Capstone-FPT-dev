@@ -65,7 +65,7 @@ export class SessionService extends BaseService<SessionEntity> {
       throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
     const listSession = await this.sessionRepository.find({
       where: { kitchen: { id: kitchenFind.id }, workDate: filter.workDate },
-      relations: { timeSlot: true },
+      relations: { timeSlot: true, batchs: { orders: true } },
       order: {
         timeSlot: {
           startTime: 'ASC',
@@ -80,7 +80,13 @@ export class SessionService extends BaseService<SessionEntity> {
   async getSessionDetail(id: string): Promise<SessionEntity> {
     const sessionDetail = await this.sessionRepository.findOne({
       where: { id: id },
-      relations: { orders: true, timeSlot: true },
+      relations: {
+        timeSlot: true,
+        batchs: {
+          station: true,
+          orders: { packageItem: { foodGroup: { foods: true } } },
+        },
+      },
     });
     if (!sessionDetail || sessionDetail == null)
       throw new HttpException('No session found', HttpStatus.NOT_FOUND);
