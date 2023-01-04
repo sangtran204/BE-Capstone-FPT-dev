@@ -21,13 +21,14 @@ import {
   TripFilterDate,
 } from './dto/deliveryTrip-filter.dto';
 import { NotificationsService } from '../notifications/notifications.service';
-import { CreateTripDTO } from './dto/createDeliveryTrip.dto';
+import { AssignShipperDTO, CreateTripDTO } from './dto/createDeliveryTrip.dto';
 import { SessionService } from '../sessions/sessions.service';
 import { BatchEntity } from '../batchs/entities/batch.entity';
 import { SettingConfig } from 'src/common/types/setting_config';
 import { BatchService } from '../batchs/batch.service';
 import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
+import axios from 'axios';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -136,162 +137,185 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
   }
 
+  async listTripBySession(sessionId: string): Promise<DeliveryTripEntity[]> {
+    return await this.deliveryTripRepository.find({
+      where: { session: { id: sessionId } },
+      relations: { batchs: { station: true } },
+    });
+  }
+
   async createTrip(dto: CreateTripDTO): Promise<DeliveryTripEntity[]> {
     const sessionFind = await this.sessionService.findOne({
       where: { id: dto.sessionId },
-      relations: { batchs: true },
+      relations: { batchs: { station: true } },
     });
-    if (!sessionFind || sessionFind == null)
-      throw new HttpException('session not found', HttpStatus.NOT_FOUND);
+    const newSet = new Set(sessionFind.batchs.map((i) => i.station.id));
+    const newMap = new Map<string, BatchEntity[]>();
+    newSet.forEach((e) => {
+      const listBatch: BatchEntity[] = [];
+      newMap.set(e, listBatch);
+    });
+    for (const item of sessionFind.batchs) {
+      if (newMap.has(item.station.id)) {
+        newMap.get(item.station.id).push(item);
+      }
+    }
+    const arrPromiseTrip: Promise<BatchEntity>[] = [];
+    const listOneBatch: BatchEntity[] = [];
+    for (const value of newMap.values()) {
+      for (let i = 0; i < value.length; i++) {
+        if (i % 2 == 0) {
+          const arrSub = value.slice(i, i + 2);
+          if (arrSub.length == 2) {
+            const trip = await this.deliveryTripRepository.save({
+              session: sessionFind,
+              deliveryDate: sessionFind.workDate,
+            });
+            arrSub.map((j) => {
+              arrPromiseTrip.push(
+                this.batchService.save({
+                  id: j.id,
+                  deliveryTrip: trip,
+                }),
+              );
+            });
+            await Promise.all(arrPromiseTrip);
+          } else {
+            listOneBatch.push(arrSub[0]);
+          }
+        }
+      }
+    }
+    const arrPromiseSingleBatch: Promise<BatchEntity>[] = [];
+    let newTrip;
 
-    for (let i = 0; i < sessionFind.batchs.length; i++) {
-      const ibatch = await this.batchService.findOne({
-        where: { id: sessionFind.batchs[i].id },
-        relations: { station: true },
-      });
-
-      const listTrip = await this.deliveryTripRepository.find({
-        where: { session: { id: sessionFind.id } },
-        relations: { batchs: { station: true } },
-      });
-
-      let tripFind;
-      if (!listTrip || listTrip.length == 0) {
-        tripFind = await this.deliveryTripRepository.save({
+    for (let z = 0; z < listOneBatch.length; z++) {
+      if (listOneBatch.length < 2) {
+        newTrip = await this.deliveryTripRepository.save({
           session: sessionFind,
           deliveryDate: sessionFind.workDate,
         });
         await this.batchService.save({
-          id: ibatch.id,
-          deliveryTrip: tripFind,
+          id: listOneBatch[0].id,
+          deliveryTrip: newTrip,
         });
-        // console.log('list null');
+        break;
       } else {
-        console.log('list no null');
-
-        for (let j = 0; j < listTrip.length; j++) {
-          if (listTrip[j].batchs.length < SettingConfig.MAX_BATCH) {
-            if (listTrip[j].batchs[0].station.id == ibatch.station.id) {
-              console.log(listTrip[j].batchs[0].station.id);
-
-              await this.batchService.save({
-                id: ibatch.id,
-                deliveryTrip: listTrip[j],
-              });
-            } else if (listTrip[j].batchs[0].station.id != ibatch.station.id) {
-              tripFind = await this.deliveryTripRepository.save({
+        const firstBatch = listOneBatch[0];
+        const origin = `${firstBatch.station.coordinate['coordinates'][0]},${firstBatch.station.coordinate['coordinates'][1]}`;
+        const destinations = listOneBatch
+          .filter((i) => i.id != firstBatch.id)
+          .map((h) => {
+            const subDestination = `${h.station.coordinate['coordinates'][0]},${h.station.coordinate['coordinates'][1]}`;
+            return subDestination;
+          })
+          .join('%7C');
+        const listDistance = await axios.get(
+          `https://rsapi.goong.io/DistanceMatrix?origins=${origin}&destinations=${destinations}&vehicle=bike&api_key=DuKETIrSZD6KjGweBEgitOzSOBEsGWWjys2ea1jW`,
+        );
+        const arrResultDistance = listDistance.data.rows[0].elements;
+        let subSingleBatch = [];
+        for (let e = 0; e < arrResultDistance.length; e++) {
+          if (
+            arrResultDistance[e].distance.value < SettingConfig.MAX_DISTANCE
+          ) {
+            subSingleBatch = [firstBatch, listOneBatch[e + 1]];
+            newTrip = await this.deliveryTripRepository.save({
+              session: sessionFind,
+              deliveryDate: sessionFind.workDate,
+            });
+            subSingleBatch.map((s) => {
+              arrPromiseSingleBatch.push(
+                this.batchService.save({
+                  id: s.id,
+                  deliveryTrip: newTrip,
+                }),
+              );
+            });
+            listOneBatch.splice(0, 1);
+            listOneBatch.splice(e, 1);
+            await Promise.all(arrPromiseSingleBatch);
+            if (listOneBatch.length == 1) {
+              newTrip = await this.deliveryTripRepository.save({
                 session: sessionFind,
                 deliveryDate: sessionFind.workDate,
               });
               await this.batchService.save({
-                id: ibatch.id,
-                deliveryTrip: tripFind,
+                id: listOneBatch[0].id,
+                deliveryTrip: newTrip,
               });
             }
             break;
-            // console.log(listTrip[i].batchs);
-          } else if (listTrip[j].batchs.length >= SettingConfig.MAX_BATCH) {
-            // tripFind = await this.deliveryTripRepository.save({
-            //   session: sessionFind,
-            //   deliveryDate: sessionFind.workDate,
-            // });
-            // await this.batchService.save({
-            //   id: ibatch.id,
-            //   deliveryTrip: tripFind,
-            // });
-            j++;
+          }
+          if (e == arrResultDistance.length - 1) {
+            newTrip = await this.deliveryTripRepository.save({
+              session: sessionFind,
+              deliveryDate: sessionFind.workDate,
+            });
+            await this.batchService.save({
+              id: firstBatch.id,
+              deliveryTrip: newTrip,
+            });
+            listOneBatch.splice(0, 1);
+            if (listOneBatch.length == 1) {
+              newTrip = await this.deliveryTripRepository.save({
+                session: sessionFind,
+                deliveryDate: sessionFind.workDate,
+              });
+              await this.batchService.save({
+                id: listOneBatch[0].id,
+                deliveryTrip: newTrip,
+              });
+            }
           }
         }
       }
-
-      // let tripFind = await this.deliveryTripRepository.findOne({
-      //   where: {
-      //     session: { id: ibatch.session.id },
-      //     deliveryDate: ibatch.session.workDate,
-      //   },
-      //   relations: { batchs: { station: true } },
-      // });
-
-      // if (
-      //   !tripFind ||
-      //   tripFind == null
-      //   // ||
-      //   // tripFind?.batchs.length >= SettingConfig.MAX_BATCH
-      // ) {
-      //   // throw new HttpException('check null', HttpStatus.NOT_FOUND);
-      //   // console.log(tripFind.batchs.length >= SettingConfig.MAX_BATCH);
-      //   console.log('null');
-      //   tripFind = await this.deliveryTripRepository.save({
-      //     session: sessionFind,
-      //     deliveryDate: sessionFind.workDate,
-      //   });
-      //   await this.batchService.save({
-      //     id: ibatch.id,
-      //     deliveryTrip: tripFind,
-      //   });
-      // } else if (tripFind !== null || tripFind) {
-      //   // throw new HttpException('check not null', HttpStatus.BAD_REQUEST);
-      //   // console.log(tripFind.batchs.length < SettingConfig.MAX_BATCH);
-      //   if (tripFind.batchs.length < SettingConfig.MAX_BATCH) {
-      //     console.log(` length : ${tripFind.batchs.length}`);
-      //     console.log(
-      //       `check: ${tripFind.batchs.length < SettingConfig.MAX_BATCH}`,
-      //     );
-      //     if (tripFind.batchs[0].station.id == ibatch.station.id) {
-      //       console.log('double station');
-      //       await this.batchService.save({
-      //         id: ibatch.id,
-      //         deliveryTrip: tripFind,
-      //       });
-      //     } else {
-      //       tripFind = await this.deliveryTripRepository.save({
-      //         session: sessionFind,
-      //         deliveryDate: sessionFind.workDate,
-      //       });
-      //       await this.batchService.save({
-      //         id: ibatch.id,
-      //         deliveryTrip: tripFind,
-      //       });
-      //     }
-      //     // console.log('bé hơn 1');
-      //   }
-      //   if (tripFind.batchs?.length >= SettingConfig.MAX_BATCH) {
-      //     console.log('more 1 batch');
-      //     tripFind = await this.deliveryTripRepository.save({
-      //       session: sessionFind,
-      //       deliveryDate: sessionFind.workDate,
-      //     });
-      //     await this.batchService.save({
-      //       id: ibatch.id,
-      //       deliveryTrip: tripFind,
-      //     });
-      //     // console.log('lớn hơn 1');
-      //   }
-      // }
-      // else if (
-      //   !tripFind ||
-      //   tripFind == null
-      //   // ||
-      //   // tripFind.batchs.length >= SettingConfig.MAX_BATCH
-      // ) {
-      //   // throw new HttpException('check null', HttpStatus.NOT_FOUND);
-      //   tripFind = await this.deliveryTripRepository.save({
-      //     session: sessionFind,
-      //     deliveryDate: sessionFind.workDate,
-      //   });
-      //   await this.batchService.save({
-      //     id: ibatch.id,
-      //     deliveryTrip: tripFind,
-      //   });
-      // }
     }
-    const listTrip = await this.deliveryTripRepository.find({
+    return await this.deliveryTripRepository.find({
       where: { session: { id: dto.sessionId } },
       relations: { batchs: { station: true } },
     });
-    return listTrip;
   }
 
+  async assignShipperToTrip(
+    dto: AssignShipperDTO,
+  ): Promise<DeliveryTripEntity[]> {
+    const sessionFind = await this.sessionService.findOne({
+      where: { id: dto.sessionId },
+      relations: { kitchen: true },
+    });
+    const listTrip = await this.deliveryTripRepository.find({
+      where: { session: { id: dto.sessionId } },
+    });
+
+    if (dto.shipperIds.length != listTrip.length) {
+      throw new HttpException('shipper not enough', HttpStatus.BAD_REQUEST);
+    } else {
+      for (let i = 0; i < dto.shipperIds.length; i++) {
+        const shipperFind = await this.shipperService.findOne({
+          where: { id: dto.shipperIds[i] },
+          relations: { kitchen: true, account: { profile: true } },
+        });
+        if (
+          shipperFind.kitchen == null ||
+          sessionFind.kitchen.id != shipperFind.kitchen.id
+        ) {
+          throw new HttpException(
+            `shipper ${shipperFind.account.profile.fullName} is not in your kitchen `,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          await this.deliveryTripRepository.save({
+            id: listTrip[i].id,
+            shipper: shipperFind,
+          });
+        }
+      }
+    }
+    return await this.deliveryTripRepository.find({
+      where: { session: { id: dto.sessionId } },
+    });
+  }
   //-------------------------------------------
   // async createDeliveryTrip(
   //   dto: CreateDeliveryTripDTO,

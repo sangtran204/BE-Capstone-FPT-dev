@@ -20,6 +20,18 @@ export class BatchService extends BaseService<BatchEntity> {
   //     throw new HttpException('Can not create batch', HttpStatus.BAD_REQUEST);
   //   return newBatch;
   // }
+
+  async getBatchBySessionStation(
+    sessionId: string,
+    stationId: string,
+  ): Promise<BatchEntity[]> {
+    return await this.batchRepository.find({
+      where: { session: { id: sessionId }, station: { id: stationId } },
+      relations: { station: true, orders: true },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async getBatchById(id: string): Promise<BatchEntity> {
     const batch = await this.batchRepository.findOne({
       where: { id: id },

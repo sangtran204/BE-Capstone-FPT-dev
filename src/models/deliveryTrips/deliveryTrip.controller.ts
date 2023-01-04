@@ -28,6 +28,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/entities/account.entity';
 import { DeliveryTripService } from './deliveryTrip.service';
 import {
+  AssignShipperDTO,
   // CreateDeliveryTripDTO,
   CreateTripDTO,
 } from './dto/createDeliveryTrip.dto';
@@ -199,6 +200,21 @@ export class DeliveryTripController {
     @Body() dto: CreateTripDTO,
   ): Promise<DeliveryTripEntity[]> {
     return await this.deliveryTripService.createTrip(dto);
+  }
+
+  @Post('/shipper_toTrip')
+  // @Roles(RoleEnum.MANAGER)
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'ASSIGN SHIPPER TO TRIP',
+    type: [DeliveryTripEntity],
+  })
+  async assignShipperToTrip(
+    // @GetUser() user: AccountEntity,
+    @Body() dto: AssignShipperDTO,
+  ): Promise<DeliveryTripEntity[]> {
+    return await this.deliveryTripService.assignShipperToTrip(dto);
   }
 
   @Put('/reject/:id')
