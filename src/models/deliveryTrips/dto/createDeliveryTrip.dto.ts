@@ -25,7 +25,13 @@ import { IsUUID } from 'class-validator';
 export class CreateTripDTO {
   @ApiProperty()
   sessionId: string;
+}
 
-  @ApiProperty({ type: [String], required: false })
+export class AssignShipperDTO {
+  @ApiProperty()
+  sessionId: string;
+
+  @ApiProperty({ type: [String], required: true })
+  @IsUUID(null, { each: true, message: 'ID shipper must be unique' })
   shipperIds: string[];
 }

@@ -19,6 +19,7 @@ export class BatchEntity extends BaseEntity {
   @ManyToOne(() => StationEntity, (station) => station.batchs)
   station: StationEntity;
 
+  @AutoMap(() => DeliveryTripEntity)
   @ManyToOne(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.batchs)
   deliveryTrip: DeliveryTripEntity;
 

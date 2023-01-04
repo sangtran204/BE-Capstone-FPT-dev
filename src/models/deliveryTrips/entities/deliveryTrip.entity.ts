@@ -39,9 +39,11 @@ export class DeliveryTripEntity extends BaseEntity {
   // @OneToMany(() => OrderEntity, (order) => order.deliveryTrips)
   // order: OrderEntity[];
 
+  @AutoMap(() => SessionEntity)
   @ManyToOne(() => SessionEntity, (session) => session.deliveryTrips)
   session: SessionEntity;
 
+  @AutoMap(() => BatchEntity)
   @OneToMany(() => BatchEntity, (batchs) => batchs.deliveryTrip)
   batchs: BatchEntity[];
 }

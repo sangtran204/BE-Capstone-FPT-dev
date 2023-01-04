@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export class Coordinate {
+  @ApiProperty()
+  public lattitude: number;
+  @ApiProperty()
+  public longitude: number;
+}
 export class CreateStationDTO {
   @ApiProperty()
   kitchenId: string;
@@ -18,4 +24,7 @@ export class CreateStationDTO {
 
   @ApiProperty()
   closeTime: Date;
+
+  @ApiProperty()
+  coordinate: Coordinate;
 }

@@ -72,7 +72,8 @@ export class OrdersController {
   async orderSub(
     @Body() dto: OrderCreationDTO,
     // @GetUser() user: AccountEntity,
-  ): Promise<OrderEntity> {
+  ): // Promise<OrderEntity>
+  Promise<string> {
     return await this.ordersService.createOrders(dto);
   }
 

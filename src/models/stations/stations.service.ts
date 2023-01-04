@@ -63,6 +63,10 @@ export class StationsService extends BaseService<StationEntity> {
         phone: dto.phone,
         openTime: dto.openTime,
         closeTime: dto.closeTime,
+        coordinate: {
+          type: 'Point',
+          coodinate: [dto.coordinate.lattitude, dto.coordinate.longitude],
+        },
       });
     } else {
       const kitchenFind = await this.kitchenService.findOne({
@@ -78,6 +82,10 @@ export class StationsService extends BaseService<StationEntity> {
         openTime: dto.openTime,
         closeTime: dto.closeTime,
         kitchen: kitchenFind,
+        coordinate: {
+          type: 'Point',
+          coordinates: [dto.coordinate.lattitude, dto.coordinate.longitude],
+        },
       });
     }
   }

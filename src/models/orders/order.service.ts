@@ -115,7 +115,8 @@ export class OrdersService extends BaseService<OrderEntity> {
   //   }
   // }
 
-  async createOrders(dto: OrderCreationDTO): Promise<OrderEntity> {
+  async createOrders(dto: OrderCreationDTO): // Promise<OrderEntity>
+  Promise<string> {
     const itemFind = await this.packageItemService.findOne({
       where: { id: dto.packageItemID },
     });
@@ -165,24 +166,45 @@ export class OrdersService extends BaseService<OrderEntity> {
           HttpStatus.BAD_REQUEST,
         );
     }
-    let batchFind = await this.batchService.findOne({
-      where: {
-        session: { id: sessionFind.id },
-        station: { id: stationFind.id },
-      },
-      relations: { orders: true },
-    });
-    if (
-      !batchFind ||
-      batchFind == null ||
-      batchFind.orders.length >= SettingConfig.MAX_ORDER
-    ) {
+    // let tripFind = await this.tripService.findOne({
+    //   where: {
+    //     session: { id: sessionFind.id },
+    //     deliveryDate: sessionFind.workDate,
+    //   },
+    //   relations: { batchs: { station: true } },
+    // });
+    // if (tripFind == null || tripFind.batchs.length >= SettingConfig.MAX_BATCH) {
+    //   tripFind = await this.tripService.save({
+    //     session: sessionFind,
+    //     deliveryDate: sessionFind.workDate,
+    //   });
+    // } else if (tripFind.batchs.length < SettingConfig.MAX_BATCH) {
+    //   if (tripFind.batchs[0]?.station.id != stationFind.id) {
+    //     tripFind = await this.tripService.save({
+    //       session: sessionFind,
+    //       deliveryDate: sessionFind.workDate,
+    //     });
+    //   }
+    // }
+    const listBatch = await this.batchService.getBatchBySessionStation(
+      sessionFind.id,
+      stationFind.id,
+    );
+    let batchFind;
+    if (!listBatch || listBatch.length == 0) {
       batchFind = await this.batchService.save({
         session: sessionFind,
         station: stationFind,
       });
-      if (!batchFind || batchFind == null)
-        throw new HttpException('Can not create batch', HttpStatus.BAD_REQUEST);
+    } else {
+      if (listBatch[0].orders.length < SettingConfig.MAX_ORDER) {
+        batchFind = listBatch[0];
+      } else if (listBatch[0].orders.length >= SettingConfig.MAX_ORDER) {
+        batchFind = await this.batchService.save({
+          session: sessionFind,
+          station: stationFind,
+        });
+      }
     }
     const newOrder = await this.ordersRepository.save({
       subscription: subFind,
@@ -194,7 +216,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     });
     if (!newOrder || newOrder == null)
       throw new HttpException('Create order fail', HttpStatus.BAD_REQUEST);
-    return newOrder;
+    return 'newOrder';
   }
 
   //---------------------------Before remake--------------------------------
