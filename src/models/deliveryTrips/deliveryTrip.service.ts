@@ -97,10 +97,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
-        // kitchen: { account: { profile: true } },
-        // order: true,
-        // station: true,
-        // time_slot: true,
+        // shipper: { kitchen: { account: { profile: true } } },
+        // batchs: { orders: { subscription: { account: { profile: true } } } },
+        batchs: { orders: true, station: true },
+        session: { timeSlot: true },
       },
     });
   }
@@ -115,10 +115,8 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         deliveryDate: filter.deliveryDate,
       },
       relations: {
-        // kitchen: { account: { profile: true } },
-        // order: true,
-        // station: true,
-        // time_slot: true,
+        batchs: { orders: true, station: true },
+        session: { timeSlot: true },
       },
     });
   }
@@ -132,10 +130,8 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         // status: DeliveryTripEnum.WAITING || DeliveryTripEnum.DELIVERY,
       },
       relations: {
-        // kitchen: { account: { profile: true } },
-        // order: true,
-        // station: true,
-        // time_slot: true,
+        batchs: { orders: true, station: true },
+        session: { timeSlot: true },
       },
     });
   }
