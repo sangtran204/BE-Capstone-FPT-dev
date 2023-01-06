@@ -13,6 +13,19 @@ import {
   SessionFilterDTO,
 } from './dto/session_filter.dto';
 import { SessionEntity } from './entities/sessions.entity';
+import * as moment from 'moment';
+import { DeliveryTripEntity } from '../deliveryTrips/entities/deliveryTrip.entity';
+import { SessionEnum } from 'src/common/enums/session.enum';
+import { DeliveryTripService } from '../deliveryTrips/deliveryTrip.service';
+import { DeliveryTripEnum } from 'src/common/enums/deliveryTrip.enum';
+import { Inject } from '@nestjs/common/decorators';
+import { forwardRef } from '@nestjs/common/utils';
+import { OrdersService } from '../orders/order.service';
+import { BatchEntity } from '../batchs/entities/batch.entity';
+import { OrderEntity } from '../orders/entities/order.entity';
+import { BatchService } from '../batchs/batch.service';
+import { BatchEnum } from 'src/common/enums/batch.enum';
+import { OrderEnum } from 'src/common/enums/order.enum';
 
 @Injectable()
 export class SessionService extends BaseService<SessionEntity> {
@@ -21,6 +34,11 @@ export class SessionService extends BaseService<SessionEntity> {
     private readonly sessionRepository: Repository<SessionEntity>,
     private readonly kitchenService: KitchenService,
     private readonly timeSlotService: TimeSlotsService,
+    @Inject(forwardRef(() => DeliveryTripService))
+    private readonly tripService: DeliveryTripService,
+    @Inject(forwardRef(() => OrdersService))
+    private readonly orderService: OrdersService,
+    private readonly batchService: BatchService,
   ) {
     super(sessionRepository);
   }
@@ -91,5 +109,71 @@ export class SessionService extends BaseService<SessionEntity> {
     if (!sessionDetail || sessionDetail == null)
       throw new HttpException('No session found', HttpStatus.NOT_FOUND);
     return sessionDetail;
+  }
+
+  async doneSession(sessionId: string): Promise<SessionEntity> {
+    const date = moment().format('YYYY-MM-DD');
+
+    const sessionFind = await this.sessionRepository.findOne({
+      where: { id: sessionId },
+      relations: {
+        kitchen: true,
+        deliveryTrips: { batchs: { orders: true } },
+        // batchs: { orders: true },
+      },
+    });
+    if (sessionFind == null || !sessionFind) {
+      throw new HttpException(
+        `session ${sessionId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    // if (sessionFind.workDate.toString() != date) {
+    //   throw new HttpException(
+    //     'today is not working day for session',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
+    const arrUpdateTripPromise: Promise<DeliveryTripEntity>[] = [];
+    const arrUpdateBatchPromise: Promise<BatchEntity>[] = [];
+    const arrUpdateOrderPromise: Promise<OrderEntity>[] = [];
+    const updateSession = await this.sessionRepository.save({
+      id: sessionFind.id,
+      status: SessionEnum.DONE,
+    });
+    if (!updateSession) {
+      throw new HttpException('can not done session', HttpStatus.BAD_REQUEST);
+    }
+    sessionFind.deliveryTrips.map((i) => {
+      arrUpdateTripPromise.push(
+        this.tripService.save({
+          id: i.id,
+          status: DeliveryTripEnum.READY,
+        }),
+      );
+      i.batchs.map((b) => {
+        arrUpdateBatchPromise.push(
+          this.batchService.save({
+            id: b.id,
+            status: BatchEnum.READY,
+          }),
+        );
+        b.orders.map((o) => {
+          arrUpdateOrderPromise.push(
+            this.orderService.save({
+              id: o.id,
+              status: OrderEnum.READY,
+            }),
+          );
+        });
+        Promise.all(arrUpdateOrderPromise);
+      });
+      Promise.all(arrUpdateBatchPromise);
+    });
+    await Promise.all(arrUpdateTripPromise);
+    return await this.sessionRepository.findOne({
+      where: { id: sessionFind.id },
+      relations: { deliveryTrips: { batchs: { orders: true } } },
+    });
   }
 }

@@ -31,7 +31,7 @@ export class AssignShipperDTO {
   @ApiProperty()
   sessionId: string;
 
-  @ApiProperty({ type: [String], required: true })
+  @ApiProperty({ type: [String], required: true, uniqueItems: true })
   @IsUUID(null, { each: true, message: 'ID shipper must be unique' })
   shipperIds: string[];
 }
