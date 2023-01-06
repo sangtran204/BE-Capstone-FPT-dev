@@ -102,7 +102,10 @@ export class SessionService extends BaseService<SessionEntity> {
         timeSlot: true,
         batchs: {
           station: true,
-          orders: { packageItem: { foodGroup: { foods: true } } },
+          orders: {
+            packageItem: { foodGroup: { foods: true } },
+            subscription: { account: { profile: true } },
+          },
         },
       },
     });
