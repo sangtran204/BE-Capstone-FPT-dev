@@ -247,22 +247,22 @@ export class ShippersService extends BaseService<ShipperEntity> {
       throw new HttpException('List shipper is null', HttpStatus.BAD_REQUEST);
     for (const shipper of dto.shippers) {
       const shipperFind = await this.shipperRepository.findOne({
-        where: { id: shipper.idShipper },
+        where: { id: shipper },
         relations: { account: { profile: true } },
       });
       if (!shipperFind || shipperFind == null)
         throw new HttpException(
-          `Shipper ${shipper.idShipper} not found`,
+          `Shipper ${shipper} not found`,
           HttpStatus.NOT_FOUND,
         );
       if (shipperFind.status !== ShipperStatusEnum.ACTIVE)
         throw new HttpException(
-          `Only add active shipper (Error at: ${shipper.idShipper})`,
+          `Only add active shipper (Error at: ${shipper})`,
           HttpStatus.BAD_REQUEST,
         );
       if (shipperFind.account.status !== AccountStatusEnum.ACTIVE)
         throw new HttpException(
-          `Only add active account shipper (Error at: ${shipper.idShipper})`,
+          `Only add active account shipper (Error at: ${shipper})`,
           HttpStatus.BAD_REQUEST,
         );
 

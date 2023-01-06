@@ -1,7 +1,7 @@
 export enum DeliveryTripEnum {
-  WAITING = 'waiting',
-  READY = 'ready',
-  DELIVERY = 'delivery',
-  ARRIVED = 'arrived',
-  REJECT = 'reject',
+  WAITING = 'waiting', // đang xữ lý
+  READY = 'ready', // sẵn sàng
+  DELIVERY = 'delivery', // đang giao
+  ARRIVED = 'arrived', // đã giao
+  REJECT = 'reject', // từ chối
 }

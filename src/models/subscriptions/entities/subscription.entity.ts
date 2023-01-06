@@ -16,7 +16,7 @@ export class SubscriptionEntity extends BaseEntity {
 
   @Column('date')
   @AutoMap()
-  subscriptionDelivery: Date;
+  subscriptionDate: Date;
 
   @Column({ default: SubEnum.UNCONFIRMED })
   @AutoMap()

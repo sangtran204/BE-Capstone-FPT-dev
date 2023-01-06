@@ -9,8 +9,8 @@ export class ListShipperID {
   kitchenId: string;
 
   @ApiProperty({
-    type: [ShipperID],
+    type: [String],
     description: 'List Shipper id',
   })
-  shippers: [ShipperID];
+  shippers: [string];
 }

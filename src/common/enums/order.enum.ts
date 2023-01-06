@@ -1,12 +1,12 @@
 export enum OrderEnum {
   // UNCONFIRMED = 'unconfirmed',
   // WAIT_PAYMENT = 'waitPayment',
-  PENDING = 'pending',
-  PROGRESS = 'progress',
-  DELIVERY = 'delivery',
-  READY = 'ready',
-  ARRIVED = 'arrived',
-  DONE = 'done',
+  PENDING = 'pending', // đã nhận đơn
+  PROGRESS = 'progress', // đang xữ lý
+  DELIVERY = 'delivery', // đang giao
+  READY = 'ready', // chờ giao
+  ARRIVED = 'arrived', // đã đến nơi
+  DONE = 'done', // đã giao
   // BAN = 'ban',
   //   REJECT = 'reject',
   // CANCEL = 'cancel',
