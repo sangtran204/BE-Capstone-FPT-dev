@@ -7,10 +7,6 @@ export class UpdateStatusTrip {
 
   @ApiProperty()
   updateTime: string;
-
-  @ApiProperty({ type: [String] })
-  @IsUUID(null, { each: true, message: 'ID food must be unique' })
-  ordersIds: string[];
 }
 
 export class DirectShipperDTO {

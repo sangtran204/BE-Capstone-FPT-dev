@@ -30,6 +30,7 @@ import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
 import axios from 'axios';
 import { SessionEnum } from 'src/common/enums/session.enum';
+import { BatchEnum } from 'src/common/enums/batch.enum';
 
 @Injectable()
 export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
@@ -431,7 +432,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
   ): Promise<DeliveryTripEntity> {
     const trip = await this.deliveryTripRepository.findOne({
       where: { id: orderIds.deliveryTripId },
-      relations: { batchs: true },
+      relations: { batchs: { orders: true } },
     });
     // const picktime = new Date();
     // const time =
@@ -441,6 +442,8 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     //   ':' +
     //   picktime.getSeconds().toString();
 
+    const arrUpdateBatchPromise: Promise<BatchEntity>[] = [];
+    const arrUpdateOrderPromise: Promise<OrderEntity>[] = [];
     if (trip.status == DeliveryTripEnum.READY) {
       const updateTrip = await this.deliveryTripRepository.update(
         { id: orderIds.deliveryTripId },
@@ -450,18 +453,24 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         },
       );
       if (updateTrip) {
-        // for (const item of orderIds.ordersIds) {
-        //   const callback = async (
-        //     entityManager: EntityManager,
-        //   ): Promise<void> => {
-        //     await entityManager.update(
-        //       OrderEntity,
-        //       { id: item.valueOf() },
-        //       { status: OrderEnum.DELIVERY },
-        //     );
-        //   };
-        //   await this.orderService.transaction(callback, this.dataSource);
-        // }
+        trip.batchs.map((b) => {
+          arrUpdateBatchPromise.push(
+            this.batchService.save({
+              id: b.id,
+              status: BatchEnum.DELIVERY,
+            }),
+          );
+          b.orders.map((o) => {
+            arrUpdateOrderPromise.push(
+              this.orderService.save({
+                id: o.id,
+                status: OrderEnum.DELIVERY,
+              }),
+            );
+          });
+          Promise.all(arrUpdateOrderPromise);
+        });
+        await Promise.all(arrUpdateBatchPromise);
       }
     } else if (trip.status == DeliveryTripEnum.DELIVERY) {
       const updateTrip = await this.deliveryTripRepository.update(
@@ -469,23 +478,29 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         { status: DeliveryTripEnum.ARRIVED, arrivedTime: orderIds.updateTime },
       );
       if (updateTrip) {
-        for (const item of orderIds.ordersIds) {
-          const callback = async (
-            entityManager: EntityManager,
-          ): Promise<void> => {
-            await entityManager.update(
-              OrderEntity,
-              { id: item.valueOf() },
-              { status: OrderEnum.ARRIVED },
+        trip.batchs.map((b) => {
+          arrUpdateBatchPromise.push(
+            this.batchService.save({
+              id: b.id,
+              status: BatchEnum.ARRIVED,
+            }),
+          );
+          b.orders.map((o) => {
+            arrUpdateOrderPromise.push(
+              this.orderService.save({
+                id: o.id,
+                status: OrderEnum.ARRIVED,
+              }),
             );
-          };
-          await this.orderService.transaction(callback, this.dataSource);
-        }
+          });
+          Promise.all(arrUpdateOrderPromise);
+        });
+        await Promise.all(arrUpdateBatchPromise);
       }
     }
     const freshTrip = await this.deliveryTripRepository.findOne({
       where: { id: orderIds.deliveryTripId },
-      // relations: { order: true },
+      relations: { batchs: { orders: true } },
     });
     return freshTrip;
   }
