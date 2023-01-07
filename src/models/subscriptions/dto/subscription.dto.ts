@@ -11,9 +11,6 @@ export class SubscriptionDTO extends BaseDTO {
   subscriptionDate: Date;
 
   @AutoMap()
-  cancelDate: Date;
-
-  @AutoMap()
   status: string;
 
   @AutoMap(() => PackageDTO)
