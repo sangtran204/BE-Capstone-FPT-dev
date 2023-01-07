@@ -34,6 +34,9 @@ import { FeedBackModule } from './models/feedback/feedback.module';
 import { VnpayProviderModule } from './providers/vnpay/vnpay.module';
 import { TestController } from './app.controller';
 import { SessionModule } from './models/sessions/sessions.module';
+import { BatchModule } from './models/batchs/batch.module';
+import { GoongMapConfigModule } from './config/goong-map/config.module';
+
 @Module({
   imports: [
     AppConfigModule,
@@ -66,6 +69,8 @@ import { SessionModule } from './models/sessions/sessions.module';
     ScheduleModule.forRoot(),
 
     SessionModule,
+    BatchModule,
+    GoongMapConfigModule,
   ],
   controllers: [TestController],
   providers: [

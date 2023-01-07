@@ -1,4 +1,5 @@
 export enum SettingConfig {
-  MAXORDER = 15,
-  MAXBATCH = 2,
+  MAX_ORDER = 3,
+  MAX_BATCH = 2,
+  MAX_DISTANCE = 5000,
 }

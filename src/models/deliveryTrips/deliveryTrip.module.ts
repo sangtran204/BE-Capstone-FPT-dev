@@ -10,6 +10,8 @@ import { ShippersModule } from '../shippers/shippers.module';
 import { OrdersModule } from '../orders/order.module';
 import { TimeSlotsModule } from '../time-slots/time-slots.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { SessionModule } from '../sessions/sessions.module';
+import { BatchModule } from '../batchs/batch.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { NotificationsModule } from '../notifications/notifications.module';
     ShippersModule,
     TimeSlotsModule,
     NotificationsModule,
+    SessionModule,
+    BatchModule,
   ],
   controllers: [DeliveryTripController],
   providers: [DeliveryTripService, DeliveryTripProfile],

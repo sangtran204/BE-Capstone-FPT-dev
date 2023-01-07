@@ -42,12 +42,12 @@ export class OrderEntity extends BaseEntity {
   @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.orders)
   kitchen: KitchenEntity;
 
-  @AutoMap(() => DeliveryTripEntity)
-  @ManyToOne(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.order)
-  deliveryTrips: DeliveryTripEntity;
+  // @AutoMap(() => DeliveryTripEntity)
+  // @ManyToOne(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.order)
+  // deliveryTrips: DeliveryTripEntity;
 
-  @ManyToOne(() => SessionEntity, (session) => session.orders)
-  session: SessionEntity;
+  // @ManyToOne(() => SessionEntity, (session) => session.orders)
+  // session: SessionEntity;
 
   @ManyToOne(() => BatchEntity, (batch) => batch.orders)
   batch: BatchEntity;

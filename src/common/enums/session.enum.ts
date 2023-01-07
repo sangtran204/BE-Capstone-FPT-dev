@@ -1,5 +1,5 @@
 export enum SessionEnum {
-  WAITING = 'waiting',
-  PROGRESS = 'progress',
-  DONE = 'done',
+  WAITING = 'waiting', // đợi xữ lý
+  PROCESSING = 'processing', // đang xữ lý
+  DONE = 'done', // đã hoàn thành
 }

@@ -58,7 +58,7 @@ export class AccountsController {
       relations: {
         profile: true,
         role: true,
-        shipper: true,
+        shipper: { kitchen: { account: { profile: true } } },
         kitchen: true,
       },
     });
