@@ -8,10 +8,7 @@ export class SubscriptionDTO extends BaseDTO {
   totalPrice: number;
 
   @AutoMap()
-  startDelivery: Date;
-
-  @AutoMap()
-  cancelDate: Date;
+  subscriptionDate: Date;
 
   @AutoMap()
   status: string;

@@ -37,8 +37,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     private readonly vnpayService: VnpayService,
     private readonly banksService: BanksService,
     private readonly accountService: AccountsService,
-    // private readonly notificationsService: NotificationsService,
-    // private readonly firebaseMessageService: FirebaseMessageService,
+    private readonly notificationsService: NotificationsService,
+    private readonly firebaseMessageService: FirebaseMessageService,
     @Inject(forwardRef(() => OrdersService))
     private readonly orderService: OrdersService,
   ) {
@@ -129,9 +129,8 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       } else {
         return await this.subscriptionRepository.save({
           totalPrice: dto.totalPrice,
-          // startDelivery: dto.startDelivery,
-          subscriptionDelivery: dto.startDelivery,
-          account: customerFind,
+          startDelivery: dto.subscriptionDate,
+          customer: customerFind,
           packages: packgeFind,
         });
       }
@@ -189,26 +188,26 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     } else {
       await this.orderService.confirmSubOrder(subscription.orders);
     }
-    // if (Boolean(subscription)) {
-    //   const title = `Gói ăn đã được thanh toán bởi ${user.profile.fullName}`;
-    //   const body = `Gói ăn: ${subscription.packages.name}`;
-    //   const data = { ['id']: subscription.id };
-    //   const saveNotify = this.notificationsService.save({
-    //     account: { id: user.id },
-    //     title,
-    //     body,
-    //     data: JSON.stringify(data),
-    //     type: TypeNotificationEnum.ORDER,
-    //   });
-    //   const sendNotify = this.firebaseMessageService.sendCustomNotification(
-    //     user.deviceToken,
-    //     title,
-    //     body,
-    //     data,
-    //   );
-    //   await saveNotify;
-    //   await sendNotify;
-    // }
+    if (Boolean(subscription)) {
+      const title = `Gói ăn đã được thanh toán bởi ${user.profile.fullName}`;
+      const body = `Gói ăn: ${subscription.packages.name}`;
+      const data = { ['id']: subscription.id };
+      const saveNotify = this.notificationsService.save({
+        account: { id: user.id },
+        title,
+        body,
+        data: JSON.stringify(data),
+        type: TypeNotificationEnum.ORDER,
+      });
+      const sendNotify = this.firebaseMessageService.sendCustomNotification(
+        user.deviceToken,
+        title,
+        body,
+        data,
+      );
+      await saveNotify;
+      await sendNotify;
+    }
     return 'Confirm Successful';
   }
 
