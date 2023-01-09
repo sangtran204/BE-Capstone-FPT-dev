@@ -41,6 +41,32 @@ export class FoodsService extends BaseService<FoodEntity> {
     return list;
   }
 
+  async getFoodOnSession(id: string): Promise<FoodDTO[]> {
+    const list = await this.foodsRepository
+      .createQueryBuilder('foods')
+      .select('foods.id, foods.name, foods.image, foods.description')
+      .leftJoin('foods.foodGroups', 'food_groups')
+      .leftJoin('food_groups.packageItem', 'package_item')
+      .leftJoin('package_item.orders', 'orders')
+      .leftJoin('orders.batch', 'batchs')
+      .leftJoin('batchs.session', 'sessions')
+      .where('sessions.id = :id', { id: id })
+      .execute();
+    if (!list || list.length == 0) {
+      throw new HttpException('No food in session!', HttpStatus.NOT_FOUND);
+    }
+    const result: FoodDTO[] = Object.values(
+      list.reduce((agr, cur) => {
+        const key = `${cur.id}`;
+        if (!agr[key]) agr[key] = { ...cur, count: 1 };
+        else agr[key].count += 1;
+        return agr;
+      }, {}),
+    );
+
+    return result;
+  }
+
   async getAllFood(): Promise<FoodEntity[]> {
     return await this.foodsRepository.find({
       relations: {

@@ -41,6 +41,7 @@ export class SessionControler {
   }
 
   @Get('/detail/:id')
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'GET SESSION DETAIL',

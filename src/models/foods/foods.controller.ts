@@ -71,6 +71,18 @@ export class FoodsController {
     return await this.foodsService.getFoodOnPackage(find);
   }
 
+  @Get('/session-food/:id')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET ALL FOOD',
+    type: [FoodDTO],
+  })
+  // @UseInterceptors(MapInterceptor(FoodEntity, FoodDTO, { isArray: true }))
+  async findFoodOnSession(@Param('id') id: string): Promise<FoodDTO[]> {
+    return await this.foodsService.getFoodOnSession(id);
+  }
+
   @Get('/byCatefory_filter')
   @Public()
   @ApiResponse({
