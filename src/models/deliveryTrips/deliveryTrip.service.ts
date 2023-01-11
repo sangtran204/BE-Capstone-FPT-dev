@@ -18,6 +18,7 @@ import { TimeSlotsService } from '../time-slots/time-slots.service';
 import {
   TripFilter,
   TripFilterByKitchen,
+  TripFilterBySession,
   TripFilterDate,
 } from './dto/deliveryTrip-filter.dto';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -66,24 +67,54 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     });
   }
 
-  async getDeliveryTripByKitchen(
-    kitchen: AccountEntity,
-    filter: TripFilterByKitchen,
+  // async getDeliveryTripByKitchen(
+  //   kitchen: AccountEntity,
+  //   filter: TripFilterByKitchen,
+  // ): Promise<DeliveryTripEntity[]> {
+  //   const { status } = filter;
+  //   return await this.deliveryTripRepository.find({
+  //     where: {
+  //       // kitchen: { id: kitchen.id },
+  //       status: Like(Boolean(status) ? status : '%%'),
+  //       deliveryDate: filter.deliveryDate,
+  //     },
+  //     relations: {
+  //       // kitchen: { account: { profile: true } },
+  //       // order: true,
+  //       // station: true,
+  //       // time_slot: true,
+  //     },
+  //   });
+  // }
+
+  async getDeliveryTripBySession(
+    filter: TripFilterBySession,
   ): Promise<DeliveryTripEntity[]> {
     const { status } = filter;
-    return await this.deliveryTripRepository.find({
+    const sessionFind = await this.sessionService.findOne({
+      where: { id: filter.sessionId },
+    });
+    if (!sessionFind || sessionFind == null) {
+      throw new HttpException(
+        `session ${filter.sessionId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const listTrip = await this.deliveryTripRepository.find({
       where: {
-        // kitchen: { id: kitchen.id },
-        status: Like(Boolean(status) ? status : '%%'),
-        deliveryDate: filter.deliveryDate,
+        session: { id: filter.sessionId },
+        status: status,
       },
       relations: {
-        // kitchen: { account: { profile: true } },
-        // order: true,
-        // station: true,
-        // time_slot: true,
+        batchs: { orders: true, station: true },
+        shipper: { account: { profile: true } },
+        session: { timeSlot: true },
       },
     });
+    if (!listTrip || listTrip.length == 0) {
+      throw new HttpException('No trip found', HttpStatus.NOT_FOUND);
+    }
+    return listTrip;
   }
 
   async getDeliveryTripByStatus(

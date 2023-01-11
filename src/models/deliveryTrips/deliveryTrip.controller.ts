@@ -35,6 +35,7 @@ import {
 import {
   TripFilter,
   TripFilterByKitchen,
+  TripFilterBySession,
   TripFilterDate,
 } from './dto/deliveryTrip-filter.dto';
 import { DeliveryTripDTO } from './dto/deliveryTrip.dto';
@@ -128,26 +129,26 @@ export class DeliveryTripController {
     }
   }
 
-  @Get('/byKitchen')
-  @ApiResponse({
-    status: 200,
-    description: 'GET DELIVERY TRIP BY SHIPPER',
-    type: [DeliveryTripDTO],
-  })
-  async getDeliveryTripByKitchen(
-    @GetUser() kitchen: AccountEntity,
-    @Query() filter: TripFilterByKitchen,
-  ): Promise<DeliveryTripEntity[]> {
-    const listTrip = await this.deliveryTripService.getDeliveryTripByKitchen(
-      kitchen,
-      filter,
-    );
-    if (!listTrip || listTrip.length == 0) {
-      throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
-    } else {
-      return listTrip;
-    }
-  }
+  // @Get('/byKitchen')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'GET DELIVERY TRIP BY SHIPPER',
+  //   type: [DeliveryTripDTO],
+  // })
+  // async getDeliveryTripByKitchen(
+  //   @GetUser() kitchen: AccountEntity,
+  //   @Query() filter: TripFilterByKitchen,
+  // ): Promise<DeliveryTripEntity[]> {
+  //   const listTrip = await this.deliveryTripService.getDeliveryTripByKitchen(
+  //     kitchen,
+  //     filter,
+  //   );
+  //   if (!listTrip || listTrip.length == 0) {
+  //     throw new HttpException('No data delivery trip', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     return listTrip;
+  //   }
+  // }
 
   @Get('/byId/:id')
   @Public()
@@ -160,6 +161,19 @@ export class DeliveryTripController {
     @Param('id') id: string,
   ): Promise<DeliveryTripEntity> {
     return this.deliveryTripService.getTripById(id);
+  }
+
+  @Get('/bySession')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'GET DELIVERY TRIP BY SESSION',
+    type: [DeliveryTripEntity],
+  })
+  async getTripBySession(
+    @Query() filter: TripFilterBySession,
+  ): Promise<DeliveryTripEntity[]> {
+    return await this.deliveryTripService.getDeliveryTripBySession(filter);
   }
 
   @Post('/update_status/:id')
