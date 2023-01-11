@@ -409,6 +409,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       where: { id: tripId },
       // relations: { order: { timeSlot: true } },
       relations: {
+        session: { timeSlot: true },
         batchs: {
           orders: { subscription: { account: { profile: true } } },
           station: true,
