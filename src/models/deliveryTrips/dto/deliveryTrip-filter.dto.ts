@@ -33,3 +33,16 @@ export class SessionFilterTrip {
   @ApiProperty({ default: new Date().toISOString().slice(0, 10) })
   deliveryDate: Date;
 }
+
+export class TripFilterBySession {
+  @ApiProperty()
+  sessionId: string;
+
+  @ApiProperty({
+    enum: DeliveryTripEnum,
+    default: DeliveryTripEnum.WAITING,
+    required: false,
+    description: 'Delivery trip status',
+  })
+  status: DeliveryTripEnum;
+}
