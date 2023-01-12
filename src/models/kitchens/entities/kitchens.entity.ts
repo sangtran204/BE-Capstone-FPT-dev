@@ -31,8 +31,8 @@ export class KitchenEntity extends BaseEntity {
   @JoinColumn({ name: 'id' })
   account: AccountEntity;
 
-  @OneToMany(() => OrderEntity, (order) => order.kitchen)
-  orders: OrderEntity[];
+  // @OneToMany(() => OrderEntity, (order) => order.kitchen)
+  // orders: OrderEntity[];
 
   // @OneToMany(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.kitchen)
   // deliveryTrips: DeliveryTripEntity[];

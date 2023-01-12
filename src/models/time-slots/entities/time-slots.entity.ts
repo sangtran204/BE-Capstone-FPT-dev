@@ -19,9 +19,9 @@ export class TimeSlotEntity extends BaseEntity {
   @AutoMap()
   flag: number;
 
-  @OneToMany(() => OrderEntity, (order) => order.timeSlot)
-  @AutoMap(() => [OrderEntity])
-  orders: OrderEntity[];
+  // @OneToMany(() => OrderEntity, (order) => order.timeSlot)
+  // @AutoMap(() => [OrderEntity])
+  // orders: OrderEntity[];
 
   // @OneToMany(() => DeliveryTripEntity, (deliveryTrip) => deliveryTrip.time_slot)
   // deliveryTrip: DeliveryTripEntity[];

@@ -158,7 +158,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
       where: { id: id },
       relations: {
         // packages: true,
-        orders: { station: true, timeSlot: true },
+        // orders: { station: true, timeSlot: true },
       },
     });
     if (!subscription) {
