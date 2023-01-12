@@ -128,10 +128,8 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         status: Like(Boolean(status) ? status : '%%'),
       },
       relations: {
-        // shipper: { kitchen: { account: { profile: true } } },
-        // batchs: { orders: { subscription: { account: { profile: true } } } },
         batchs: { orders: true, station: true },
-        session: { timeSlot: true },
+        session: { timeSlot: true, kitchen: { account: { profile: true } } },
       },
     });
   }
@@ -147,7 +145,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       },
       relations: {
         batchs: { orders: true, station: true },
-        session: { timeSlot: true },
+        session: { timeSlot: true, kitchen: { account: { profile: true } } },
       },
     });
   }
@@ -162,7 +160,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
       },
       relations: {
         batchs: { orders: true, station: true },
-        session: { timeSlot: true },
+        session: { timeSlot: true, kitchen: { account: { profile: true } } },
       },
     });
   }
