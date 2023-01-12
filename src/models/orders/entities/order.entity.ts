@@ -30,17 +30,17 @@ export class OrderEntity extends BaseEntity {
   })
   packageItem: PackageItemEntity;
 
-  @AutoMap(() => TimeSlotEntity)
-  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.orders)
-  timeSlot: TimeSlotEntity;
+  // @AutoMap(() => TimeSlotEntity)
+  // @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.orders)
+  // timeSlot: TimeSlotEntity;
 
   @AutoMap(() => StationEntity)
   @ManyToOne(() => StationEntity, (station) => station.orders)
   station: StationEntity;
 
-  @AutoMap(() => KitchenEntity)
-  @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.orders)
-  kitchen: KitchenEntity;
+  // @AutoMap(() => KitchenEntity)
+  // @ManyToOne(() => KitchenEntity, (kitchen) => kitchen.orders)
+  // kitchen: KitchenEntity;
 
   // @AutoMap(() => DeliveryTripEntity)
   // @ManyToOne(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.order)

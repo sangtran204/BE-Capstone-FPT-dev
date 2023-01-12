@@ -379,8 +379,8 @@ export class OrdersService extends BaseService<OrderEntity> {
         // food: true,
         station: true,
         packageItem: true,
-        kitchen: true,
-        timeSlot: true,
+        // kitchen: true,
+        // timeSlot: true,
       },
     });
     if (!order)
@@ -394,17 +394,17 @@ export class OrdersService extends BaseService<OrderEntity> {
   ): Promise<OrderEntity[]> {
     const listOrder = await this.ordersRepository.find({
       where: {
-        kitchen: { id: find.kitchenId },
+        // kitchen: { id: find.kitchenId },
         // deliveryDate: find.deliveryDate,
         station: { id: find.stationId },
-        timeSlot: { id: find.time_slotId },
+        // timeSlot: { id: find.time_slotId },
         status: OrderEnum.PROGRESS,
       },
       relations: {
-        kitchen: { account: { profile: true } },
+        // kitchen: { account: { profile: true } },
         station: true,
         subscription: { account: { profile: true } },
-        timeSlot: true,
+        // timeSlot: true,
       },
     });
     if (!listOrder || listOrder.length == 0) {
@@ -495,8 +495,8 @@ export class OrdersService extends BaseService<OrderEntity> {
         subscription: { account: { profile: true } },
         station: true,
         packageItem: true,
-        kitchen: { account: { profile: true } },
-        timeSlot: true,
+        // kitchen: { account: { profile: true } },
+        // timeSlot: true,
       },
     });
   }
@@ -514,8 +514,8 @@ export class OrdersService extends BaseService<OrderEntity> {
         subscription: { account: { profile: true } },
         station: true,
         packageItem: true,
-        kitchen: true,
-        timeSlot: true,
+        // kitchen: true,
+        // timeSlot: true,
       },
     });
   }
