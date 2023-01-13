@@ -22,7 +22,7 @@ import { SubHistoryDTO } from './dto/getSub-history.dto';
 import { BanksService } from '../banks/banks.service';
 import { OrdersService } from '../orders/order.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
+// import { TypeNotificationEnum } from 'src/common/enums/notification.enum';
 import { FirebaseMessageService } from 'src/providers/firebase/message/firebase-message.service';
 import { AccountsService } from '../accounts/accounts.service';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -76,18 +76,18 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
     user: AccountEntity,
   ): Promise<SubHistoryDTO[]> {
     const { status } = subFilter;
-    const statuss = Like(Boolean(status) ? status : '%%');
+    const statusCompare = Like(Boolean(status) ? status : '%%');
     return await this.subscriptionRepository
       .createQueryBuilder('subscriptions')
       .select(
-        'subscriptions.id as id, totalPrice, startDelivery, cancelDate, subscriptions.status as status, packages.name as packageName, packages.image as packageImg',
+        'subscriptions.id as id, totalPrice, subscriptionDate, subscriptions.status as status, packages.name as packageName, packages.image as packageImg',
       )
       .leftJoin('subscriptions.packages', 'packages')
-      .where('subscriptions.customerId = :customerId', { customerId: user.id })
+      .where('subscriptions.account = :id', { id: user.id })
       .andWhere('subscriptions.status = :status', {
-        status: statuss.value,
+        status: statusCompare.value,
       })
-      .orderBy('startDelivery', 'DESC')
+      .orderBy('subscriptionDate', 'DESC')
       .execute();
   }
 

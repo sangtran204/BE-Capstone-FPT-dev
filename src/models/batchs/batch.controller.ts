@@ -15,8 +15,8 @@ import { BatchService } from './batch.service';
 import { BatchEntity } from './entities/batch.entity';
 import { Public } from 'src/decorators/public.decorator';
 @ApiBearerAuth()
-@ApiTags('batch')
-@Controller('batch')
+@ApiTags('batchs')
+@Controller('batchs')
 export class BatchController {
   constructor(private readonly batchService: BatchService) {}
 

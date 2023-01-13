@@ -2,7 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { SubEnum } from 'src/common/enums/sub.enum';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 import { BaseEntity } from 'src/models/base/base.entity';
-// import { FeedBackEntity } from 'src/models/feedback/entities/feedback.entity';
+import { FeedBackEntity } from 'src/models/feedback/entities/feedback.entity';
 import { OrderEntity } from 'src/models/orders/entities/order.entity';
 import { PackageEntity } from 'src/models/packages/entities/packages.entity';
 import { PaymentEntity } from 'src/models/payment/entities/payment.entity';
@@ -41,6 +41,6 @@ export class SubscriptionEntity extends BaseEntity {
   @OneToOne(() => PaymentEntity, (payment) => payment.subscription)
   payment: PaymentEntity;
 
-  // @OneToOne(() => FeedBackEntity, (feedback) => feedback.subscription)
-  // feedback: FeedBackEntity;
+  @OneToOne(() => FeedBackEntity, (feedback) => feedback.subscription)
+  feedback: FeedBackEntity;
 }

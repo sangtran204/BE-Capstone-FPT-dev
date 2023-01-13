@@ -4,8 +4,8 @@ export class CreateFeedbackDTO {
   @ApiProperty()
   packageRate: number;
 
-  @ApiProperty()
-  foodRate: number;
+  // @ApiProperty()
+  // foodRate: number;
 
   @ApiProperty()
   deliveryRate: number;
@@ -14,5 +14,5 @@ export class CreateFeedbackDTO {
   comment: string;
 
   @ApiProperty()
-  packageId: string;
+  subId: string;
 }

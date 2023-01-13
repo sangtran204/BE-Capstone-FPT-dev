@@ -6,6 +6,9 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { FeedBackEntity } from './entities/feedback.entity';
 import { SubscriptionService } from '../subscriptions/subscriptions.service';
+import { CreateFeedbackDTO } from './dto/create_feedback.dto';
+import { AccountEntity } from '../accounts/entities/account.entity';
+import { SubEnum } from 'src/common/enums/sub.enum';
 
 @Injectable()
 export class FeedBackService extends BaseService<FeedBackEntity> {
@@ -18,40 +21,32 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
     super(feedbackRepository);
   }
 
-  // async createFeedBack(
-  //   dto: CreateFeedbackDTO,
-  //   user: AccountEntity,
-  // ): Promise<string> {
-  //   const subFind = await this.subscriptionService.findOne({
-  //     where: { id: dto.packageId },
-  //     relations: { packages: true },
-  //   });
-  //   if (!subFind || subFind == null)
-  //     throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
-  //   const packageFind = await this.packageService.findOne({
-  //     where: { id: subFind.packages.id },
-  //   });
-  //   if (!packageFind || packageFind == null)
-  //     throw new HttpException('Package not found', HttpStatus.NOT_FOUND);
+  async createFeedBack(
+    dto: CreateFeedbackDTO,
+    // user: AccountEntity,
+  ): Promise<string> {
+    const subFind = await this.subscriptionService.findOne({
+      where: { id: dto.subId },
+      // relations: { packages: true },
+    });
 
-  //   if (!packageFind)
-  //     throw new HttpException('Package not found', HttpStatus.NOT_FOUND);
-  //   const newFeedback = await this.feedbackRepository.save({
-  //     packageRate: dto.packageRate,
-  //     foodRate: dto.foodRate,
-  //     deliveryRate: dto.deliveryRate,
-  //     comment: dto.comment,
-  //     packages: packageFind,
-  //     customer: user,
-  //   });
-  //   if (newFeedback) {
-  //     subFind.status = SubEnum.DONE;
-  //     await this.subscriptionService.save(subFind);
-  //     return 'Send feedback success';
-  //   } else {
-  //     return 'Send feedback fail';
-  //   }
-  // }
+    if (!subFind)
+      throw new HttpException('Sub not found', HttpStatus.NOT_FOUND);
+    const newFeedback = await this.feedbackRepository.save({
+      packageRate: dto.packageRate,
+      // foodRate: dto.foodRate,
+      deliveryRate: dto.deliveryRate,
+      comment: dto.comment,
+      subscription: subFind,
+    });
+    if (newFeedback) {
+      subFind.status = SubEnum.DONE;
+      await this.subscriptionService.save(subFind);
+      return 'Send feedback success';
+    } else {
+      return 'Send feedback fail';
+    }
+  }
 
   // async getFeedbackByPackage(packageId: string): Promise<FeedBackEntity[]> {
   //   const packageFind = await this.packageService.findOne({
@@ -70,13 +65,13 @@ export class FeedBackService extends BaseService<FeedBackEntity> {
   //   return listFeedback;
   // }
 
-  // async getAllFeedback(): Promise<FeedBackEntity[]> {
-  //   const list = await this.feedbackRepository.find({
-  //     relations: { customer: { account: { profile: true } }, packages: true },
-  //   });
-  //   if (!list || list.length == 0) {
-  //     throw new HttpException('No feedback found', HttpStatus.NOT_FOUND);
-  //   }
-  //   return list;
-  // }
+  async getAllFeedback(): Promise<FeedBackEntity[]> {
+    const list = await this.feedbackRepository.find({
+      // relations: { subscription: true },
+    });
+    if (!list || list.length == 0) {
+      throw new HttpException('No feedback found', HttpStatus.NOT_FOUND);
+    }
+    return list;
+  }
 }

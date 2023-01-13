@@ -9,9 +9,9 @@ export class FeedBackEntity extends BaseEntity {
   @AutoMap()
   packageRate: number;
 
-  @Column()
-  @AutoMap()
-  foodRate: number;
+  // @Column()
+  // @AutoMap()
+  // foodRate: number;
 
   @Column()
   @AutoMap()
@@ -21,6 +21,6 @@ export class FeedBackEntity extends BaseEntity {
   @AutoMap()
   comment: string;
 
-  // @OneToOne(() => SubscriptionEntity, (subscription) => subscription.feedback)
-  // subscription: SubscriptionEntity;
+  @OneToOne(() => SubscriptionEntity, (subscription) => subscription.feedback)
+  subscription: SubscriptionEntity;
 }
