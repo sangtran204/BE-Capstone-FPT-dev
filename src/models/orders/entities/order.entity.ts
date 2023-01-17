@@ -46,8 +46,8 @@ export class OrderEntity extends BaseEntity {
   // @ManyToOne(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.order)
   // deliveryTrips: DeliveryTripEntity;
 
-  // @ManyToOne(() => SessionEntity, (session) => session.orders)
-  // session: SessionEntity;
+  @ManyToOne(() => SessionEntity, (session) => session.orders)
+  session: SessionEntity;
 
   @ManyToOne(() => BatchEntity, (batch) => batch.orders)
   batch: BatchEntity;

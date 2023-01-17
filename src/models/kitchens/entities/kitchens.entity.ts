@@ -20,6 +20,18 @@ export class KitchenEntity extends BaseEntity {
   @PrimaryColumn()
   id: string;
 
+  @Column('time')
+  @AutoMap()
+  openTime: Date;
+
+  @Column('time')
+  @AutoMap()
+  closeTime: Date;
+
+  @Column('date')
+  @AutoMap()
+  openingDate: Date;
+
   @Column()
   @AutoMap()
   address: string;

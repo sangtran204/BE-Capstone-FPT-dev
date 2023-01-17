@@ -30,8 +30,8 @@ export class SessionEntity extends BaseEntity {
   @AutoMap()
   status: string;
 
-  // @OneToMany(() => OrderEntity, (orders) => orders.session)
-  // orders: OrderEntity[];
+  @OneToMany(() => OrderEntity, (orders) => orders.session)
+  orders: OrderEntity[];
 
   @OneToMany(() => DeliveryTripEntity, (deliveryTrips) => deliveryTrips.session)
   deliveryTrips: DeliveryTripEntity[];

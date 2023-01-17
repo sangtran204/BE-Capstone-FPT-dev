@@ -65,3 +65,16 @@ export class PreFoodByWeek {
   @ApiProperty()
   endDate: Date;
 }
+
+export class SessionFilterOrder {
+  @ApiProperty()
+  sessionId: string;
+
+  @ApiProperty({
+    enum: OrderEnum,
+    description: 'Sort Ascending or Descending by ',
+    required: false,
+    default: null,
+  })
+  status: OrderEnum;
+}

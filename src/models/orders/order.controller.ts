@@ -24,6 +24,7 @@ import {
   OrderGetByKitchen,
   OrderSearchByDate,
   PreFoodByWeek,
+  SessionFilterOrder,
 } from './dto/order-filter.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
@@ -75,6 +76,18 @@ export class OrdersController {
   ): // Promise<OrderEntity>
   Promise<string> {
     return await this.ordersService.createOrders(dto);
+  }
+
+  @Get('/bySession')
+  @ApiResponse({
+    description: 'GET ORDER BY SESSION',
+    status: 200,
+    type: [OrderEntity],
+  })
+  async getOrderBySession(
+    @Query() filter: SessionFilterOrder,
+  ): Promise<OrderEntity[]> {
+    return await this.ordersService.getOrderBySession(filter);
   }
 
   @Get('/byStatus')
