@@ -106,7 +106,13 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         status: status,
       },
       relations: {
-        batchs: { orders: true, station: true },
+        batchs: {
+          orders: {
+            subscription: { packages: true, account: { profile: true } },
+            packageItem: { foodGroup: { foods: true } },
+          },
+          station: true,
+        },
         shipper: { account: { profile: true } },
         session: { timeSlot: true },
       },

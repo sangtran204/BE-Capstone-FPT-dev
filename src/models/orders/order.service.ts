@@ -16,6 +16,7 @@ import {
   OrderGetByKitchen,
   OrderSearchByDate,
   PreFoodByWeek,
+  SessionFilterOrder,
 } from './dto/order-filter.dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
@@ -208,6 +209,7 @@ export class OrdersService extends BaseService<OrderEntity> {
     }
     const newOrder = await this.ordersRepository.save({
       subscription: subFind,
+      session: sessionFind,
       packageItem: itemFind,
       kitchen: kitchenFind,
       timeSlot: slotFind,
@@ -332,6 +334,30 @@ export class OrdersService extends BaseService<OrderEntity> {
       }
     }
     return true;
+  }
+
+  async getOrderBySession(filter: SessionFilterOrder): Promise<OrderEntity[]> {
+    const { status } = filter;
+    const sessionFind = await this.sessionService.findOne({
+      where: { id: filter.sessionId },
+    });
+    if (!sessionFind || sessionFind == null)
+      throw new HttpException('session not found', HttpStatus.NOT_FOUND);
+    const listOrder = await this.ordersRepository.find({
+      where: {
+        session: { id: sessionFind.id },
+        status: status,
+      },
+      relations: {
+        subscription: { account: { profile: true }, packages: true },
+        packageItem: { foodGroup: { foods: true } },
+        session: { timeSlot: true },
+        station: true,
+      },
+    });
+    if (!listOrder || listOrder.length == 0)
+      throw new HttpException('no orders found', HttpStatus.NOT_FOUND);
+    return listOrder;
   }
 
   async confirmSubOrder(orders: OrderEntity[]): Promise<boolean> {
