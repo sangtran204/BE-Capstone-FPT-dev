@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { BaseEntity } from 'src/models/base/base.entity';
 import { SubscriptionEntity } from 'src/models/subscriptions/entities/subscription.entity';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity({ name: 'feedback' })
 export class FeedBackEntity extends BaseEntity {
@@ -22,5 +22,6 @@ export class FeedBackEntity extends BaseEntity {
   comment: string;
 
   @OneToOne(() => SubscriptionEntity, (subscription) => subscription.feedback)
+  @JoinColumn({ name: 'id' })
   subscription: SubscriptionEntity;
 }
