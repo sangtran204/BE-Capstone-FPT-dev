@@ -110,11 +110,22 @@ export class ShippersService extends BaseService<ShipperEntity> {
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
 
+    const kitchenFind = await this.kitchenService.findOne({
+      where: { id: update.kitchenId },
+    });
+
+    if (!kitchenFind || kitchenFind == null)
+      throw new HttpException('Kitchen not found!', HttpStatus.NOT_FOUND);
+
     const callback = async (entityManager: EntityManager): Promise<void> => {
       await entityManager.update(
         ShipperEntity,
         { id: id },
-        { noPlate: update.noPlate, vehicleType: update.vehicleType },
+        {
+          noPlate: update.noPlate,
+          vehicleType: update.vehicleType,
+          kitchen: kitchenFind,
+        },
       );
 
       await entityManager.update(
