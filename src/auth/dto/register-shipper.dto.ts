@@ -27,4 +27,7 @@ export class RegisterShipperDTO {
 
   @ApiProperty()
   vehicleType: string;
+
+  @ApiProperty()
+  kitchenId: string;
 }
