@@ -24,4 +24,13 @@ export class RegisterKitchenDTO {
 
   @ApiProperty()
   address: string;
+
+  @ApiProperty()
+  openTime: string;
+
+  @ApiProperty()
+  closeTime: string;
+
+  @ApiProperty()
+  openingDate: Date;
 }
