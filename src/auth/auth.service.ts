@@ -234,6 +234,9 @@ export class AuthService {
         entityManager.create(KitchenEntity, {
           id: accountEntity.id,
           address: register.address,
+          openTime: register.openTime,
+          closeTime: register.closeTime,
+          openingDate: register.openingDate,
         }),
       );
 
