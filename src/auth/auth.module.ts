@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtConfigModule } from 'src/config/jwt/config.module';
 import { AccountsModule } from 'src/models/accounts/accounts.module';
+import { KitchenModule } from 'src/models/kitchens/kitchens.module';
 // import { CustomersModule } from 'src/models/customers/customers.module';
 import { ProfileModule } from 'src/models/profiles/profile.module';
 import { RolesModule } from 'src/models/roles/roles.module';
@@ -21,6 +22,7 @@ import { JwtStratery } from './jwt.stratery';
     JwtProviderModule,
     ProfileModule,
     SharedModule,
+    KitchenModule,
   ],
   controllers: [AuthenticationController],
   providers: [AuthService, JwtStratery],

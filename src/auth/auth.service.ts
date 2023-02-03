@@ -9,6 +9,7 @@ import { AccountsService } from 'src/models/accounts/accounts.service';
 import { AccountEntity } from 'src/models/accounts/entities/account.entity';
 
 import { KitchenEntity } from 'src/models/kitchens/entities/kitchens.entity';
+import { KitchenService } from 'src/models/kitchens/kitchens.service';
 import { ProfileEntity } from 'src/models/profiles/entities/profile.entity';
 import { ProfileService } from 'src/models/profiles/profile.service';
 import { RoleEntity } from 'src/models/roles/entities/role.entity';
@@ -37,6 +38,7 @@ export class AuthService {
     private readonly shipperService: ShippersService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
+    private readonly kitchenService: KitchenService,
     private readonly sharedService: SharedService, // private readonly mailService: MailService,
   ) {}
 
@@ -145,6 +147,13 @@ export class AuthService {
     if (Boolean(checkNoPlate)) {
       throw new HttpException('noPlate already exists', HttpStatus.BAD_REQUEST);
     }
+
+    const kitchenFind = await this.kitchenService.findOne({
+      where: { id: register.kitchenId },
+    });
+    if (!kitchenFind || kitchenFind == null)
+      throw new HttpException('Kitchen not found', HttpStatus.NOT_FOUND);
+
     register.password = await bcrypt.hash(register.password, 10);
     const callback = async (entityManager: EntityManager): Promise<void> => {
       const role = await entityManager.findOne(RoleEntity, {
@@ -168,6 +177,7 @@ export class AuthService {
           noPlate: register.noPlate,
           vehicleType: register.vehicleType,
           status: ShipperStatusEnum.ACTIVE,
+          kitchen: kitchenFind,
         }),
       );
 
