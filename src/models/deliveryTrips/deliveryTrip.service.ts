@@ -305,6 +305,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         }
       }
     }
+    await this.sessionService.save({
+      id: sessionFind.id,
+      status: SessionEnum.UNASSIGNED,
+    });
     return await this.deliveryTripRepository.find({
       where: { session: { id: dto.sessionId } },
       relations: { batchs: { station: true } },
