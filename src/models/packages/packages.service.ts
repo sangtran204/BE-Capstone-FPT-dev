@@ -203,7 +203,7 @@ export class PackageService extends BaseService<PackageEntity> {
   ): Promise<PackageEntity[]> {
     const listPackage = await this.packagesRepository
       .createQueryBuilder('packages')
-      .leftJoinAndSelect('packages.timeFrame', 'time_frame')
+      .leftJoinAndSelect('packages.packageItem', 'package_item')
       .leftJoinAndSelect('packages.packageCategory', 'package_categories')
       .where('packages.packageCategory.id = :id', {
         id: categoryId,
