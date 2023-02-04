@@ -198,9 +198,9 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     const listOneBatch: BatchEntity[] = [];
     for (const value of newMap.values()) {
       for (let i = 0; i < value.length; i++) {
-        if (i % 2 == 0) {
+        if (i % SettingConfig.MAX_BATCH == 0) {
           const arrSub = value.slice(i, i + 2);
-          if (arrSub.length == 2) {
+          if (arrSub.length == SettingConfig.MAX_BATCH) {
             const trip = await this.deliveryTripRepository.save({
               session: sessionFind,
               deliveryDate: sessionFind.workDate,
@@ -224,7 +224,7 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
     let newTrip;
 
     for (let z = 0; z < listOneBatch.length; z++) {
-      if (listOneBatch.length < 2) {
+      if (listOneBatch.length < SettingConfig.MAX_BATCH) {
         newTrip = await this.deliveryTripRepository.save({
           session: sessionFind,
           deliveryDate: sessionFind.workDate,
@@ -305,6 +305,10 @@ export class DeliveryTripService extends BaseService<DeliveryTripEntity> {
         }
       }
     }
+    await this.sessionService.save({
+      id: sessionFind.id,
+      status: SessionEnum.UNASSIGNED,
+    });
     return await this.deliveryTripRepository.find({
       where: { session: { id: dto.sessionId } },
       relations: { batchs: { station: true } },

@@ -22,4 +22,7 @@ export class UpdateShipperDTO extends BaseDTO {
 
   @ApiProperty()
   vehicleType: string;
+
+  @ApiProperty()
+  kitchenId: string;
 }

@@ -246,7 +246,7 @@ export class DeliveryTripController {
   }
 
   @Put('/transfer')
-  @Roles(RoleEnum.MANAGER)
+  // @Roles(RoleEnum.MANAGER)
   @ApiResponse({
     status: 200,
     description: 'MANAGER TRANSFER SHIPPER',
