@@ -273,7 +273,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         .where('id = :id', {
           id: id,
         })
-        .andWhere('customerId = :customerId', { customerId: user.id })
+        .andWhere('account.id = :customerId', { customerId: user.id })
         .andWhere('status = :status', { status: 'unConfirmed' })
         .execute();
       if (delSub) {
@@ -291,7 +291,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
           .where('id = :id', {
             id: id,
           })
-          .andWhere('customerId = :customerId', { customerId: user.id })
+          .andWhere('account.id = :customerId', { customerId: user.id })
           .andWhere('status = :status', { status: 'unConfirmed' })
           .execute();
         if (delSub) {
