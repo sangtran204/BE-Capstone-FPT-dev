@@ -70,9 +70,9 @@ export class SubscriptionController {
     description: 'CUSTOMER GET SUBSCRIPTION BY STATUS',
     type: [SubscriptionDTO],
   })
-  @UseInterceptors(
-    MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
-  )
+  // @UseInterceptors(
+  //   MapInterceptor(SubscriptionEntity, SubscriptionDTO, { isArray: true }),
+  // )
   async getSubscriptionByCutomer(
     @Query() subFilter: SubscriptionFilter,
     @GetUser() user: AccountEntity,

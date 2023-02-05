@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmpty } from 'class-validator';
+// import { IsEmpty } from 'class-validator';
 
 export class SubHistoryDTO {
   @ApiProperty()
@@ -11,9 +11,9 @@ export class SubHistoryDTO {
   @ApiProperty()
   subscriptionDate: Date;
 
-  @ApiProperty()
-  @IsEmpty()
-  cancelDate: Date;
+  // @ApiProperty()
+  // @IsEmpty()
+  // cancelDate: Date;
 
   @ApiProperty()
   status: string;

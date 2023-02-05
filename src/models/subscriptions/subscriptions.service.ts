@@ -83,7 +83,7 @@ export class SubscriptionService extends BaseService<SubscriptionEntity> {
         'subscriptions.id as id, totalPrice, subscriptionDate, subscriptions.status as status, packages.name as packageName, packages.image as packageImg',
       )
       .leftJoin('subscriptions.packages', 'packages')
-      .where('subscriptions.account = :id', { id: user.id })
+      .where('subscriptions.account.id = :id', { id: user.id })
       .andWhere('subscriptions.status = :status', {
         status: statusCompare.value,
       })
